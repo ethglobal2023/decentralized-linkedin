@@ -13,3 +13,5 @@ jobs:
           heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
           heroku_app_name: decentralized-linkedin-api
           heroku_email: ${{ secrets.HEROKU_EMAIL }}
+        env:
+          HD_APP_BASE: backend/
