@@ -1,0 +1,37 @@
+{
+  "name": "xmtp-web",
+  "version": "0.0.0",
+  "private": true,
+  "workspaces": [
+    "examples/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "build": "turbo run build --filter='./packages/*'",
+    "clean": "turbo run clean && rm -rf node_modules && yarn cache clean",
+    "format:check": "turbo run format:check",
+    "format": "turbo run format",
+    "generate:types": "turbo run generate:types",
+    "lint": "FORCE_COLOR=1 turbo run lint",
+    "publish": "yarn build && changeset publish",
+    "quickstart": "turbo run quickstart",
+    "test": "FORCE_COLOR=1 turbo run test",
+    "typecheck": "FORCE_COLOR=1 turbo run typecheck"
+  },
+  "devDependencies": {
+    "prettier": "^3.0.3",
+    "turbo": "^1.10.14"
+  },
+  "packageManager": "yarn@3.4.1",
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "@changesets/changelog-github": "^0.4.8",
+    "@changesets/cli": "^2.26.2"
+  },
+  "resolutions": {
+    "@xmtp/xmtp-js": "^11.1.1",
+    "vite": "^4.4.9"
+  }
+}

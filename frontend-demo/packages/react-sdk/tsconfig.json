@@ -1,0 +1,10 @@
+{
+  "extends": "./react-sdk.json",
+  "include": ["src", ".eslintrc.cjs", "vitest.setup.ts"],
+  "compilerOptions": {
+    "module": "esnext",
+    "paths": {
+      "@/*": ["./src/*"]
+    }
+  }
+}

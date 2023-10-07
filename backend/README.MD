@@ -8,10 +8,13 @@
 
 
 ## Deployment
-1. `brew tap heroku/brew && brew install heroku`
-2. heroku login
+[Github Actions are used to deploy to Heroku](./.github/workflows/deploy.yml)
+
+#### Manual Deployment (Not Recommended)
+2. `brew tap heroku/brew && brew install heroku`
+2. heroku login (ask @ad0ll for access)
 3. git remote add heroku-api https://git.heroku.com/decentralized-linkedin-api.git                                                                                       21:15:54
 4. git remote add heroku-web https://git.heroku.com/decentralized-linkedin-web.git       
-5. (Manual) Push to heroku-api and heroku-web:
-   1. git push heroku-api main
-   2. git push heroku-web main
+5. Push to heroku-api or heroku-web:
+   1. `git push heroku-api main`
+   2. `git push heroku-web main`

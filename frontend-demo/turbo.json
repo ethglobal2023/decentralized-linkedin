@@ -1,0 +1,38 @@
+{
+  "$schema": "https://turbo.build/schema.json",
+  "globalDependencies": ["**/.env.*local"],
+  "pipeline": {
+    "build": {
+      "dependsOn": ["^build"],
+      "outputs": ["dist/**", "lib/**", "build/**"]
+    },
+    "clean": {
+      "outputs": []
+    },
+    "format": {
+      "outputs": []
+    },
+    "format:check": {
+      "outputs": []
+    },
+    "generate:types": {
+      "dependsOn": ["^generate:types"],
+      "outputs": ["lib/index.d.ts"]
+    },
+    "lint": {
+      "dependsOn": ["^generate:types"],
+      "outputs": []
+    },
+    "quickstart": {
+      "dependsOn": ["^build"],
+      "persistent": true
+    },
+    "test": {
+      "outputs": []
+    },
+    "typecheck": {
+      "dependsOn": ["^generate:types"],
+      "outputs": []
+    }
+  }
+}
