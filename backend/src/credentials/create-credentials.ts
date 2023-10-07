@@ -1,6 +1,8 @@
 import { agent } from './index'
+import { Request, Response, NextFunction } from 'express'
+import {logger} from "../index";
 
-async function main() {
+const createCredentials = async (req: Request, res: Response, next: NextFunction) => {
     const identifier = await agent.didManagerGetByAlias({ alias: 'default' })
 
     const verifiableCredential = await agent.createVerifiableCredential({
@@ -14,8 +16,9 @@ async function main() {
         },
         proofFormat: 'jwt',
     })
-    console.log(`New credential created`)
-    console.log(JSON.stringify(verifiableCredential, null, 2))
+    logger.info(`New credential created`)
+    logger.info(verifiableCredential)
+    res.send(verifiableCredential)
 }
 
-main().catch(console.log)
+export default createCredentials

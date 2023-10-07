@@ -2,13 +2,32 @@ import express from 'express';
 import winston from 'winston';
 import morgan from 'morgan';
 import {search} from "./search";
+import listIdentifiers from "./credentials/list-identifiers";
+import createIdentifier from "./credentials/create-identifier";
+import getCredentials from "./credentials/get-credentials";
+import createCredentials from "./credentials/create-credentials";
+import verifyCredentials from "./credentials/verify-credentials";
 
-export const config = {
+type Config = {
+    port: number | string,
+    logLevel: string,
+    talentLayerSubgraphUrl: string,
+    databaseType: string,
+    databaseUrl: string,
+    rpcUrl: string,
+    rpcNetwork: "mumbai" | "sepolia" | "goerli"
+}
+
+export const config: Config = {
     port: process.env.PORT || 3000,
     logLevel: process.env.LOG_LEVEL || 'info',
-    // talentLayerSubgraphUrl: process.env.TALENTLAYER_SUBGRAPH_URL || "https://api.thegraph.com/subgraphs/name/talentlayer/talent-layer-mumbai/graphql"
-    talentLayerSubgraphUrl: process.env.TALENTLAYER_SUBGRAPH_URL || "https://api.thegraph.com/subgraphs/name/talentlayer/talentlayer-polygon"
+    talentLayerSubgraphUrl: "https://api.thegraph.com/subgraphs/name/talentlayer/talentlayer-polygon",
+    databaseType: process.env.DATABASE_TYPE || "postgres", //see README for one-liner to start postgres instance
+    databaseUrl: process.env.DATABASE_URL || "postgres://postgres:password@localhost:5432/postgres",
+    rpcUrl: process.env.RPC_URL || "https://rpc-mumbai.maticvigil.com",
+    rpcNetwork: process.env.RPC_NETWORK as "mumbai" | "sepolia" | "goerli" || "mumbai"
 }
+
 const app = express();
 const PORT = process.env.PORT || 3000;
 
@@ -28,6 +47,11 @@ if (process.env.NODE_ENV !== 'production') {
 
 app.get('/search', search);
 
+app.get("/identifiers", listIdentifiers);
+app.post("/identifiers", createIdentifier);
+app.get("/credentials/", getCredentials);
+app.post("/credentials/", createCredentials);
+app.post("/credentials/verify", verifyCredentials);
 
 app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);

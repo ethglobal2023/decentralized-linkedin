@@ -1,6 +1,9 @@
 import { agent } from './index'
+import { Request, Response, NextFunction } from 'express'
+import {logger} from "../index";
 
-async function main() {
+
+const verifyCredentials = async (req: Request, res: Response, next: NextFunction) => {
     const result = await agent.verifyCredential({
         credential: {
             credentialSubject: {
@@ -19,7 +22,9 @@ async function main() {
             },
         },
     })
-    console.log(`Credential verified`, result.verified)
+
+    logger.info(`Credential verified`, result.verified)
+    res.send(result)
 }
 
-main().catch(console.log)
+export default verifyCredentials

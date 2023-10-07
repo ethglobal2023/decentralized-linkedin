@@ -1,16 +1,21 @@
 import { agent } from './index'
+import { Request, Response, NextFunction } from 'express'
+import {logger} from "../index";
 
-async function main() {
+
+const listIdentifiers = async (req: Request, res: Response, next: NextFunction) => {
     const identifiers = await agent.didManagerFind()
 
-    console.log(`There are ${identifiers.length} identifiers`)
+    logger.debug(`There are ${identifiers.length} identifiers`)
 
     if (identifiers.length > 0) {
         identifiers.map((id) => {
-            console.log(id)
-            console.log('..................')
+            logger.debug(id)
+            logger.debug('..................')
         })
     }
+
+    res.send(identifiers)
 }
 
-main().catch(console.log)
+export default listIdentifiers
