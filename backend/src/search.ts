@@ -11,6 +11,13 @@ const queryParamSchema = Joi.object({
     onlyInApp: Joi.boolean().optional()
 });
 
+type SearchOutput = {
+    name: string;
+    website: string; // url
+    skills: string[];
+    source: "talentlayer";
+}
+
 const skillSearch = `
 query SearchBySkill ($skill: String) {
   users(where:{

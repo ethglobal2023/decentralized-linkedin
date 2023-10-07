@@ -1,0 +1,15 @@
+name: Deploy app to heroku
+on: [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v2
+#        The below build step can be copied and pasted when we have the react app
+      - name: Publish to Heroku
+        uses: akhileshns/heroku-deploy@v3.12.12
+        with:
+          heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
+          heroku_app_name: decentralized-linkedin-api
+          heroku_email: ${{ secrets.HEROKU_EMAIL }}

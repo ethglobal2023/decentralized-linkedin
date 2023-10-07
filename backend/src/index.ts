@@ -12,13 +12,6 @@ export const config = {
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-type SearchOutput = {
-    name: string;
-    website: string; // url
-    skills: string[];
-    source: "talentlayer";
-}
-
 app.use(express.urlencoded({extended: false}))
 app.use(express.json())
 app.use(express.static('public'))
