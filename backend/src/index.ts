@@ -1,9 +1,7 @@
-import express, {NextFunction, Request, Response} from 'express';
+import express from 'express';
 import winston from 'winston';
 import morgan from 'morgan';
 import {search} from "./search";
-import axios from "axios/index";
-import {processGraphqlRequest} from "./lib";
 
 export const config = {
     port: process.env.PORT || 3000,
@@ -21,7 +19,7 @@ type SearchOutput = {
     source: "talentlayer";
 }
 
-app.use(express.urlencoded({ extended: false }))
+app.use(express.urlencoded({extended: false}))
 app.use(express.json())
 app.use(express.static('public'))
 
@@ -36,7 +34,6 @@ if (process.env.NODE_ENV !== 'production') {
 
 
 app.get('/search', search);
-
 
 
 app.listen(PORT, () => {

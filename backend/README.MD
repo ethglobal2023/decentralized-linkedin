@@ -8,5 +8,10 @@
 
 
 ## Deployment
-
-TBD
+1. `brew tap heroku/brew && brew install heroku`
+2. heroku login
+3. git remote add heroku-api https://git.heroku.com/decentralized-linkedin-api.git                                                                                       21:15:54
+4. git remote add heroku-web https://git.heroku.com/decentralized-linkedin-web.git       
+5. (Manual) Push to heroku-api and heroku-web:
+   1. git push heroku-api main
+   2. git push heroku-web main
