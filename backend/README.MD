@@ -8,7 +8,7 @@
 
 
 ## Deployment
-[Github Actions are used to deploy to Heroku](./.github/workflows/deploy.yml)
+[Github Actions are used to deploy to Heroku on any push](./.github/workflows/deploy.yml)
 
 #### Manual Deployment (Not Recommended)
 2. `brew tap heroku/brew && brew install heroku`
