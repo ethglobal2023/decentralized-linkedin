@@ -32,9 +32,6 @@ dependencies:
   axios:
     specifier: ^1.5.1
     version: 1.5.1
-  body-parser:
-    specifier: ^1.20.2
-    version: 1.20.2
   cors:
     specifier: ^2.8.5
     version: 2.8.5
@@ -53,9 +50,6 @@ dependencies:
   morgan:
     specifier: ^1.10.0
     version: 1.10.0
-  pks:
-    specifier: link:@veramo/did-provider/pks
-    version: link:@veramo/did-provider/pks
   typescript:
     specifier: ^5.2.2
     version: 5.2.2
@@ -82,9 +76,6 @@ devDependencies:
   '@graphql-codegen/typescript-resolvers':
     specifier: 4.0.1
     version: 4.0.1(graphql@16.8.1)
-  '@types/body-parser':
-    specifier: ^1.19.3
-    version: 1.19.3
   '@types/express':
     specifier: ^4.17.18
     version: 4.17.18
@@ -5015,6 +5006,7 @@ packages:
     transitivePeerDependencies:
       - supports-color
     dev: false
+    optional: true
 
   /bplist-creator@0.1.0:
     resolution: {integrity: sha512-sXaHZicyEEmY86WyueLTQesbeoH/mquvarJaQNbjuOQO+7gbFcDEWqKmcWA4cOTLzFlfgvkiVxolk1k5bBIpmg==}
@@ -9551,6 +9543,7 @@ packages:
       iconv-lite: 0.4.24
       unpipe: 1.0.0
     dev: false
+    optional: true
 
   /rc@1.2.8:
     resolution: {integrity: sha512-y3bGgqKj3QBdxLbLkomlohkvsA8gdAiUQlSBJnBhfn+BPxg4bc62d8TcBW15wavDfgexCgccckhcZvywyQYPOw==}
