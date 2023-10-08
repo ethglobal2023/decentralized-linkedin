@@ -1,0 +1,10 @@
+{
+  "extends": "./tsconfig.json",
+  "include": [
+    "./react-quickstart",
+    ".eslintrc.cjs",
+    "postcss.config.cjs"
+  ],
+  "exclude": [
+    "react-quickstart/dist", "node_modules"]
+}

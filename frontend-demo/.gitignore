@@ -12,7 +12,7 @@ coverage
 
 # debug
 yarn-debug.log*
-yarn-error.log*
+app/yarn-error.log
 
 # local env files
 .env*
