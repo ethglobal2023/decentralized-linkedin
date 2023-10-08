@@ -132,8 +132,6 @@ dist
 .pnp.*
 
 dist/
-.env
-.envrc
 .vercel
 .private
 .idea

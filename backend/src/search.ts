@@ -1,8 +1,10 @@
-import Joi from "joi";
 import {Request, Response, NextFunction} from "express";
 import axios from "axios";
-import {processGraphqlRequest} from "./lib";
-import {config, logger} from "./index";
+import {processGraphqlRequest} from "./lib.js";
+import {logger} from "./index.js";
+import Joi from "joi";
+import { config } from "./config.js";
+
 
 const queryParamSchema = Joi.object({
     // skills: Joi.array().items(Joi.string()).optional(),
@@ -44,7 +46,7 @@ query SearchBySkill ($skill: String) {
 }`
 
 
-export  const search = async (req: Request, res: Response, next: NextFunction) => {
+export const search = async (req: Request, res: Response, next: NextFunction) => {
 
     const { error, value } = queryParamSchema.validate(req.query);
 
@@ -62,3 +64,4 @@ export  const search = async (req: Request, res: Response, next: NextFunction) =
     logger.debug("finished searching TalentLayer for skills", value.skills);
     res.status(200).send(matches);
 }
+
