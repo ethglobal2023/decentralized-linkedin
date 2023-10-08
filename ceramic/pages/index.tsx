@@ -222,12 +222,15 @@ export default function Home() {
                     body: JSON.stringify(requestBody),
                   };
                   // call attest api endpoint to store attestation on ComposeDB
-                  await fetch("http://localhost:3005/eas/attest", requestOptions)
+                  const res = await fetch("http://localhost:3005/eas/attest", requestOptions)
                     .then((response) => response.json())
-                    .then((data) => console.log(data))
+                  console.log("Attested", res);
                   setAddress("");
                   setAttesting(false);
-                } catch (e) {}
+                } catch (e) {
+                  console.log("Failed to attest", e)
+
+                }
                 setAddress("");
                 setAttesting(false);
               }

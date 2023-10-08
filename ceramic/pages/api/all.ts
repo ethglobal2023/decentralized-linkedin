@@ -17,28 +17,10 @@ export default async function createAttestation(
 
   try {
     console.log(req.body.account);
+    console.log("Getting data");
     const data: any = await composeClient.executeQuery(`
             query {
-              attestationIndex(filters: {
-                or: [
-          {
-            where: {
-              attester: { 
-                    equalTo: "${req.body.account}"
-                  } 
-            }
-          },
-          {
-            and: {
-              where: {
-            recipient : {
-                    equalTo: "${req.body.account}"
-                  } 
-              }
-            }
-          }
-            ],
-            } 
+              attestationIndex(
           first: 100) {
             edges {
               node {
@@ -91,8 +73,10 @@ export default async function createAttestation(
             }
           }
       `);
+    console.log("Got data", data)
     return res.json(data);
   } catch (err) {
+    console.log("Failed to get datae:", err)
     res.json({
       err,
     });

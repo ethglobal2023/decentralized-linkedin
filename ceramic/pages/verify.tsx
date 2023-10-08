@@ -110,6 +110,7 @@ export default function Home() {
     checkIfWalletIsConnected();
   }, [account]);
 
+  console.log("attestations", attestations)
   return (
     <>
       <div className="relative flex flex-1">
