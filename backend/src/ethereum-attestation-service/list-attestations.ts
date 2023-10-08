@@ -31,7 +31,7 @@ export const getAttestationsForAccount = async (
           {
             where: {
               attester: { 
-                    equalTo: "${value.account}"
+                    equalTo: "${value.account.toLowerCase()}"
                   } 
             }
           },
@@ -39,7 +39,7 @@ export const getAttestationsForAccount = async (
             and: {
               where: {
             recipient : {
-                    equalTo: "${value.account}"
+                    equalTo: "${value.account.toLowerCase()}"
                   } 
               }
             }
