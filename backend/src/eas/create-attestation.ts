@@ -1,8 +1,10 @@
 import {NextFunction, Request, Response} from "express";
 import {logger} from "../index.js";
 import Joi from "joi";
-import {extractAddressFromAttestation, getComposeClient, signatureIsFromAttester} from "./index.js";
+import {extractAddressFromAttestation, getComposeClient, signatureIsFromAttester, VerifyEasRequest} from "./index.js";
 import {config} from "../config.js";
+import {Signature} from "ethers";
+import {EIP712DomainTypedData} from "@ethereum-attestation-service/eas-sdk/dist/offchain/typed-data-handler.js";
 
 const attestationRequestSchema = Joi.object({
     uid: Joi.string().required(),
@@ -33,6 +35,49 @@ const attestationRequestSchema = Joi.object({
     }),
 });
 
+export type CreateEasRequest = {
+    uid: string,
+    account: string,
+    signature: Signature,
+    types: any, //TODO figure out what this type is
+    domain: EIP712DomainTypedData,
+    primaryType: string,
+    message: any
+}
+
+// The EAS format supplied matches when it's fetched from Ceramic, but doesn't match when it's created through the app
+// This is because the message has additional fields to prevent replay attacks
+// This function converts the format from the app to the format fetched from Ceramic
+const appAttestationToEASFormat = (data: CreateEasRequest): VerifyEasRequest => {
+    return {
+        sig: {
+            domain: {
+                name: "EAS Attestation",
+                version: data.domain.version,
+                chainId: data.domain.chainId,
+                verifyingContract: data.domain.verifyingContract,
+            },
+            primaryType: "Attest",
+            types: data.types,
+            signature: data.signature,
+            uid: data.uid,
+            message: {
+                version: data.message.version,
+                schema: data.message.schema,
+                refUID: data.message.refUID,
+                time: data.message.time,
+                expirationTime: 0,
+                recipient: data.message.recipient,
+                attester: data.message.attester,
+                revocable: true,
+                data: data.message.data,
+            },
+        },
+        signer: data.account,
+    };
+}
+
+
 export const createNewAttestation = async (req: Request, res: Response, next: NextFunction) => {
     // Attestation is verified in middleware before this function is called
     logger.debug("Attestation request:", req.body)
@@ -46,21 +91,22 @@ export const createNewAttestation = async (req: Request, res: Response, next: Ne
 
     const {message, uid, account, domain, types, signature} = value;
 
-    // if (!signatureIsFromAttester(account, value)) {
-    //     const recoveredAddress = extractAddressFromAttestation(value);
-    //     logger.debug(`Signature is not from the attester. Expected: ${account}, signer: ${recoveredAddress}`)
-    //     return res.status(401).send("Signature is not from the attester")
-    // }
-    //
-    // if(message.recipient === account) {
-    //     logger.debug(`Attestation recipient is the same as the attester.`)
-    //     return res.status(401).send("Attestation recipient is the same as the attester")
-    // }
-    //
-    // if (value.attester !== config.ceramicIssuerAddress) {
-    //     logger.warn(`Signature is not from the trusted issuer. Expected: ${config.ceramicIssuerAddress}, signer: ${account}`)
-    //     return res.status(401).send("Signature is not from the trusted issuer")
-    // }
+    const verificationRequest = appAttestationToEASFormat(value)
+    if (!signatureIsFromAttester(account, verificationRequest)) {
+        const recoveredAddress = extractAddressFromAttestation(verificationRequest);
+        logger.debug(`Signature is not from the attester. Expected: ${account}, signer: ${recoveredAddress}`)
+        return res.status(401).send("Signature is not from the attester")
+    }
+
+    if(message.recipient === account) {
+        logger.debug(`Attestation recipient is the same as the attester.`)
+        return res.status(401).send("Attestation recipient is the same as the attester")
+    }
+
+    if (value.attester !== config.ceramicIssuerAddress) {
+        logger.warn(`Signature is not from the trusted issuer. Expected: ${config.ceramicIssuerAddress}, signer: ${account}`)
+        return res.status(401).send("Signature is not from the trusted issuer")
+    }
 
     try {
         const composeClient = await getComposeClient();

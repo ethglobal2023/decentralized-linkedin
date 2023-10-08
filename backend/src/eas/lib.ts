@@ -40,3 +40,4 @@ export const computeUserTrustScore = async (account: string) => {
 //     })
 // }
 
+// 0xf3D6e2604AD63b23A97D2f931d80d746305f0152
