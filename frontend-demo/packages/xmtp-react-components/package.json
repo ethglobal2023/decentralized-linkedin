@@ -22,7 +22,7 @@
   "repository": {
     "type": "git",
     "url": "git@github.com:xmtp/xmtp-web.git",
-    "directory": "packages/react-components"
+    "directory": "packages/xmtp-react-components"
   },
   "homepage": "https://github.com/xmtp/xmtp-web",
   "bugs": {

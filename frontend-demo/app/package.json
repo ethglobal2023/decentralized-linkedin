@@ -19,7 +19,7 @@
     "@heroicons/react": "^2.0.18",
     "@rainbow-me/rainbowkit": "^1.0.11",
     "@xmtp/content-type-remote-attachment": "^1.1.2",
-    "@xmtp/react-components": "file:../packages/xmtp-react-components",
+    "@xmtp/react-components": "workspace:*",
     "@xmtp/react-sdk": "^2.1.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
