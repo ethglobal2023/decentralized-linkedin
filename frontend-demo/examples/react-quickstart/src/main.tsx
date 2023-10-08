@@ -40,12 +40,12 @@ const contentTypeConfigs = [
 const { chains, publicClient } = configureChains(
   [mainnet],
   [
-    infuraProvider({ apiKey: import.meta.env.VITE_INFURA_ID }),
+    infuraProvider({ apiKey: "b46a8b93584e410e8a0d353a9a2b4f1a" }),
     publicProvider(),
   ],
 );
 
-const projectId = import.meta.env.VITE_PROJECT_ID;
+const projectId = "f3b8ea84247122bc77e28b7b91edf3d8";
 const appName = "XMTP React Quickstart";
 
 const connectors = connectorsForWallets([
