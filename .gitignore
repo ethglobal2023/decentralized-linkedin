@@ -3,7 +3,7 @@ logs
 *.log
 npm-debug.log*
 yarn-debug.log*
-frontend-demo/app/yarn-error.log
+frontend/app/yarn-error.log
 lerna-debug.log*
 .pnpm-debug.log*
 
@@ -140,3 +140,13 @@ dist/
 private/
 wheel
 .turbo
+
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions
+
+# typedocs
+docs

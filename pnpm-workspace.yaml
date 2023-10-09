@@ -1,0 +1,4 @@
+packages:
+  - 'frontend/app/'
+  - 'frontend/packages/xmtp-react-components'
+  - 'backend/'

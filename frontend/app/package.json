@@ -5,14 +5,14 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "yarn typecheck && vite build",
+    "build": "pnpm typecheck && vite build",
     "clean:dist": "rm -rf react-quickstart/dist",
-    "clean": "rm -rf .turbo && rm -rf react-quickstart/node_modules && yarn clean:dist",
+    "clean": "rm -rf .turbo && rm -rf react-quickstart/node_modules && pnpm clean:dist",
     "lint": "eslint react-quickstart --ignore-path ../../.gitignore",
-    "format:base": "prettier --ignore-path ../.gitignore",
-    "format:check": "yarn format:base -c react-quickstart",
-    "format": "yarn format:base -w react-quickstart",
-    "quickstart": "yarn dev",
+    "format:base": "prettier --ignore-path ../../archive/xmtp-web/.gitignore",
+    "format:check": "pnpm format:base -c react-quickstart",
+    "format": "pnpm format:base -w react-quickstart",
+    "quickstart": "pnpm dev",
     "typecheck": "tsc --noEmit",
     "serve": "serve dist/"
   },
@@ -22,6 +22,7 @@
     "@xmtp/content-type-remote-attachment": "^1.1.2",
     "@xmtp/react-components": "workspace:*",
     "@xmtp/react-sdk": "^2.1.0",
+    "buffer": "^6.0.3",
     "express": "^4.18.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
@@ -30,6 +31,7 @@
     "wagmi": "^1.4.2"
   },
   "devDependencies": {
+    "@esbuild-plugins/node-globals-polyfill": "^0.2.3",
     "@types/react": "^18.2.20",
     "@types/react-dom": "^18.2.8",
     "@vitejs/plugin-react": "^4.1.0",
