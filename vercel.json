@@ -1,0 +1,25 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "backend/dist/index.js",
+      "use": "@vercel/node",
+      "config": { "includeFiles": ["backend/dist/**"] }
+    },
+    {
+      "src": "frontend-demo/app/dist/index.html",
+      "use": "@vercel/node",
+      "config": { "includeFiles": ["frontend-demo/app/dist/**"] }
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "fronted-demo/app/dist/index.html"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "backend/dist/index.js"
+    }
+  ]
+}
