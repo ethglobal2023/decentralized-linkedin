@@ -1,6 +1,3 @@
-
-
-
 const profile1 = {
     pubKey: "0xb9c5714089478a327f09197987f16f9e5d936e8a",  // maybe keep this for the end with the payload signature
     dids:[
@@ -32,7 +29,8 @@ const profile1 = {
          }
     ],
     occupations:[
-        { title:"Theoretical Chemistry Researcher", 
+        {
+          title:"Theoretical Chemistry Researcher",
         company: {
             name:"ETH Zurich",
             dns:"eth.ch",
