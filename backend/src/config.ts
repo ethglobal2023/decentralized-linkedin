@@ -1,4 +1,6 @@
 import dotenv from 'dotenv'
+import { createClient } from "@supabase/supabase-js";
+import { Database } from "./__generated__/supabase-types.js";
 
 dotenv.config()
 type Config = {
@@ -9,14 +11,17 @@ type Config = {
     databaseUrl: string,
     rpcUrl: string,
     rpcNetwork: "mumbai" | "sepolia" | "goerli"
-    ceramicKey: string
-    ceramicUrl: string
-    ceramicIssuerDid: string
-    ceramicIssuerAddress: string
+    easIssuerDid: string
+    easIssuerAddress: string
 }
-const toLower = (str: string) => {
-    return str.toLowerCase()
+
+if (!process.env.SUPABASE_PROJECT_ID || !process.env.SUPABASE_API_KEY) {
+    throw new Error("Missing SUPABASE_PROJECT_ID or SUPABASE_API_KEY")
 }
+
+export const supabase = createClient<Database>(process.env.SUPABASE_PROJECT_ID, process.env.SUPABASE_API_KEY);
+
+
 export const config: Config = {
     port: process.env.PORT || 3000,
     logLevel: (process.env.LOG_LEVEL || 'info').toLowerCase(),
@@ -25,11 +30,7 @@ export const config: Config = {
     databaseUrl: (process.env.DATABASE_URL || "postgres://postgres:password@localhost:5432/postgres"),
     rpcUrl: (process.env.RPC_URL || "https://rpc-mumbai.maticvigil.com"),
     rpcNetwork: (process.env.RPC_NETWORK as "mumbai" | "sepolia" | "goerli" || "mumbai"),
-    ceramicKey: (process.env.CERAMIC_KEY || ""),
-    ceramicUrl: (process.env.CERAMIC_URL || "http://localhost:7007").toLowerCase(),
-    ceramicIssuerDid: (process.env.CERAMIC_EAS_ISSUER_DID || "did:pkh:eip-155:11155111:0x9cbC225B9d08502d231a6d8c8FF0Cc66aDcc2A4F").toLowerCase(),
-    ceramicIssuerAddress: (process.env.CERAMIC_EAS_ISSUER_ADDRESS || "0x9cbC225B9d08502d231a6d8c8FF0Cc66aDcc2A4F").toLowerCase()
+    easIssuerDid: (process.env.CERAMIC_EAS_ISSUER_DID || "did:pkh:eip-155:11155111:0x9cbC225B9d08502d231a6d8c8FF0Cc66aDcc2A4F").toLowerCase(),
+    easIssuerAddress: (process.env.CERAMIC_EAS_ISSUER_ADDRESS || "0x9cbC225B9d08502d231a6d8c8FF0Cc66aDcc2A4F").toLowerCase()
 }
 
-
-console.log(config)

@@ -8,23 +8,23 @@ import KeyResolver from "key-did-resolver";
 
 //authenticate developer DID in order to create a write transaction
 export const authenticateIssuerDID = async (seed: string) => {
-    const key = fromString(seed, "base16");
-    const provider = new Ed25519Provider(key);
-    fromString(seed, "base16");
-    const staticDid = new DID({
-        resolver: KeyResolver.getResolver(),
-        provider
-    });
-    await staticDid.authenticate();
-    ceramicClient.did = staticDid;
+  const key = fromString(seed, "base16");
+  const provider = new Ed25519Provider(key);
+  fromString(seed, "base16");
+  const staticDid = new DID({
+    resolver: KeyResolver.getResolver(),
+    provider
+  });
+  await staticDid.authenticate();
+  ceramicClient.did = staticDid;
 
-    return staticDid;
+  return staticDid;
 }
 
 export const computeUserTrustScore = async (account: string) => {
-    // TODO Give them one point for each attestation we've issued to them
-    // TODO Give them a fraction of a point for that have been issued to them by others through our platform (i.e. us as the publisher)
-    // TODO Check if they have talentlayer account and give them what points if they do?
+  // TODO Give them one point for each attestation we've issued to them
+  // TODO Give them a fraction of a point for that have been issued to them by others through our platform (i.e. us as the publisher)
+  // TODO Check if they have talentlayer account and give them what points if they do?
 }
 
 // See here for all networks options: https://github.com/w3c-ccg/did-pkh/blob/main/did-pkh-method-draft.md#networks

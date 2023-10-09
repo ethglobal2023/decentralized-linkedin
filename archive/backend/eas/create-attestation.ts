@@ -6,7 +6,9 @@ import {
   signatureIsFromAttester,
   VerifyEasRequest,
 } from "./index.js";
-import { config, supabase } from "../config.js";
+import { config } from "../config.js";
+import { Signature } from "ethers";
+import { EIP712DomainTypedData } from "@ethereum-attestation-service/eas-sdk/dist/offchain/typed-data-handler.js";
 
 const attestationRequestSchema = Joi.object({
   uid: Joi.string().required(),
@@ -68,7 +70,7 @@ const appAttestationToEASFormat = (data: any): VerifyEasRequest => {
     },
     signer: data.account,
   };
-
+  
   console.log("Post transformation2:", attestation2);
   return attestation2;
 };
@@ -78,35 +80,33 @@ export const createNewAttestation = async (
   res: Response,
   next: NextFunction
 ) => {
-
-
   // Attestation is verified in middleware before this function is called
   logger.debug("Attestation request:", req.body);
   logger.debug("Creating new attestation");
 
-  const { error: validationError, value } = attestationRequestSchema.validate(req.body);
-  if (validationError) {
-    logger.error("Attestation request validation error:", validationError);
-    return res.status(400).send(validationError.details[0].message);
+  const { error, value } = attestationRequestSchema.validate(req.body);
+  if (error) {
+    logger.error("Attestation request validation error:", error);
+    return res.status(400).send(error.details[0].message);
   }
 
   const { message, uid, account, domain, types, signature } = value;
 
-  const easDocument = appAttestationToEASFormat(value);
-  if (!signatureIsFromAttester(account, easDocument)) {
-    const recoveredAddress = extractAddressFromAttestation(easDocument);
+  const verificationRequest = appAttestationToEASFormat(value);
+  if (!signatureIsFromAttester(account, verificationRequest)) {
+    const recoveredAddress = extractAddressFromAttestation(verificationRequest);
     logger.debug(
       `Signature is not from the attester. Expected: ${account}, signer: ${recoveredAddress}`
     );
     return res.status(401).send("Signature is not from the attester");
   }
   //
-  if (message.recipient === account) {
-    logger.debug(`Attestation recipient is the same as the attester.`);
-    return res
-      .status(401)
-      .send("Attestation recipient is the same as the attester");
-  }
+  // if (message.recipient === account) {
+  //   logger.debug(`Attestation recipient is the same as the attester.`);
+  //   return res
+  //     .status(401)
+  //     .send("Attestation recipient is the same as the attester");
+  // }
 
   if (account !== config.easIssuerAddress) {
     logger.warn(
@@ -115,22 +115,74 @@ export const createNewAttestation = async (
     return res.status(401).send("Signature is not from the trusted issuer");
   }
 
-  const {error} = await supabase
-    .from('attestations')
-    .insert({
-      id: uid,
-      refuid: message.refUID,
-      attester_address: account,
-      issuer_address: config.easIssuerAddress,
-      recipient_address: message.recipient,
-      eas_schema_address: message.schema,
-      revoked: false,
-      type: "TODO type", //TODO Take the type as metadata from the UI
-      expiration_time: 0, //TODO, make sure this is populated in the ui
-      document: JSON.stringify(easDocument),
-    })
-  if(error){
-    logger.error("Failed to insert attestation error:", error);
-    res.status(500).json({error: `Failed to insert attestation: ${error}`})
+  console.log("Value:")
+  console.log(value)
+  try {
+    const composeClient = await getComposeClient();
+    const data: any = await composeClient.executeQuery(`
+          mutation {
+            createAttestation(input: {
+              content: {
+                uid: "${uid}"
+                schema: "${message.schema}"
+                attester: "${account}"
+                verifyingContract: "${domain.verifyingContract}"
+                easVersion: "${domain.version}"
+                version: ${message.version}
+                chainId: ${domain.chainId}
+                r: "${signature.r}"
+                s: "${signature.s}"
+                v: ${signature.v}
+                types: ${JSON.stringify(types.Attest)
+                  .replaceAll('"name"', "name")
+                  .replaceAll('"type"', "type")}
+                recipient: "${message.recipient}"
+                refUID: "${message.refUID}"
+                data: "${message.data}"
+                time: ${message.time}
+              }
+            })
+            {
+              document {
+                id
+                uid
+                schema
+                attester
+                verifyingContract
+                easVersion
+                version
+                chainId
+                types{
+                  name
+                  type
+                }
+                r
+                s
+                v
+                recipient
+                refUID
+                data
+                time
+              }
+            }
+          }
+        `);
+
+    logger.debug("Attestation created:", data);
+
+    if (data.data.createAttestation.document.id) {
+      logger.debug("Attestation created successfully");
+      return res.json(data);
+    } else {
+      logger.error("There was an error processing your write request", data);
+      return res.json({
+        error: "There was an error processing your write request",
+      });
+    }
+  } catch (err) {
+    logger.error("Outermost exception caught in createNewAttestation", err);
+    res.json({
+      err,
+    });
   }
 };
