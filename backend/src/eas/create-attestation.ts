@@ -134,13 +134,13 @@ export const createNewAttestation = async (
     );
     return res.status(401).send("Signature is not from the attester");
   }
-
-  if (message.recipient === account) {
-    logger.debug(`Attestation recipient is the same as the attester.`);
-    return res
-      .status(401)
-      .send("Attestation recipient is the same as the attester");
-  }
+  //
+  // if (message.recipient === account) {
+  //   logger.debug(`Attestation recipient is the same as the attester.`);
+  //   return res
+  //     .status(401)
+  //     .send("Attestation recipient is the same as the attester");
+  // }
 
   if (account !== config.ceramicIssuerAddress) {
     logger.warn(
@@ -149,6 +149,8 @@ export const createNewAttestation = async (
     return res.status(401).send("Signature is not from the trusted issuer");
   }
 
+  console.log("Value:")
+  console.log(value)
   try {
     const composeClient = await getComposeClient();
     const data: any = await composeClient.executeQuery(`
