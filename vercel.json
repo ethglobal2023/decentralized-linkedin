@@ -9,16 +9,16 @@
     {
       "src": "frontend/app/dist/index.html",
       "use": "@vercel/node",
-      "config": { "includeFiles": ["frontend-demo/app/dist/**"] }
+      "config": { "includeFiles": ["frontend/app/dist/**"] }
     }
   ],
   "routes": [
     {
       "src": "/(.*)",
-      "dest": "fronted/app/dist/index.html"
+      "dest": "frontend/app/dist/index.html"
     },
     {
-      "src": "/(.*)",
+      "src": "/api/(.*)",
       "dest": "backend/dist/index.js"
     }
   ]
