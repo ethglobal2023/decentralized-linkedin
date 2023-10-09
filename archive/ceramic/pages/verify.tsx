@@ -46,8 +46,7 @@ export default function Home() {
       const acc = accounts[0];
       console.log("Found an authorized account:", acc);
       setAccount(acc.toLowerCase());
-      await getAtts()
-      
+      await getAtts();
     } else {
       console.log("No authorized account found");
     }
@@ -88,7 +87,6 @@ export default function Home() {
       addresses.add(obj.recipient);
     });
 
-
     const records: any[] = [];
     allRecords.forEach((att: any) => {
       const item = att.node;
@@ -101,16 +99,15 @@ export default function Home() {
       records.push(item);
     });
     setAttestations([...attestations, ...records]);
-    console.log(records)
+    console.log(records);
     setLoading(false);
   }
-
 
   useEffect(() => {
     checkIfWalletIsConnected();
   }, [account]);
 
-  console.log("attestations", attestations)
+  console.log("attestations", attestations);
   return (
     <>
       <div className="relative flex flex-1">
@@ -138,12 +135,12 @@ export default function Home() {
               Back home
             </a>
             <div className="GradientBar" />
-            
+
             <div className="NewConnection">Who you met IRL.</div>
             <div className="AttestationHolder">
               <div className="WhiteBox">
                 {loading && <div>Loading...</div>}
-                {!loading && !attestations.length &&  <div>No one here</div>}
+                {!loading && !attestations.length && <div>No one here</div>}
                 {attestations.length > 0 || loading ? (
                   attestations.map((attestation, i) => (
                     <AttestToVerify key={i} data={attestation} />
@@ -151,7 +148,14 @@ export default function Home() {
                 ) : (
                   <div></div>
                 )}
-                {!account && <button className="MetButton" onClick={async () => connectWallet()}>Connect Wallet</button>}
+                {!account && (
+                  <button
+                    className="MetButton"
+                    onClick={async () => connectWallet()}
+                  >
+                    Connect Wallet
+                  </button>
+                )}
               </div>
             </div>
           </div>

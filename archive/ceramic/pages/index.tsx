@@ -182,8 +182,8 @@ export default function Home() {
                     alert('Incorrect recipient address');
                     return;
                   }
-                  const offchain = await eas.getOffchain();
 
+                  const offchain = await eas.getOffchain();
                   const time = Math.floor(Date.now() / 1000);
                   const offchainAttestation =
                     await offchain.signOffchainAttestation(

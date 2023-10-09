@@ -1,6 +1,7 @@
 import "@rainbow-me/rainbowkit/styles.css";
 import { createContext, useMemo } from "react";
-import { useAccount, useConnect, useDisconnect } from "wagmi";
+import { useAccount, useConnect, useDisconnect, useNetwork } from "wagmi";
+import { Chain } from "viem/_types/types/chain";
 
 export type WalletContextValue = {
   address: `0x${string}` | undefined;
@@ -8,6 +9,8 @@ export type WalletContextValue = {
   error: Error | null;
   isConnected: boolean;
   isLoading: boolean;
+  chain: Chain | undefined;
+  chainsSupportedByWallet: Chain[];
 };
 
 export const WalletContext = createContext<WalletContextValue>({
@@ -16,14 +19,17 @@ export const WalletContext = createContext<WalletContextValue>({
   error: null,
   isConnected: false,
   isLoading: false,
+  chain: undefined,
+  chainsSupportedByWallet: [],
 });
 
 export const WalletProvider: React.FC<React.PropsWithChildren> = ({
   children,
 }) => {
-  const { address, isConnected, isConnecting, isReconnecting } = useAccount();
+  const { address, isConnected, isConnecting, isReconnecting, connector } = useAccount();
   const { error } = useConnect();
   const { disconnect } = useDisconnect();
+  const { chain, chains: chainsSupportedByWallet } = useNetwork()
 
   const isLoading = isConnecting || isReconnecting;
 
@@ -35,8 +41,10 @@ export const WalletProvider: React.FC<React.PropsWithChildren> = ({
       error,
       isLoading,
       isConnected,
+      chain,
+      chainsSupportedByWallet
     }),
-    [address, disconnect, error, isLoading, isConnected],
+    [address, disconnect, error, isLoading, isConnected, chain, chainsSupportedByWallet],
   );
 
   return (

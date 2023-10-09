@@ -17,17 +17,23 @@
     "serve": "serve dist/"
   },
   "dependencies": {
+    "@ethereum-attestation-service/eas-sdk": "^0.29.1",
+    "@ethersproject/providers": "^5.7.2",
     "@heroicons/react": "^2.0.18",
     "@rainbow-me/rainbowkit": "^1.0.11",
+    "@wagmi/core": "^1.4.3",
     "@xmtp/content-type-remote-attachment": "^1.1.2",
     "@xmtp/react-components": "workspace:*",
     "@xmtp/react-sdk": "^2.1.0",
     "buffer": "^6.0.3",
+    "ethers": "^5.7.2",
     "express": "^4.18.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-hook-form": "^7.47.0",
+    "react-json-pretty": "^2.2.0",
     "serve": "^14.2.1",
-    "viem": "^1.13.0",
+    "viem": "^1.16.0",
     "wagmi": "^1.4.2"
   },
   "devDependencies": {

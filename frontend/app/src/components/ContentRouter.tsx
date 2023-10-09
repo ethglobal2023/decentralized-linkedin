@@ -4,12 +4,14 @@ import { useWallet } from "../hooks/useWallet";
 import { XMTPConnect } from "./XMTPConnect";
 import { WalletConnect } from "./WalletConnect";
 import { Inbox } from "./Inbox";
+import { EASConfigContext, EasConfigContextProvider } from "./admin/EASConfigContext";
+import AdminCreateAttestation from "./admin/CreateMetIrlAttestation";
 
 export const ContentRouter = () => {
-  const { isConnected } = useWallet();
+  const { isConnected, chain } = useWallet();
   const { client } = useClient();
 
-  if (!isConnected) {
+  if (!isConnected || !chain){
     return <WalletConnect />;
   }
 
@@ -17,5 +19,8 @@ export const ContentRouter = () => {
     return <XMTPConnect />;
   }
 
-  return <Inbox />;
+  return <EasConfigContextProvider chainId={chain.id}>
+   <AdminCreateAttestation/>
+    {/*<Inbox/>*/}
+</EasConfigContextProvider>
 };
