@@ -1,7 +1,6 @@
 import "@rainbow-me/rainbowkit/styles.css";
 import { createContext, useMemo } from "react";
-import { useAccount, useConnect, useDisconnect, useNetwork } from "wagmi";
-import { Chain } from "viem/_types/types/chain";
+import { Chain, useAccount, useConnect, useDisconnect, useNetwork } from "wagmi";
 
 export type WalletContextValue = {
   address: `0x${string}` | undefined;

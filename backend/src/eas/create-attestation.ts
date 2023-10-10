@@ -35,6 +35,7 @@ const attestationRequestSchema = Joi.object({
     revocable: Joi.boolean().optional(),
     nonce: Joi.number().optional(),
   }),
+  attestationType: Joi.string().valid("todo", "humanity", "met_irl", "resume", "review", "confirmed_skill", "confirmed_language")
 });
 
 // The EAS format supplied matches when it's fetched from Ceramic, but doesn't match when it's created through the app
@@ -90,7 +91,7 @@ export const createNewAttestation = async (
     return res.status(400).send(validationError.details[0].message);
   }
 
-  const { message, uid, account, domain, types, signature } = value;
+  const { message, uid, account, domain, types, signature, attestationType } = value;
 
   const easDocument = appAttestationToEASFormat(value);
   if (!signatureIsFromAttester(account, easDocument)) {
@@ -119,18 +120,33 @@ export const createNewAttestation = async (
     .from('attestations')
     .insert({
       id: uid,
-      refuid: message.refUID,
+      ref_uid: message.refUID,
       attester_address: account,
       issuer_address: config.easIssuerAddress,
       recipient_address: message.recipient,
       eas_schema_address: message.schema,
       revoked: false,
-      type: "TODO type", //TODO Take the type as metadata from the UI
+      type: attestationType,
       expiration_time: 0, //TODO, make sure this is populated in the ui
       document: JSON.stringify(easDocument),
     })
+
+
   if(error){
     logger.error("Failed to insert attestation error:", error);
     res.status(500).json({error: `Failed to insert attestation: ${error}`})
   }
+  const {data, error: selectError} = await supabase
+    .from("attestations")
+    .select()
+    .eq("id", uid)
+  console.log("Attestation created:", data)
+
+  if(selectError){
+    logger.error("Failed to select attestation error:", selectError);
+    res.status(500).json({error: `Failed to select attestation: ${selectError}`})
+  }
+
+  return res.status(200).send(data)
+
 };

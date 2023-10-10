@@ -1,5 +1,5 @@
 packages:
   - 'frontend/app/'
-  - 'frontend/packages/xmtp-react-components'
+  - 'frontend/packages/xmtp-react-components/'
   - 'frontend-next/'
   - 'backend/'

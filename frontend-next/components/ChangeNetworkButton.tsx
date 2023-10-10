@@ -11,6 +11,7 @@ export const ChangeNetworkButton = () => {
 
       {chains.map((x) => (
         <button
+          style={{ border: '1px solid black', padding: '5px' } }
           disabled={!switchNetwork || x.id === chain?.id}
           key={x.id}
           onClick={() => switchNetwork?.(x.id)}

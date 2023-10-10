@@ -1,3 +1,4 @@
+'use-client';
 import { Buffer } from "buffer";
 
 // TODO Below change might have unintended side effects

@@ -5,7 +5,6 @@ import cors from 'cors';
 import {config} from "./config.js";
 import {search} from "./search.js";
 import {createNewAttestation} from "./eas/create-attestation.js";
-import {getAttestationsForAccount} from "../../archive/backend/eas/list-attestations.js";
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -42,7 +41,7 @@ app.get('/search', search);
 // app.post("/credentials/", createCredentials);
 // app.post("/credentials/verify", verifyCredentials);
 
-app.get("/eas/attest", getAttestationsForAccount);
+// app.get("/eas/attest", getAttestationsForAccount);
 app.post("/eas/attest", createNewAttestation);
 
 

@@ -13,7 +13,7 @@ import {
   trustWallet,
   walletConnectWallet,
 } from "@rainbow-me/rainbowkit/wallets";
-import { createConfig, configureChains, mainnet, WagmiConfig } from "wagmi";
+import { createConfig, configureChains, mainnet, WagmiConfig, sepolia } from "wagmi";
 import { infuraProvider } from "wagmi/providers/infura";
 import { publicProvider } from "wagmi/providers/public";
 import {
@@ -38,7 +38,7 @@ const contentTypeConfigs = [
 ];
 
 const { chains, publicClient } = configureChains(
-  [mainnet],
+  [mainnet, sepolia],
   [
     infuraProvider({ apiKey: "b46a8b93584e410e8a0d353a9a2b4f1a" }),
     publicProvider(),

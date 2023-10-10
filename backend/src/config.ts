@@ -15,6 +15,7 @@ type Config = {
     easIssuerAddress: string
 }
 
+
 if (!process.env.SUPABASE_PROJECT_ID || !process.env.SUPABASE_API_KEY) {
     throw new Error("Missing SUPABASE_PROJECT_ID or SUPABASE_API_KEY")
 }

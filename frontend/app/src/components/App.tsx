@@ -3,6 +3,7 @@ import { useEffect } from "react";
 import { useClient } from "@xmtp/react-sdk";
 import { ContentRouter } from "./ContentRouter";
 import { useWallet } from "../hooks/useWallet";
+import { ChangeNetworkButton } from "./ChangeNetworkButton";
 
 const App = () => {
   const { address } = useWallet();
@@ -16,7 +17,7 @@ const App = () => {
 
   return (
     <div className="App">
-      {/*<ChangeNetworkButton/>*/}
+      <ChangeNetworkButton/>
       <ContentRouter />
     </div>
   );

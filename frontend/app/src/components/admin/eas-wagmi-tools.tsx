@@ -1,5 +1,3 @@
-//This was taken entirely from: https://gist.github.com/slavik0329/2e5b6fc31cb745b65d3d37f7cf1d7b36
-// These are wrappers around wagmi that lets you pass the walletClient to the EAS sdk
 import { type PublicClient, type WalletClient } from "@wagmi/core";
 import { providers } from "ethers";
 import { type HttpTransport } from "viem";
@@ -26,12 +24,7 @@ export function publicClientToProvider(publicClient: PublicClient) {
 
 export function walletClientToSigner(walletClient: WalletClient) {
   const { account, chain, transport } = walletClient;
-  console.log(
-    "walletClientToSigner",
-    account,
-    chain,
-    transport,
-  )
+  console.log("walletClientToSigner", walletClient);
   const network = {
     chainId: chain.id,
     name: chain.name,
@@ -39,7 +32,7 @@ export function walletClientToSigner(walletClient: WalletClient) {
   };
   const provider = new providers.Web3Provider(transport, network);
   const signer = provider.getSigner(account.address);
-console.log('signer', signer)
+
   return signer;
 }
 
@@ -47,7 +40,6 @@ console.log('signer', signer)
 export function useSigner() {
   const { data: walletClient } = useWalletClient();
 
-  console.log('walletClient', walletClient)
   const [signer, setSigner] = useState<JsonRpcSigner | undefined>(undefined);
   useEffect(() => {
     async function getSigner() {

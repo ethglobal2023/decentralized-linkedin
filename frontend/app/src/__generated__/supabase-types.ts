@@ -19,7 +19,7 @@ export interface Database {
           id: string
           issuer_address: string
           recipient_address: string
-          refuid: string
+          ref_uid: string
           revoked: boolean
           type: string
         }
@@ -32,7 +32,7 @@ export interface Database {
           id: string
           issuer_address?: string
           recipient_address: string
-          refuid: string
+          ref_uid: string
           revoked?: boolean
           type: string
         }
@@ -45,9 +45,39 @@ export interface Database {
           id?: string
           issuer_address?: string
           recipient_address?: string
-          refuid?: string
+          ref_uid?: string
           revoked?: boolean
           type?: string
+        }
+        Relationships: []
+      }
+      ipfs_cache: {
+        Row: {
+          body: string | null
+          cid: string
+          content_type: string | null
+          created_at: string
+          gateway: string | null
+          json: Json | null
+          status: number | null
+        }
+        Insert: {
+          body?: string | null
+          cid: string
+          content_type?: string | null
+          created_at?: string
+          gateway?: string | null
+          json?: Json | null
+          status?: number | null
+        }
+        Update: {
+          body?: string | null
+          cid?: string
+          content_type?: string | null
+          created_at?: string
+          gateway?: string | null
+          json?: Json | null
+          status?: number | null
         }
         Relationships: []
       }
@@ -75,9 +105,57 @@ export interface Database {
         }
         Relationships: []
       }
+      talent_layer: {
+        Row: {
+          address: string | null
+          cid: string | null
+          document: Json | null
+          id: string
+        }
+        Insert: {
+          address?: string | null
+          cid?: string | null
+          document?: Json | null
+          id: string
+        }
+        Update: {
+          address?: string | null
+          cid?: string | null
+          document?: Json | null
+          id?: string
+        }
+        Relationships: []
+      }
+      tmptmptmpt_http: {
+        Row: {
+          content: string | null
+          content_type: string | null
+          headers: unknown[] | null
+          status: number | null
+        }
+        Insert: {
+          content?: string | null
+          content_type?: string | null
+          headers?: unknown[] | null
+          status?: number | null
+        }
+        Update: {
+          content?: string | null
+          content_type?: string | null
+          headers?: unknown[] | null
+          status?: number | null
+        }
+        Relationships: []
+      }
     }
     Views: {
-      [_ in never]: never
+      talent_layer_formated: {
+        Row: {
+          json: Json | null
+          pubkey: string | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       gtrgm_compress: {
@@ -110,6 +188,96 @@ export interface Database {
         }
         Returns: unknown
       }
+      human_text_from_json_jsonbin: {
+        Args: {
+          "": Json
+        }
+        Returns: string
+      }
+      human_text_from_json_txin: {
+        Args: {
+          "": string
+        }
+        Returns: string
+      }
+      human_text_from_jsonb: {
+        Args: {
+          intext: Json
+        }
+        Returns: string
+      }
+      human_text_from_jsonbb: {
+        Args: {
+          "": Json
+        }
+        Returns: string
+      }
+      ipfs:
+        | {
+            Args: {
+              _cid: string
+            }
+            Returns: {
+              cid: string
+              created_at: string
+              status: number
+              content_type: string
+              gateway: string
+              body: string
+              json: Json
+            }[]
+          }
+        | {
+            Args: {
+              incid: string
+            }
+            Returns: {
+              cid: string
+              status: number
+              content_type: string
+              body: string
+              json: Json
+            }[]
+          }
+      no_cache_ipfs: {
+        Args: {
+          _cid: string
+        }
+        Returns: {
+          cid: string
+          created_at: string
+          status: number
+          content_type: string
+          gateway: string
+          body: string
+          json: Json
+        }[]
+      }
+      people_websearch: {
+        Args: {
+          query: string
+        }
+        Returns: {
+          pk: string
+          text: string
+          json: Json
+          snippet: string
+        }[]
+      }
+      save_ipfs: {
+        Args: {
+          _cid: string
+        }
+        Returns: {
+          cid: string
+          created_at: string
+          status: number
+          content_type: string
+          gateway: string
+          body: string
+          json: Json
+        }[]
+      }
       set_limit: {
         Args: {
           "": number
@@ -125,6 +293,10 @@ export interface Database {
           "": string
         }
         Returns: unknown
+      }
+      sync_talent_layer: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
       }
     }
     Enums: {

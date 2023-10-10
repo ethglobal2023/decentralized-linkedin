@@ -1,7 +1,13 @@
+'use client';
 import "@rainbow-me/rainbowkit/styles.css";
 import { createContext, useMemo } from "react";
-import { useAccount, useConnect, useDisconnect, useNetwork } from "wagmi";
-import { Chain } from "wagmi";
+import {
+  Chain,
+  useAccount,
+  useConnect,
+  useDisconnect,
+  useNetwork,
+} from "wagmi";
 
 export type WalletContextValue = {
   address: `0x${string}` | undefined;
@@ -23,13 +29,16 @@ export const WalletContext = createContext<WalletContextValue>({
   chainsSupportedByWallet: [],
 });
 
+
+
 export const WalletProvider: React.FC<React.PropsWithChildren> = ({
   children,
 }) => {
-  const { address, isConnected, isConnecting, isReconnecting, connector } = useAccount();
+  const { address, isConnected, isConnecting, isReconnecting, connector } =
+    useAccount();
   const { error } = useConnect();
   const { disconnect } = useDisconnect();
-  const { chain, chains: chainsSupportedByWallet } = useNetwork()
+  const { chain, chains: chainsSupportedByWallet } = useNetwork();
 
   const isLoading = isConnecting || isReconnecting;
 
@@ -42,12 +51,26 @@ export const WalletProvider: React.FC<React.PropsWithChildren> = ({
       isLoading,
       isConnected,
       chain,
-      chainsSupportedByWallet
+      chainsSupportedByWallet,
     }),
-    [address, disconnect, error, isLoading, isConnected, chain, chainsSupportedByWallet],
+    [
+      address,
+      disconnect,
+      error,
+      isLoading,
+      isConnected,
+      chain,
+      chainsSupportedByWallet,
+    ],
   );
 
+  if(!isConnected){
+    return <div>Can't render app until wallet is connected</div>
+  }
+
   return (
-    <WalletContext.Provider value={value}>{children}</WalletContext.Provider>
+        <WalletContext.Provider value={value}>
+          {children}
+        </WalletContext.Provider>
   );
 };
