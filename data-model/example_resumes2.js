@@ -8,7 +8,7 @@ const profile1 = {
         "did:pkh:eip155:1:0xb9c5714089478a327f09197987f16f9e5d936e8a",
     ],
     lastName:"von Neumann",
-    firstName:"John",
+    firstName:null,
     preferredName:"von Neumann",
     preferredTitle:"Lecturer",
     preferredLocation:"Zurich and London",
@@ -206,6 +206,9 @@ function keyNamingToTitle(text){
 function recursionResumeToString( d , prefixpath){
         let out="";
 
+        if( d === null )
+            return "";
+
         if( typeof(d)==="string"  && ( d.split(" ").length>=MIN_SPACES_IN_VALUE_TO_CONSIDER_NON_TECHNICAL || d.length<MAX_LENGTH_NON_SENTENCE_VALUES )){
             return (keyNamingToTitle(prefixpath)+": "+d+`\n`)
         }
@@ -245,9 +248,11 @@ console.log(JSON.stringify(profile1));
 
 //TODO put into settings file 
 
+if(false){
+
 let supabase_url="https://qbuoensvkofstuhnfxzn.supabase.co";
 let supabase_anon_key="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFidW9lbnN2a29mc3R1aG5meHpuIiwicm9sZSI6ImFub24iLCJpYXQiOjE2OTY4MDc3MTksImV4cCI6MjAxMjM4MzcxOX0.WiGeLc4r2OZhX_4bkIUeAOGjq-cXGmBN65i2qXfPnn4";
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
+//import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 const supabase = createClient(supabase_url, supabase_anon_key)
 
 
@@ -287,4 +292,4 @@ console.log(data8);
 
 await supabase .rpc('people_websearch', {query:'"fox dog"'} )
 
-
+}
