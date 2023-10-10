@@ -20,7 +20,7 @@
     "@ethereum-attestation-service/eas-sdk": "^0.29.1",
     "@ethersproject/providers": "^5.7.2",
     "@heroicons/react": "^2.0.18",
-    "@rainbow-me/rainbowkit": "^1.0.11",
+    "@rainbow-me/rainbowkit": "^1.1.1",
     "@wagmi/core": "^1.4.3",
     "@xmtp/content-type-remote-attachment": "^1.1.2",
     "@xmtp/react-components": "workspace:*",
@@ -33,19 +33,19 @@
     "react-hook-form": "^7.47.0",
     "react-json-pretty": "^2.2.0",
     "serve": "^14.2.1",
-    "viem": "^1.16.0",
-    "wagmi": "^1.4.2"
+    "viem": "^1.16.1",
+    "wagmi": "^1.4.3"
   },
   "devDependencies": {
     "@esbuild-plugins/node-globals-polyfill": "^0.2.3",
-    "@types/react": "^18.2.20",
-    "@types/react-dom": "^18.2.8",
+    "@types/react": "^18.2.27",
+    "@types/react-dom": "^18.2.12",
     "@vitejs/plugin-react": "^4.1.0",
     "autoprefixer": "^10.4.16",
-    "eslint": "^8.50.0",
-    "postcss": "^8.4.30",
-    "postcss-preset-env": "^9.1.4",
+    "eslint": "^8.51.0",
+    "postcss": "^8.4.31",
+    "postcss-preset-env": "^9.2.0",
     "typescript": "^5.2.2",
-    "vite": "^4.4.9"
+    "vite": "^4.4.11"
   }
 }

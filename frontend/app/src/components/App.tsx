@@ -16,6 +16,7 @@ const App = () => {
 
   return (
     <div className="App">
+      {/*<ChangeNetworkButton/>*/}
       <ContentRouter />
     </div>
   );

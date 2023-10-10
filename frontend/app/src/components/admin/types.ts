@@ -1,22 +1,6 @@
 import { TypedData } from "@ethereum-attestation-service/eas-sdk/dist/offchain/typed-data-handler"
 import { EAS } from "@ethereum-attestation-service/eas-sdk";
 
-export type EASChainConfig = {
-  chainId: number
-  chainName: string
-  version: string
-  contractAddress: string
-  eas: EAS,
-  schemaRegistryAddress: string
-  etherscanURL: string
-  easscanUrl: string
-  /** Must contain a trailing dot (unless mainnet). */
-  subdomain: string
-  contractStartBlock: number
-  rpcProvider: string
-  metIrlSchema: string
-  confirmSchema: string
-}
 
 
 export interface Attestation {

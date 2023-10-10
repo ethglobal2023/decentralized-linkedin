@@ -3,24 +3,29 @@ import { useClient } from "@xmtp/react-sdk";
 import { useWallet } from "../hooks/useWallet";
 import { XMTPConnect } from "./XMTPConnect";
 import { WalletConnect } from "./WalletConnect";
-import { Inbox } from "./Inbox";
-import { EASConfigContext, EasConfigContextProvider } from "./admin/EASConfigContext";
+import { EasConfigContextProvider } from "./admin/EASConfigContext";
 import AdminCreateAttestation from "./admin/CreateMetIrlAttestation";
+import { Inbox } from "./Inbox";
 
 export const ContentRouter = () => {
   const { isConnected, chain } = useWallet();
   const { client } = useClient();
 
-  if (!isConnected || !chain){
+  if (!isConnected || !chain) {
     return <WalletConnect />;
   }
-
+  //
   if (!client) {
     return <XMTPConnect />;
   }
 
-  return <EasConfigContextProvider chainId={chain.id}>
-   <AdminCreateAttestation/>
-    {/*<Inbox/>*/}
-</EasConfigContextProvider>
+
+  return (
+      <Inbox/>
+  );
+  // return (
+  //   <EasConfigContextProvider chainId={chain.id}>
+  //     <AdminCreateAttestation />
+  //   </EasConfigContextProvider>
+  // );
 };
