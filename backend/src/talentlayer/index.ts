@@ -25,27 +25,9 @@ const graphqlQuery = `
     }
   }`;
 
-// async function querySubgraph() {
-//   try {
-//     const response = await axios.post(TALENLAYER_SUBGRAPH_ENDPOINT, {
-//       query: graphqlQuery,
-//     });
-//     // console.log("response", response);
-
-//     const subgraphData = response.data.data.users;
-
-//     console.log("sub", subgraphData);
-//   } catch (error) {
-//     // Handle errors here
-//     console.error("Error:", error);
-//   }
-// }
-
-// querySubgraph();
-
 export async function fetchAllUsers() {
-  const batchSize = 1000; // Number of users per request
-  let lastUserId = 14200; // Initialize with null for the first batch
+  const batchSize = 1000;
+  let lastUserId = 14200;
   const users = [];
 
   while (lastUserId < 15000) {
