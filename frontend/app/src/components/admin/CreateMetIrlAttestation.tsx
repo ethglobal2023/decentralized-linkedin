@@ -5,7 +5,6 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import { BACKEND_URL, EASConfigContext } from "./EASConfigContext";
 import { useAccount, useWalletClient } from "wagmi";
 import { EAS, SchemaEncoder } from "@ethereum-attestation-service/eas-sdk";
-import { Web3Provider } from "@ethersproject/providers";
 import { BrowserProvider } from "ethers";
 
 type SupportedAttestationTypes = "metIRL" | "resume";
@@ -101,7 +100,7 @@ export default function AdminCreateAttestation() {
       ]);
 
       const time = Math.floor(Date.now() / 1000);
-      console.log("Signing attestation")
+      console.log("Signing attestation");
       const offchainAttestation = await offchain.signOffchainAttestation(
         {
           recipient: data.recipientAddress.toLowerCase(),
@@ -127,7 +126,9 @@ export default function AdminCreateAttestation() {
       // await transaction.wait();
       // ts ignore nextline because Bigint doesn't have toJSON as a function
       // @ts-ignore-next-line
-      BigInt.prototype.toJSON = function() { return this.toString() }
+      BigInt.prototype.toJSON = function () {
+        return this.toString();
+      };
       const requestBody = {
         ...offchainAttestation,
         account: address.toLowerCase(),
@@ -154,17 +155,32 @@ export default function AdminCreateAttestation() {
 
   return (
     <div className="Container">
-      <div className="GradientBar" />
       <div className="WhiteBox">
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <div className="Title">
-            I <b>attest</b> that I met
+        <form onSubmit={handleSubmit(onSubmit)} className={"flex-col border-2"}>
+          <div className="Title flex justify-center">
+            <p className={"text-xl"}>I attest that I met</p>
           </div>
+          <div className={"justify-center border-2 flex"}>
+            <div className="w-72">
+              <div className="relative h-10 w-full min-w-[200px]">
+                <input
+                  className="peer h-full w-full rounded-[7px] border border-blue-gray-200 border-t-transparent bg-transparent px-3 py-2.5 font-sans text-sm font-normal text-blue-gray-700 outline outline-0 transition-all placeholder-shown:border placeholder-shown:border-blue-gray-200 placeholder-shown:border-t-blue-gray-200 focus:border-2 focus:border-pink-500 focus:border-t-transparent focus:outline-0 disabled:border-0 disabled:bg-blue-gray-50"
+                  placeholder=" "
+                  {...register("recipientAddress", { required: true })}
+                />
+                <label className="before:content[' '] after:content[' '] pointer-events-none absolute left-0 -top-1.5 flex h-full w-full select-none text-[11px] font-normal leading-tight text-blue-gray-400 transition-all before:pointer-events-none before:mt-[6.5px] before:mr-1 before:box-border before:block before:h-1.5 before:w-2.5 before:rounded-tl-md before:border-t before:border-l before:border-blue-gray-200 before:transition-all after:pointer-events-none after:mt-[6.5px] after:ml-1 after:box-border after:block after:h-1.5 after:w-2.5 after:flex-grow after:rounded-tr-md after:border-t after:border-r after:border-blue-gray-200 after:transition-all peer-placeholder-shown:text-sm peer-placeholder-shown:leading-[3.75] peer-placeholder-shown:text-blue-gray-500 peer-placeholder-shown:before:border-transparent peer-placeholder-shown:after:border-transparent peer-focus:text-[11px] peer-focus:leading-tight peer-focus:text-pink-500 peer-focus:before:border-t-2 peer-focus:before:border-l-2 peer-focus:before:border-pink-500 peer-focus:after:border-t-2 peer-focus:after:border-r-2 peer-focus:after:border-pink-500 peer-disabled:text-transparent peer-disabled:before:border-transparent peer-disabled:after:border-transparent peer-disabled:peer-placeholder-shown:text-blue-gray-500">
+                  Met IRL Address
+                </label>
+                {errors.recipientAddress && <span>This field is required</span>}
+              </div>
+            </div>
+          </div>
+          <div className={"flex border-2 p-2"}>
 
-          <input {...register("recipientAddress", { required: true })} />
+            <input type={"submit"} value={"Submit"} className={"btn"}/>
+
+          </div>
           {/* errors will return when field validation fails  */}
-          {errors.recipientAddress && <span>This field is required</span>}
-          <input type={"submit"} />
         </form>
         {attesting
           ? "Attesting..."

@@ -22,7 +22,7 @@ export const siteConfig: SiteConfig = {
   name: 'MetIRL',
   title: 'MetIRL - EAS with ComposeDB',
   emoji: '⚡',
-  description: 'Web3 App built using EAS with ComposeDB',
+  description: 'Web3 DisconnectOnSignout built using EAS with ComposeDB',
   previewImg: `${SITE_CANONICAL}/eas-summary.png`,
   localeDefault: 'en',
   links: {

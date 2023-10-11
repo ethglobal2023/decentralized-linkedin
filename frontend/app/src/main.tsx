@@ -13,20 +13,32 @@ import {
   trustWallet,
   walletConnectWallet,
 } from "@rainbow-me/rainbowkit/wallets";
-import { createConfig, configureChains, mainnet, WagmiConfig, sepolia } from "wagmi";
+import {
+  configureChains,
+  createConfig,
+  mainnet,
+  sepolia,
+  WagmiConfig,
+} from "wagmi";
 import { infuraProvider } from "wagmi/providers/infura";
 import { publicProvider } from "wagmi/providers/public";
 import {
-  XMTPProvider,
   attachmentContentTypeConfig,
   reactionContentTypeConfig,
   readReceiptContentTypeConfig,
   replyContentTypeConfig,
+  XMTPProvider,
 } from "@xmtp/react-sdk";
-import App from "./components/App";
+import ShowConnectDialogWhenNotConnected from "./components/ShowConnectDialogWhenNotConnected";
 import "@xmtp/react-components/styles.css";
 import { WalletProvider } from "./contexts/WalletContext";
 import "./index.css";
+import { ChangeNetworkButton } from "./components/ChangeNetworkButton";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { Inbox } from "./components/Inbox";
+import { Profile } from "./components/Profile";
+import { SupabaseProvider } from "./components/SupabaseContext";
+import { Search } from "./components/Search";
 
 const DB_VERSION = 1;
 
@@ -68,17 +80,41 @@ const wagmiConfig = createConfig({
   publicClient,
 });
 
+const router = createBrowserRouter([
+  {
+    path: "/",
+    element: <Inbox />, //TODO this should probably be the "Message" and "NewMessage" components in the Inbox.tsx file
+  },
+  {
+    path: "/profile/:address",
+    element: <Profile />,
+  },
+  {
+    path: "/search",
+    element: <Search />,
+  },
+]);
+
 createRoot(document.getElementById("root") as HTMLElement).render(
   <WagmiConfig config={wagmiConfig}>
     <RainbowKitProvider chains={chains}>
       <StrictMode>
-        <WalletProvider>
-          <XMTPProvider
-            dbVersion={DB_VERSION}
-            contentTypeConfigs={contentTypeConfigs}>
-            <App />
-          </XMTPProvider>
-        </WalletProvider>
+        <SupabaseProvider>
+          <WalletProvider>
+            <XMTPProvider
+              dbVersion={DB_VERSION}
+              contentTypeConfigs={contentTypeConfigs}
+            >
+              <div className="container mx-auto">
+
+                <ShowConnectDialogWhenNotConnected>
+                  <ChangeNetworkButton />
+                  <RouterProvider router={router} />
+                </ShowConnectDialogWhenNotConnected>
+              </div>
+            </XMTPProvider>
+          </WalletProvider>
+        </SupabaseProvider>
       </StrictMode>
     </RainbowKitProvider>
   </WagmiConfig>,

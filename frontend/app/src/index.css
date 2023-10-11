@@ -1,3 +1,11 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.btn{
+  @apply bg-blue-500 hover:bg-blue-700 text-white font-bold py-2.5 px-6 rounded;
+  text-transform: uppercase;
+}
 :root {
   --background-color: white;
   --secondary-background-color: #eee;
