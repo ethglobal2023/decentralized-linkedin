@@ -5,7 +5,7 @@ import {
   extractAddressFromAttestation,
   signatureIsFromAttester,
   VerifyEasRequest,
-} from "./index.js";
+} from "./util.js";
 import { config, supabase } from "../config.js";
 
 const attestationRequestSchema = Joi.object({
@@ -80,10 +80,8 @@ export const createNewAttestation = async (
   next: NextFunction
 ) => {
 
-
   // Attestation is verified in middleware before this function is called
-  logger.debug("Attestation request:", req.body);
-  logger.debug("Creating new attestation");
+  logger.debug("Create attestation request:", req.body);
 
   const { error: validationError, value } = attestationRequestSchema.validate(req.body);
   if (validationError) {
@@ -148,5 +146,4 @@ export const createNewAttestation = async (
   }
 
   return res.status(200).send(data)
-
 };

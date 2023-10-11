@@ -26,7 +26,6 @@ export const signatureIsFromAttester = (
 
   console.log(attester);
   console.log(request);
-
   console.log(request.sig.types);
   return offchain.verifyOffchainAttestationSignature(
     request.signer,

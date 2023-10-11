@@ -4,7 +4,7 @@ import morgan from 'morgan';
 import cors from 'cors';
 import {config} from "./config.js";
 import {search} from "./search.js";
-import {createNewAttestation} from "./eas/create-attestation.js";
+import {createNewAttestation} from "./eas/create.js";
 
 const app = express();
 const PORT = process.env.PORT || 3000;

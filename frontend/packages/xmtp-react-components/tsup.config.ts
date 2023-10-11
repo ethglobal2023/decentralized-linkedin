@@ -6,7 +6,7 @@ import postcssModules from "postcss-modules";
 import postcssPresetEnv from "postcss-preset-env";
 
 export default defineConfig((options) => ({
-  entry: ["src/index.ts"],
+  entry: ["src/util.ts"],
   outDir: "lib",
   splitting: false,
   sourcemap: true,
