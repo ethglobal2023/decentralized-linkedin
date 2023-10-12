@@ -4,8 +4,9 @@ import { useWallet } from "../hooks/useWallet";
 import { WalletConnect } from "./WalletConnect";
 import { XMTPConnect } from "./XMTPConnect";
 
-
-const ShowConnectDialogWhenNotConnected: FC<PropsWithChildren> = ({ children }) => {
+const ShowConnectDialogWhenNotConnected: FC<PropsWithChildren> = ({
+  children,
+}) => {
   const { address, isConnected, chain } = useWallet();
   const { client, disconnect } = useClient();
 
@@ -14,7 +15,6 @@ const ShowConnectDialogWhenNotConnected: FC<PropsWithChildren> = ({ children }) 
     void disconnect();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [address]);
-
 
   if (!isConnected || !chain) {
     return <WalletConnect />;

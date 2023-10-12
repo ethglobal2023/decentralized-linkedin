@@ -6,8 +6,6 @@ import { supabase } from "../config.js";
 const requestManualReviewSchema = Joi.object({
   account: Joi.string().required(), //TODO Account won't be required when a signature is included
   cid: Joi.string().required(),
-  //Media type gives the reviewer a hint on what the content they'll be verifying is
-  mediaType: Joi.string().valid("conference_talk", "publication", "interview"),
   signature: Joi.object({
     r: Joi.string().optional(),
     s: Joi.string().optional(),
@@ -16,7 +14,7 @@ const requestManualReviewSchema = Joi.object({
 });
 
 // Collects metadata about the uploaded media and adds it to the manual review inbox
-export const requestVerification = async (
+export const confirmVerification = async (
   req: Request,
   res: Response,
   next: NextFunction
@@ -37,19 +35,18 @@ export const requestVerification = async (
 
   const { error, data } = await supabase
     .from("manual_review_inbox")
-    .insert({
-      account: value.account,
-      cid: value.cid,
-      media_type: value.mediaType,
-      fulfilled: false,
+    .update({
+      fulfilled: true,
     })
+    .eq("account", value.account)
+    .eq("cid", value.cid);
 
-  console.log("Successfully inserted new manual verification request", data);
+  console.log("Approved request for ", data);
   if (error) {
-    logger.error("Failed to insert manual verification request:", error);
+    logger.error("Failed to mark verification request as fulfilled:", error);
     return res
       .status(500)
-      .json({ error: `Failed to insert manual verification request: ${error}` });
+      .json({ error: `Failed to mark verification request as fulfilled: ${error}` });
   }
   return res.status(200).send(data);
 };

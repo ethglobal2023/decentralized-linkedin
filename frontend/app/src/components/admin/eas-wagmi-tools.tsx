@@ -5,7 +5,6 @@ import { useEffect, useState } from "react";
 import type { JsonRpcProvider, JsonRpcSigner } from "@ethersproject/providers";
 import { usePublicClient, useWalletClient } from "wagmi";
 
-
 export function publicClientToProvider(publicClient: PublicClient) {
   const { chain, transport } = publicClient;
   const network = {

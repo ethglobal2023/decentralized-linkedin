@@ -5,6 +5,8 @@ import cors from 'cors';
 import {config} from "./config.js";
 import {search} from "./search.js";
 import {createNewAttestation} from "./eas/create.js";
+import { requestVerification } from "./eas/request-manual-verification.js";
+import { confirmVerification } from "./eas/confirm-manual-verification.js";
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -43,7 +45,8 @@ app.get('/search', search);
 
 // app.get("/eas/attest", getAttestationsForAccount);
 app.post("/eas/attest", createNewAttestation);
-
+app.post("/eas/request-verification", requestVerification);
+app.post("/eas/confirm-verification", confirmVerification);
 
 app.listen(PORT, () => {
 

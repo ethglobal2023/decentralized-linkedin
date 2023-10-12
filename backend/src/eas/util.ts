@@ -21,9 +21,7 @@ export const signatureIsFromAttester = (
   };
 
   // const EASContractAddress = "0xC2679fBD37d54388Ce493F1DB75320D236e1815e"; // Sepolia v0.26
-
   const offchain = new Offchain(EAS_CONFIG, OFFCHAIN_ATTESTATION_VERSION);
-
   console.log(attester);
   console.log(request);
   console.log(request.sig.types);
@@ -32,6 +30,7 @@ export const signatureIsFromAttester = (
     request.sig
   );
 };
+
 export const extractAddressFromAttestation = (
   attestation: VerifyEasRequest
 ) => {
@@ -47,5 +46,3 @@ export const extractAddressFromAttestation = (
     sig
   );
 };
-
-// 0xf3D6e2604AD63b23A97D2f931d80d746305f0152

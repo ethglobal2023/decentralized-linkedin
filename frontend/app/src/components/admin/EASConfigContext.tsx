@@ -1,4 +1,5 @@
 import { createContext } from "react";
+import { useWallet } from "../../hooks/useWallet";
 
 export type EASChainConfig = {
   chainId: number;
@@ -58,17 +59,18 @@ export const EASConfigContext = createContext<EASChainConfig>(
 );
 // React context provider that carries the EAS chain config
 export const EasConfigContextProvider = ({
-  chainId,
   children,
 }: {
-  chainId: number;
   children: any;
 }) => {
-  const config = EAS_CHAIN_CONFIGS[chainId];
+  const {chain} = useWallet();
+  const chainId = chain?.id || 0
+  const config = EAS_CHAIN_CONFIGS[chain?.id || 0];
 
   if (!config) {
     return <div>Could not find an EAS config for chainid {chainId}</div>;
   }
+
   return (
     <EASConfigContext.Provider value={config}>
       {children}

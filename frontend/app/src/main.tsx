@@ -39,6 +39,9 @@ import { Inbox } from "./components/Inbox";
 import { Profile } from "./components/Profile";
 import { SupabaseProvider } from "./components/SupabaseContext";
 import { Search } from "./components/Search";
+import { EasConfigContextProvider } from "./components/admin/EASConfigContext";
+import AdminCreateAttestation from "./components/admin/AdminCreateAttestation";
+import { ProfileMediaCard } from "./components/ProfileMediaCard";
 
 const DB_VERSION = 1;
 
@@ -93,6 +96,14 @@ const router = createBrowserRouter([
     path: "/search",
     element: <Search />,
   },
+  {
+    path: "/admin",
+    element: <EasConfigContextProvider>
+      <AdminCreateAttestation/>
+      <ProfileMediaCard cid={"cid:testcid4"} mediaType={"publication"}/>
+      <ProfileMediaCard cid={`cid:testcid${Date.now()}`} mediaType={"publication"}/>
+    </EasConfigContextProvider>,
+  },
 ]);
 
 createRoot(document.getElementById("root") as HTMLElement).render(
@@ -103,10 +114,8 @@ createRoot(document.getElementById("root") as HTMLElement).render(
           <WalletProvider>
             <XMTPProvider
               dbVersion={DB_VERSION}
-              contentTypeConfigs={contentTypeConfigs}
-            >
+              contentTypeConfigs={contentTypeConfigs}>
               <div className="container mx-auto">
-
                 <ShowConnectDialogWhenNotConnected>
                   <ChangeNetworkButton />
                   <RouterProvider router={router} />

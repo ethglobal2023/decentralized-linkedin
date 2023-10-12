@@ -11,6 +11,9 @@ type SupportedAttestationTypes = "metIRL" | "resume";
 type FormInputs = {
   recipientAddress: string;
 };
+
+
+
 export default function AdminCreateAttestation() {
   const { address } = useWallet();
   const { connector } = useAccount();
@@ -51,15 +54,8 @@ export default function AdminCreateAttestation() {
   const onSubmit: SubmitHandler<FormInputs> = async (data) => {
     setAttesting(true);
     try {
-      console.log("EAR contract address", contractAddress);
-      // const eas = new EAS(contractAddress);
-      // const eas = new EAS("0xA1207F3BBa224E2c9c3c6D5aF63D0eb1582Ce587");
-      const eas = new EAS("0xC2679fBD37d54388Ce493F1DB75320D236e1815e");
+      const eas = new EAS(contractAddress);
 
-      // const signer = await walletClientToSigner(walletClient);
-      console.log("eas: ", eas);
-      console.log("Connecting to EAS");
-      // console.log("signer", signer);
       const { account, chain, transport } = walletClient;
       console.log("walletClientToSignerFORM", walletClient);
       if (chain.id !== easChainId) {
@@ -74,21 +70,13 @@ export default function AdminCreateAttestation() {
       };
       const provider = new BrowserProvider(transport, network);
       const signer = await provider.getSigner(account.address);
-
-      console.log("provider: ", signer);
       if (!signer) {
-        console.log("No signer, getting signer");
         return;
       }
       eas.connect(signer);
-      console.log("eas2: ", eas);
-      console.log("eas3: ", eas.contract);
-      // console.log("eas4: ", eas.contract.provider)
+      console.log("eas: ", eas);
 
       console.log("Getting offchain");
-      console.log(await eas.getChainId());
-      console.log(await eas.getVersion());
-      console.log(await eas.contract.getAddress());
       const offchain = await eas.getOffchain();
 
       console.log("Encoding schema");
@@ -134,7 +122,7 @@ export default function AdminCreateAttestation() {
         account: address.toLowerCase(),
         attestationType: "met_irl",
       };
-      console.log(address);
+
       const requestOptions = {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -152,6 +140,8 @@ export default function AdminCreateAttestation() {
     }
     setAttesting(false);
   };
+
+
 
   return (
     <div className="Container">
@@ -189,8 +179,9 @@ export default function AdminCreateAttestation() {
         <div>
           <h2>Response</h2>
           {errorMessage && <div className="Error">{errorMessage}</div>}
-          <JSONPretty id="json-pretty" data={jsonResponse}></JSONPretty>
+          <JSONPretty id="json-pretty" data={jsonResponse}/>
         </div>
+
 
         <div>
           <h2>Attestations you've issued</h2>

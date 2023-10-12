@@ -81,6 +81,33 @@ export interface Database {
         }
         Relationships: []
       }
+      manual_review_inbox: {
+        Row: {
+          account: string
+          cid: string
+          created_at: string
+          fulfilled: boolean
+          id: number
+          media_type: string
+        }
+        Insert: {
+          account: string
+          cid: string
+          created_at?: string
+          fulfilled: boolean
+          id?: number
+          media_type: string
+        }
+        Update: {
+          account?: string
+          cid?: string
+          created_at?: string
+          fulfilled?: boolean
+          id?: number
+          media_type?: string
+        }
+        Relationships: []
+      }
       people_search: {
         Row: {
           created_at: string
