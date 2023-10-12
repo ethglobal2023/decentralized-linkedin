@@ -1,6 +1,6 @@
 import { FC, useContext, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { SupabaseContext } from "./SupabaseContext";
+import { SupabaseContext } from "../contexts/SupabaseContext";
 
 export const Profile: FC = () => {
   const { address: profileAddress } = useParams();

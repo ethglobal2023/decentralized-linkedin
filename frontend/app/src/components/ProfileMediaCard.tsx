@@ -4,7 +4,7 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import { BACKEND_URL } from "./admin/EASConfigContext";
 import { useWallet } from "../hooks/useWallet";
 import { useContext, useEffect, useState } from "react";
-import { SupabaseContext } from "./SupabaseContext";
+import { SupabaseContext } from "../contexts/SupabaseContext";
 
 type RequestVerificationBody = {
   account: string;
@@ -105,7 +105,7 @@ export const ProfileMediaCard: React.FC<{
   const supabase = useContext(SupabaseContext);
 
   useEffect(() => {
-    const intervalId = setInterval(async () => {
+    const fetchData = async () => {
       const { data, error } = await supabase
         .from("manual_review_inbox")
         .select("*")
@@ -125,8 +125,9 @@ export const ProfileMediaCard: React.FC<{
       }
 
       setVerificationStatus(data?.fulfilled ? "done" : "pending");
-    }, 2000); // Convert seconds to milliseconds
-
+    }
+    fetchData()
+    const intervalId = setInterval(fetchData, 5000); // Poll every 5 seconds
     return () => clearInterval(intervalId); // Clear interval on component unmount
   }, []);
 

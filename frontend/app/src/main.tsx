@@ -37,11 +37,12 @@ import { ChangeNetworkButton } from "./components/ChangeNetworkButton";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { Inbox } from "./components/Inbox";
 import { Profile } from "./components/Profile";
-import { SupabaseProvider } from "./components/SupabaseContext";
+import { SupabaseProvider } from "./contexts/SupabaseContext";
 import { Search } from "./components/Search";
 import { EasConfigContextProvider } from "./components/admin/EASConfigContext";
 import AdminCreateAttestation from "./components/admin/AdminCreateAttestation";
 import { ProfileMediaCard } from "./components/ProfileMediaCard";
+import { AdminManualVerificationInbox } from "./components/admin/AdminManualVerificationInbox";
 
 const DB_VERSION = 1;
 
@@ -98,11 +99,24 @@ const router = createBrowserRouter([
   },
   {
     path: "/admin",
-    element: <EasConfigContextProvider>
-      <AdminCreateAttestation/>
-      <ProfileMediaCard cid={"cid:testcid4"} mediaType={"publication"}/>
-      <ProfileMediaCard cid={`cid:testcid${Date.now()}`} mediaType={"publication"}/>
-    </EasConfigContextProvider>,
+    element: (
+      <EasConfigContextProvider>
+        <AdminCreateAttestation />
+        <ProfileMediaCard cid={"cid:testcid4"} mediaType={"publication"} />
+        <ProfileMediaCard
+          cid={`cid:testcid${Date.now()}`}
+          mediaType={"publication"}
+        />
+      </EasConfigContextProvider>
+    ),
+  },
+  {
+    path: "/admin/inbox",
+    element: (
+      <EasConfigContextProvider>
+        <AdminManualVerificationInbox />
+      </EasConfigContextProvider>
+    ),
   },
 ]);
 
@@ -114,7 +128,8 @@ createRoot(document.getElementById("root") as HTMLElement).render(
           <WalletProvider>
             <XMTPProvider
               dbVersion={DB_VERSION}
-              contentTypeConfigs={contentTypeConfigs}>
+              contentTypeConfigs={contentTypeConfigs}
+            >
               <div className="container mx-auto">
                 <ShowConnectDialogWhenNotConnected>
                   <ChangeNetworkButton />

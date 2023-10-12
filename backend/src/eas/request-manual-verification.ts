@@ -35,7 +35,7 @@ export const requestVerification = async (
 
   // TODO Add signature verification here
 
-  const { error, data } = await supabase
+  const { error } = await supabase
     .from("manual_review_inbox")
     .insert({
       account: value.account,
@@ -43,6 +43,14 @@ export const requestVerification = async (
       media_type: value.mediaType,
       fulfilled: false,
     })
+    .select("*")
+
+  const data = await supabase
+    .from("manual_review_inbox")
+    .select("*")
+    .eq("account", value.account)
+    .eq("cid", value.cid)
+    .single()
 
   console.log("Successfully inserted new manual verification request", data);
   if (error) {

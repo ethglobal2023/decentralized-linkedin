@@ -33,13 +33,21 @@ export const confirmVerification = async (
 
   // TODO Add signature verification here
 
-  const { error, data } = await supabase
+  const { error } = await supabase
     .from("manual_review_inbox")
     .update({
       fulfilled: true,
     })
     .eq("account", value.account)
-    .eq("cid", value.cid);
+    .eq("cid", value.cid)
+
+  const data = await supabase
+    .from("manual_review_inbox")
+    .select("*")
+    .eq("account", value.account)
+    .eq("cid", value.cid)
+    .single()
+
 
   console.log("Approved request for ", data);
   if (error) {
