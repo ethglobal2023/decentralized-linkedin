@@ -36,20 +36,11 @@ if (process.env.NODE_ENV !== 'production') {
 
 
 app.get('/search', search);
-
-// app.get("/identifiers", listIdentifiers);
-// app.post("/identifiers", createIdentifier);
-// app.get("/credentials/", getCredentials);
-// app.post("/credentials/", createCredentials);
-// app.post("/credentials/verify", verifyCredentials);
-
-// app.get("/eas/attest", getAttestationsForAccount);
 app.post("/eas/attest", createNewAttestation);
 app.post("/eas/request-verification", requestVerification);
 app.post("/eas/confirm-verification", confirmVerification);
 
 app.listen(PORT, () => {
-
     console.log(`Server is running on http://localhost:${PORT}`);
 });
 

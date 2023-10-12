@@ -5,93 +5,34 @@ import { BACKEND_URL } from "./admin/EASConfigContext";
 import { useWallet } from "../hooks/useWallet";
 import { useContext, useEffect, useState } from "react";
 import { SupabaseContext } from "../contexts/SupabaseContext";
+import { useSignMessage, useWalletClient } from "wagmi";
 
 type RequestVerificationBody = {
+  message: {
+    account: string;
+    cid: string;
+    mediaType: string;
+  };
+  signature: string;
+};
+type RequestVerificationMessage = {
   account: string;
   cid: string;
   mediaType: string;
 };
-type ConfirmVerificationBody = {
-  account: string;
-  cid: string;
-};
+
 type ManualVerificationRequestStatuses =
   | "not-started"
   | "pending"
   | "done"
   | "error";
 
-export const ConfirmButton: React.FC<{ cid: string }> = ({ cid }) => {
-  const { address } = useWallet();
-  const [jsonResponse, setJsonResponse] = useState("");
-  const [error, setError] = useState("");
-  const {
-    handleSubmit,
-    formState: { errors },
-  } = useForm<{}>();
-  const supabase = useContext(SupabaseContext);
-
-  const onConfirmManualVerificationRequest: SubmitHandler<{}> = async (
-    data,
-  ) => {
-    try {
-      if (!address || address.length === 0) {
-        setError(
-          "You must be connected w/ a browser wallet to request verification",
-        );
-        return;
-      }
-      const requestBody: ConfirmVerificationBody = {
-        account: address?.toLowerCase(), //TODO This isn't a reliable value. When you have the user sign, remove this field and get their account on the backend.
-        cid,
-      };
-
-      const requestOptions = {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(requestBody),
-      };
-
-      console.log("Confirming verification", requestBody);
-      console.log("BACKEND_URL", BACKEND_URL);
-      // call attest api endpoint to store attestation on ComposeDB
-      console.log(`${BACKEND_URL}/eas/request-verification`);
-      const res = await fetch(
-        `http://localhost:3005/eas/confirm-verification`,
-        requestOptions,
-      ).then((response) => response.json());
-      console.log("Finished requesting verification, getting JSON", res);
-      setJsonResponse(res);
-      console.log("Finished requesting verification", res);
-
-      //TODO You'd create an attestation here
-    } catch (e: any) {
-      console.log("Failed to request veification", e);
-      setError(e);
-    }
-  };
-
-  return (
-    <form
-      onSubmit={handleSubmit(onConfirmManualVerificationRequest)}
-      className={"flex border-2"}
-    >
-        <button
-          type={"submit"}
-          className={"p-8 "}
-          style={{ backgroundColor: "purple" }}
-        >
-          SUBMIT
-        </button>
-    </form>
-  );
-};
-
 export const ProfileMediaCard: React.FC<{
   cid: string;
   mediaType: "conference_talk" | "publication" | "interview"; //change validation in backend/eas/request-manual-verification.ts to add new types
 }> = ({ cid, mediaType }) => {
   const { address } = useWallet();
+  const {data: walletClient} = useWalletClient();
   const [loadingVerificationRequest, setLoadingVerificationRequest] =
     useState(false);
   const [verificationStatus, setVerificationStatus] =
@@ -102,6 +43,7 @@ export const ProfileMediaCard: React.FC<{
     handleSubmit,
     formState: { errors },
   } = useForm<{}>();
+
   const supabase = useContext(SupabaseContext);
 
   useEffect(() => {
@@ -125,43 +67,50 @@ export const ProfileMediaCard: React.FC<{
       }
 
       setVerificationStatus(data?.fulfilled ? "done" : "pending");
-    }
-    fetchData()
+    };
+    fetchData();
     const intervalId = setInterval(fetchData, 5000); // Poll every 5 seconds
     return () => clearInterval(intervalId); // Clear interval on component unmount
   }, []);
 
   const onSubmitManualVerificationRequest: SubmitHandler<{}> = async (data) => {
+    if (!walletClient || !address || address.length === 0){
+      setError("You must be connected w/ a browser wallet to request verification");
+      return
+    }
     try {
       setLoadingVerificationRequest(true);
-      if (!address || address.length === 0) {
-        setError(
-          "You must be connected w/ a browser wallet to request verification",
-        );
-        return;
-      }
-      const requestBody: RequestVerificationBody = {
+      const message: RequestVerificationMessage = {
         account: address?.toLowerCase(), //TODO This isn't a reliable value. When you have the user sign, remove this field and get their account on the backend.
         cid,
         mediaType,
       };
 
-      const requestOptions = {
+      const signature = await walletClient.signMessage({
+        account: address,
+        message: JSON.stringify(message),
+      });
+
+      const requestBody: RequestVerificationBody = {message, signature}
+
+      const requestOptions: RequestInit = {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(requestBody),
       };
 
-      console.log("Requesting verification", requestBody);
-      console.log("BACKEND_URL", BACKEND_URL);
-      // call attest api endpoint to store attestation on ComposeDB
-      console.log(`${BACKEND_URL}/eas/request-verification`);
+      console.log(
+        "Requesting verification with",
+        requestBody,
+        ` to ${BACKEND_URL}/eas/request-verification`,
+      );
+
       const res = await fetch(
-        `http://localhost:3005/eas/request-verification`,
+        `${BACKEND_URL}/eas/request-verification`,
         requestOptions,
       ).then((response) => response.json());
-      console.log("Finished requesting verification, getting JSON", res);
       setJsonResponse(res);
+      setError("")
       console.log("Finished requesting verification", res);
     } catch (e: any) {
       console.log("Failed to request veification", e);
@@ -201,7 +150,6 @@ export const ProfileMediaCard: React.FC<{
             </button>
           </div>
         </form>
-        <ConfirmButton cid={cid}/>
       </div>
     </div>
   );
