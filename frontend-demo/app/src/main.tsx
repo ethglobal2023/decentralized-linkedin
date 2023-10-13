@@ -13,21 +13,20 @@ import {
   trustWallet,
   walletConnectWallet,
 } from "@rainbow-me/rainbowkit/wallets";
-import { createConfig, configureChains, mainnet, WagmiConfig } from "wagmi";
+import { configureChains, createConfig, mainnet, WagmiConfig } from "wagmi";
 import { infuraProvider } from "wagmi/providers/infura";
 import { publicProvider } from "wagmi/providers/public";
 import {
-  XMTPProvider,
   attachmentContentTypeConfig,
   reactionContentTypeConfig,
   readReceiptContentTypeConfig,
   replyContentTypeConfig,
+  XMTPProvider,
 } from "@xmtp/react-sdk";
 import App from "./components/App";
 import "@xmtp/react-components/styles.css";
 import { WalletProvider } from "./contexts/WalletContext";
 import "./index.css";
-import SideBar from "./components/SideBar";
 
 const DB_VERSION = 1;
 
@@ -76,7 +75,8 @@ createRoot(document.getElementById("root") as HTMLElement).render(
         <WalletProvider>
           <XMTPProvider
             dbVersion={DB_VERSION}
-            contentTypeConfigs={contentTypeConfigs}>
+            contentTypeConfigs={contentTypeConfigs}
+          >
             <App />
           </XMTPProvider>
         </WalletProvider>

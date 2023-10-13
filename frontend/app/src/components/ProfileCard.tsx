@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from "react";
 import { HiOutlinePencil } from "react-icons/hi";
 import FileUploadModal from "./FileUpload";
-import "./Profilecard.css";
+import "./ProfileCard.css";
 import SideBar from "./SideBar";
 
 export default function ProfileCard() {

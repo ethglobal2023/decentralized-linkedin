@@ -43,6 +43,7 @@ import { EasConfigContextProvider } from "./components/admin/EASConfigContext";
 import AdminCreateAttestation from "./components/admin/AdminCreateAttestation";
 import { ProfileMediaCard } from "./components/ProfileMediaCard";
 import { AdminManualVerificationInbox } from "./components/admin/AdminManualVerificationInbox";
+import ProfileCard from "./components/ProfileCard";
 
 const DB_VERSION = 1;
 
@@ -111,12 +112,20 @@ const router = createBrowserRouter([
     ),
   },
   {
-    path: "/admin/inbox",
+    path: "/admin/inbox", //This admin inbox is for manual verification of attestations
     element: (
       <EasConfigContextProvider>
         <AdminManualVerificationInbox />
       </EasConfigContextProvider>
     ),
+  },
+  {
+    path: "/inbox",
+    element: <Inbox />,
+  },
+  {
+    path: "/profile",
+    element: <ProfileCard />,
   },
 ]);
 
