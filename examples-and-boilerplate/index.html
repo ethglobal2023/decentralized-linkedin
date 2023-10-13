@@ -145,6 +145,37 @@
             showMessage("-- TEXT format  ---")
               showMessage("txtdoc: "+txtdoc)
  
+
+
+              try{
+              var myHeaders = new Headers();
+              myHeaders.append("Authorization", "Bearer  eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFidW9lbnN2a29mc3R1aG5meHpuIiwicm9sZSI6ImFub24iLCJpYXQiOjE2OTY4MDc3MTksImV4cCI6MjAxMjM4MzcxOX0.WiGeLc4r2OZhX_4bkIUeAOGjq-cXGmBN65i2qXfPnn4");
+              myHeaders.append("apikey", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFidW9lbnN2a29mc3R1aG5meHpuIiwicm9sZSI6ImFub24iLCJpYXQiOjE2OTY4MDc3MTksImV4cCI6MjAxMjM4MzcxOX0.WiGeLc4r2OZhX_4bkIUeAOGjq-cXGmBN65i2qXfPnn4");
+              myHeaders.append("Content-Type", "application/json");
+             // myHeaders.append("Access-Control-Allow-Origin","http://localhost:8080")
+
+              var raw = JSON.stringify({
+                "_cid": cidinput
+              });
+
+              var requestOptions = {
+                method: 'POST',
+                headers: myHeaders,
+                body: raw,
+                redirect: 'follow'
+              };
+
+              console.log("Now reading agian from our server to make sure we have it saved, should be faster ")
+              const response2 = await  fetch("https://qbuoensvkofstuhnfxzn.supabase.co/rest/v1/rpc/ipfs", requestOptions);
+              showMessage("-- FROM our servers   ---")
+              const txtdoc2 = await response.text()
+              console.log("OUr reply "+txtdoc2)
+            
+          } catch (error2) {
+              showMessage("error2:"+error2)
+                console.error("Error2:", error2);
+              }
+        
  
    
              // showMessage("JSON:"+JSON.stringify(txtdoc))

@@ -4,59 +4,66 @@ import Joi from "joi";
 import { supabase } from "../config.js";
 import { MessageWithSignature } from "../signature-auth.js";
 
-
-type ConfirmManualVerificationMessage = {
+type RequestManualReviewMessage = {
+  account: string;
   cid: string;
-  accept: boolean;
-}
-const confirmSchema = Joi.object<MessageWithSignature<ConfirmManualVerificationMessage>>({
-  message: {
+  mediaType: "conference_talk" | "publication" | "interview";
+};
+const requestManualReviewSchema = Joi.object<
+  MessageWithSignature<RequestManualReviewMessage>
+>({
+  message: Joi.object({
     cid: Joi.string().required(),
-    accept: Joi.boolean().required(),
-  },
-
+    //Media type gives the reviewer a hint on what the content they'll be verifying is
+    mediaType: Joi.string().valid(
+      "conference_talk",
+      "publication",
+      "interview"
+    ),
+  }).required(),
 });
 
 // Collects metadata about the uploaded media and adds it to the manual review inbox
-export const confirmVerification = async (
+export const requestVerification = async (
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
   // Attestation is verified in middleware before this function is called
-  logger.debug("Confirming manual review:", req.body);
-
-  const { error: validationError, value } = confirmSchema.validate(
-    req.body, {allowUnknown: true}
+  const { error: validationError, value } = requestManualReviewSchema.validate(
+    req.body,
+    { allowUnknown: true }
   );
   if (validationError) {
-    logger.error("Attestation request validation error:", validationError);
+    logger.error(
+      "Create manual verification request validation error:",
+      validationError
+    );
     return res.status(400).send(validationError.details[0].message);
   }
 
   const { message } = value;
 
-  const { error } = await supabase
-    .from("manual_review_inbox")
-    .update({
-      status: message.accept ? "accepted" : "rejected",
-    })
-    .eq("account", message.account)
-    .eq("cid", message.cid)
+  const { error } = await supabase.from("manual_review_inbox").insert({
+    account: message.account,
+    cid: message.cid,
+    media_type: message.mediaType,
+    status: "pending",
+  });
 
   const data = await supabase
     .from("manual_review_inbox")
     .select("*")
     .eq("account", message.account)
     .eq("cid", message.cid)
-    .single()
+    .single();
 
-  console.log("Confirmed manual ", data);
+  console.log("Successfully inserted new manual verification request", data);
   if (error) {
-    logger.error("Failed to mark verification request as fulfilled:", error);
-    return res
-      .status(500)
-      .json({ error: `Failed to mark verification request as fulfilled: ${error}` });
+    logger.error("Failed to insert manual verification request:", error);
+    return res.status(500).json({
+      error: `Failed to insert manual verification request: ${error}`,
+    });
   }
   return res.status(200).send(data);
 };

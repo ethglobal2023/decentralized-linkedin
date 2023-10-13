@@ -195,6 +195,33 @@ export interface Database {
         }
         Relationships: []
       }
+      rest_cache: {
+        Row: {
+          method: string
+          req_body: Json | null
+          response_body: Json
+          status: number | null
+          updated_at: string | null
+          url: string
+        }
+        Insert: {
+          method: string
+          req_body?: Json | null
+          response_body: Json
+          status?: number | null
+          updated_at?: string | null
+          url: string
+        }
+        Update: {
+          method?: string
+          req_body?: Json | null
+          response_body?: Json
+          status?: number | null
+          updated_at?: string | null
+          url?: string
+        }
+        Relationships: []
+      }
       talent_layer: {
         Row: {
           address: string | null
