@@ -10,6 +10,7 @@ import { Messages } from "./Messages";
 import { NewMessage } from "./NewMessage";
 import { useWallet } from "../hooks/useWallet";
 import { NoSelectedConversationNotification } from "./NoSelectedConversationNotification";
+import SideBar from "./SideBar";
 
 export const Inbox: React.FC = () => {
   const { disconnect } = useWallet();
@@ -40,6 +41,7 @@ export const Inbox: React.FC = () => {
   }, [disconnect]);
 
   return (
+    <><SideBar/>
     <div className="Inbox">
       <div className="InboxHeader">
         <div className="InboxHeader__xmtp">
@@ -79,6 +81,6 @@ export const Inbox: React.FC = () => {
           )}
         </div>
       </div>
-    </div>
+    </div></>
   );
 };
