@@ -2,15 +2,19 @@ import { NextFunction, Request, Response } from "express";
 import { logger } from "../index.js";
 import Joi from "joi";
 import { supabase } from "../config.js";
+import { MessageWithSignature } from "../signature-auth.js";
 
-const requestManualReviewSchema = Joi.object({
-  account: Joi.string().required(), //TODO Account won't be required when a signature is included
-  cid: Joi.string().required(),
-  signature: Joi.object({
-    r: Joi.string().optional(),
-    s: Joi.string().optional(),
-    v: Joi.number().optional(),
-  }).optional(), //TODO stubbed here as optional. Should be made required later.
+
+type ConfirmManualVerificationMessage = {
+  cid: string;
+  accept: boolean;
+}
+const confirmSchema = Joi.object<MessageWithSignature<ConfirmManualVerificationMessage>>({
+  message: {
+    cid: Joi.string().required(),
+    accept: Joi.boolean().required(),
+  },
+
 });
 
 // Collects metadata about the uploaded media and adds it to the manual review inbox
@@ -20,36 +24,34 @@ export const confirmVerification = async (
   next: NextFunction
 ) => {
   // Attestation is verified in middleware before this function is called
-  logger.debug("Attestation request:", req.body);
-  logger.debug("Creating new attestation");
+  logger.debug("Confirming manual review:", req.body);
 
-  const { error: validationError, value } = requestManualReviewSchema.validate(
-    req.body
+  const { error: validationError, value } = confirmSchema.validate(
+    req.body, {allowUnknown: true}
   );
   if (validationError) {
     logger.error("Attestation request validation error:", validationError);
     return res.status(400).send(validationError.details[0].message);
   }
 
-  // TODO Add signature verification here
+  const { message } = value;
 
   const { error } = await supabase
     .from("manual_review_inbox")
     .update({
-      fulfilled: true,
+      status: message.accept ? "accepted" : "rejected",
     })
-    .eq("account", value.account)
-    .eq("cid", value.cid)
+    .eq("account", message.account)
+    .eq("cid", message.cid)
 
   const data = await supabase
     .from("manual_review_inbox")
     .select("*")
-    .eq("account", value.account)
-    .eq("cid", value.cid)
+    .eq("account", message.account)
+    .eq("cid", message.cid)
     .single()
 
-
-  console.log("Approved request for ", data);
+  console.log("Confirmed manual ", data);
   if (error) {
     logger.error("Failed to mark verification request as fulfilled:", error);
     return res

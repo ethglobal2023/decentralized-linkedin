@@ -3,7 +3,6 @@ create table
                             id character varying not null,
                             ref_uid character varying not null,
                             attester_address character varying not null,
-                            issuer_address character varying not null default ''::character varying,
                             recipient_address character varying not null,
                             eas_schema_address character varying not null,
                             revoked boolean not null default false,
@@ -14,7 +13,6 @@ create table
                             constraint attestations_pkey primary key (id)
 ) tablespace pg_default;
 
-create index if not exists idx_attestations_issuer_address on public.attestations using btree (issuer_address) tablespace pg_default;
 
 create index if not exists idx_attestations_attester_address on public.attestations using btree (attester_address) tablespace pg_default;
 

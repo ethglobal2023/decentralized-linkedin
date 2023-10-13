@@ -9,6 +9,21 @@ export type Json =
 export interface Database {
   public: {
     Tables: {
+      admin_signers: {
+        Row: {
+          address: string
+          created_at: string
+        }
+        Insert: {
+          address: string
+          created_at?: string
+        }
+        Update: {
+          address?: string
+          created_at?: string
+        }
+        Relationships: []
+      }
       attestations: {
         Row: {
           attester_address: string
@@ -17,7 +32,6 @@ export interface Database {
           eas_schema_address: string
           expiration_time: number
           id: string
-          issuer_address: string
           recipient_address: string
           ref_uid: string
           revoked: boolean
@@ -30,7 +44,6 @@ export interface Database {
           eas_schema_address: string
           expiration_time: number
           id: string
-          issuer_address?: string
           recipient_address: string
           ref_uid: string
           revoked?: boolean
@@ -43,11 +56,49 @@ export interface Database {
           eas_schema_address?: string
           expiration_time?: number
           id?: string
-          issuer_address?: string
           recipient_address?: string
           ref_uid?: string
           revoked?: boolean
           type?: string
+        }
+        Relationships: []
+      }
+      attester_a_priori_trust_coef: {
+        Row: {
+          coef: number
+          pk: string
+        }
+        Insert: {
+          coef: number
+          pk: string
+        }
+        Update: {
+          coef?: number
+          pk?: string
+        }
+        Relationships: []
+      }
+      gitcoin_passports: {
+        Row: {
+          address: string | null
+          document: Json | null
+          id: string | null
+          score: number | null
+          tokenId: string
+        }
+        Insert: {
+          address?: string | null
+          document?: Json | null
+          id?: string | null
+          score?: number | null
+          tokenId: string
+        }
+        Update: {
+          address?: string | null
+          document?: Json | null
+          id?: string | null
+          score?: number | null
+          tokenId?: string
         }
         Relationships: []
       }
@@ -81,30 +132,42 @@ export interface Database {
         }
         Relationships: []
       }
+      known_user_pk: {
+        Row: {
+          pk: string
+        }
+        Insert: {
+          pk: string
+        }
+        Update: {
+          pk?: string
+        }
+        Relationships: []
+      }
       manual_review_inbox: {
         Row: {
           account: string
           cid: string
           created_at: string
-          fulfilled: boolean
           id: number
           media_type: string
+          status: string
         }
         Insert: {
           account: string
           cid: string
           created_at?: string
-          fulfilled: boolean
           id?: number
           media_type: string
+          status: string
         }
         Update: {
           account?: string
           cid?: string
           created_at?: string
-          fulfilled?: boolean
           id?: number
           media_type?: string
+          status?: string
         }
         Relationships: []
       }
@@ -171,6 +234,24 @@ export interface Database {
           content_type?: string | null
           headers?: unknown[] | null
           status?: number | null
+        }
+        Relationships: []
+      }
+      user_trust_score: {
+        Row: {
+          pk: string
+          score: number
+          updated_at: string | null
+        }
+        Insert: {
+          pk: string
+          score?: number
+          updated_at?: string | null
+        }
+        Update: {
+          pk?: string
+          score?: number
+          updated_at?: string | null
         }
         Relationships: []
       }

@@ -6,15 +6,9 @@ import { useWallet } from "../hooks/useWallet";
 import { useContext, useEffect, useState } from "react";
 import { SupabaseContext } from "../contexts/SupabaseContext";
 import { useSignMessage, useWalletClient } from "wagmi";
+import { MessageWithViemSignature } from "./admin/types";
 
-type RequestVerificationBody = {
-  message: {
-    account: string;
-    cid: string;
-    mediaType: string;
-  };
-  signature: string;
-};
+
 type RequestVerificationMessage = {
   account: string;
   cid: string;
@@ -66,7 +60,7 @@ export const ProfileMediaCard: React.FC<{
         return;
       }
 
-      setVerificationStatus(data?.fulfilled ? "done" : "pending");
+      setVerificationStatus(data?.status ? "done" : "pending");
     };
     fetchData();
     const intervalId = setInterval(fetchData, 5000); // Poll every 5 seconds
@@ -91,7 +85,7 @@ export const ProfileMediaCard: React.FC<{
         message: JSON.stringify(message),
       });
 
-      const requestBody: RequestVerificationBody = {message, signature}
+      const requestBody: MessageWithViemSignature<RequestVerificationMessage> = {message, signature}
 
       const requestOptions: RequestInit = {
         method: "POST",

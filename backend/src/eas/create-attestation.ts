@@ -8,7 +8,37 @@ import {
 } from "./util.js";
 import { config, supabase } from "../config.js";
 
-const attestationRequestSchema = Joi.object({
+type AttestationRequest = {
+  uid: string;
+  account: string;
+  signature: {
+    r: string;
+    s: string;
+    v: number;
+  };
+  types: any;  // The exact type needs to be determined
+  domain: {
+    name: string;
+    version: string;
+    chainId?: number;
+    verifyingContract: string;
+  };
+  primaryType: string;
+  message: {
+    schema: string;
+    version: number;
+    recipient: string;
+    refUID: string;
+    data: string;
+    time: number;
+    expirationTime?: number;
+    revocable?: boolean;
+    nonce?: number;
+  };
+  attestationType: "todo" | "humanity" | "met_irl" | "resume" | "review" | "confirmed_skill" | "confirmed_language";
+};
+
+const attestationRequestSchema = Joi.object<AttestationRequest>({
   uid: Joi.string().required(),
   account: Joi.string().required(),
   signature: Joi.object({
@@ -107,9 +137,10 @@ export const createNewAttestation = async (
       .send("Attestation recipient is the same as the attester");
   }
 
-  if (account !== config.easIssuerAddress) {
+  const adminAccount = supabase.from("admin_signers").select("account").single();
+  if (!adminAccount) {
     logger.warn(
-      `Signature is not from the trusted issuer. Expected: ${config.easIssuerAddress}, signer: ${account}`
+      `Signature is not from an admin account, got signer: ${account}`
     );
     return res.status(401).send("Signature is not from the trusted issuer");
   }
@@ -120,7 +151,6 @@ export const createNewAttestation = async (
       id: uid,
       ref_uid: message.refUID,
       attester_address: account,
-      issuer_address: config.easIssuerAddress,
       recipient_address: message.recipient,
       eas_schema_address: message.schema,
       revoked: false,

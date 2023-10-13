@@ -4,17 +4,20 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import { useContext, useEffect, useState } from "react";
 import { SupabaseContext } from "../../contexts/SupabaseContext";
 import { Database } from "../../__generated__/supabase-types";
+import { MessageWithViemSignature } from "./types";
+import { useWalletClient } from "wagmi";
+import { useWallet } from "../../hooks/useWallet";
 
 type VerificationRequest =
   Database["public"]["Tables"]["manual_review_inbox"]["Row"];
-type ConfirmVerificationBody = {
+type ConfirmVerificationMessage = {
   account: string;
   cid: string;
 };
 
+
 export const AdminManualVerificationInbox: React.FC = () => {
   const supabase = useContext(SupabaseContext);
-
   const [requests, setRequests] = useState<VerificationRequest[]>([]);
 
   useEffect(() => {
@@ -31,7 +34,7 @@ export const AdminManualVerificationInbox: React.FC = () => {
 
       setRequests(data);
     };
-    fetchData()
+    fetchData();
     const intervalId = setInterval(fetchData, 5000); // Poll every 5 seconds
     return () => clearInterval(intervalId); // Clear interval on component unmount
   }, []);
@@ -47,44 +50,61 @@ export const AdminManualVerificationInbox: React.FC = () => {
 };
 
 const InboxRow: React.FC<{ account: string; cid: string }> = ({
-  account,
-  cid,
-}) => {
+                                                                account,
+                                                                cid
+                                                              }) => {
   const [jsonResponse, setJsonResponse] = useState("");
   const [error, setError] = useState("");
+  const { address } = useWallet();
+  const { data: walletClient } = useWalletClient();
   const {
     handleSubmit,
-    formState: { errors },
+    formState: { errors }
   } = useForm<{}>();
+
   const onConfirmManualVerificationRequest: SubmitHandler<{}> = async (
-    data,
+    data
   ) => {
     try {
       if (!account || account.length === 0) {
         setError(
-          "You must be connected w/ a browser wallet to request verification",
+          "You must be connected w/ a browser wallet to request verification"
         );
+        return;
+      }
+
+      if (!walletClient) {
+        setError("You must be connected w/ a browser wallet to request verification");
         return;
       }
 
       //TODO You'd create an attestation here
 
-      const requestBody: ConfirmVerificationBody = {
-        account: account?.toLowerCase(), //TODO This isn't a reliable value. When you have the user sign, remove this field and get their account on the backend.
-        cid,
+      const message: ConfirmVerificationMessage = {
+        account: account?.toLowerCase(),
+        cid
       };
+      const signature = await walletClient.signMessage({
+        account: address,
+        message: JSON.stringify(message)
+      });
+
+      const requestBody: MessageWithViemSignature<ConfirmVerificationMessage> = {
+        message,
+        signature
+      }
 
       const requestOptions = {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(requestBody),
+        body: JSON.stringify(requestBody)
       };
 
       console.log("Confirming verification", requestBody);
 
       const res = await fetch(
         `http://localhost:3005/eas/confirm-verification`,
-        requestOptions,
+        requestOptions
       ).then((response) => response.json());
       setJsonResponse(res);
       console.log("Finished confirming verification", res);
@@ -94,7 +114,6 @@ const InboxRow: React.FC<{ account: string; cid: string }> = ({
       setError(e);
     }
   };
-
   return (
     <>
       <form
