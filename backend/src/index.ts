@@ -6,9 +6,10 @@ import {config} from "./config.js";
 import {search} from "./search.js";
 import {createNewAttestation} from "./eas/create-attestation.js";
 import { requestVerification } from "./eas/request-manual-verification.js";
-//import { confirmVerification } from "./eas/confirm-manual-verification.js";
 import { signatureVerificationMiddleware } from "./signature-auth.js";
 import { calcTrustScore } from "./dili/index.js";
+import { updatePolicy } from "./profile/update.js";
+import { confirmVerification } from "./eas/confirm-manual-verification.js";
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -43,7 +44,7 @@ app.get('/search', search);
 app.post("/eas/attest", createNewAttestation); //Signature verification is handled w/ EAS here, not in middleware
 app.post("/eas/request-verification", signatureVerificationMiddleware, requestVerification);
 app.post("/eas/confirm-verification", signatureVerificationMiddleware, confirmVerification);
-app.post("/profile", signatureVerificationMiddleware /*TODO Create/update profile here*/);
+app.post("/profile", signatureVerificationMiddleware, updatePolicy);
 app.post("/dili/trustscore", calcTrustScore);
 app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);
