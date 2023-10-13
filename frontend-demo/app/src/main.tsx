@@ -27,6 +27,7 @@ import App from "./components/App";
 import "@xmtp/react-components/styles.css";
 import { WalletProvider } from "./contexts/WalletContext";
 import "./index.css";
+import SideBar from "./components/SideBar";
 
 const DB_VERSION = 1;
 

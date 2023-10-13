@@ -4,6 +4,8 @@ import { useWallet } from "../hooks/useWallet";
 import { XMTPConnect } from "./XMTPConnect";
 import { WalletConnect } from "./WalletConnect";
 import { Inbox } from "./Inbox";
+import ProfileCard from "./ProfileCard";
+import SideBar from "./SideBar";
 
 export const ContentRouter = () => {
   const { isConnected } = useWallet();
@@ -17,5 +19,5 @@ export const ContentRouter = () => {
     return <XMTPConnect />;
   }
 
-  return <Inbox />;
+  return <ProfileCard/>;
 };
