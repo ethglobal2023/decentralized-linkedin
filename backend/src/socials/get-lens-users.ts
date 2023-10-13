@@ -1,40 +1,32 @@
 import axios from "axios";
 
-const TALENTLAYER_SUBGRAPH_ENDPOINT =
-  "https://api.thegraph.com/subgraphs/name/talentlayer/talentlayer-polygon";
+const GITCOIN_SUBGRAPH_ENDPOINT =
+  "https://api.thegraph.com/subgraphs/name/gundamdweeb/lens-protocol";
 
-export async function fetchTalentLayerUsers() {
+export async function fetchGitcoinPassportUsers() {
   const batchSize = 1000;
-  let lastUserId = 14200;
+  let lastUserId = 130000;
   const users = [];
 
-  while (lastUserId < 15000) {
+  while (lastUserId) {
     const graphqlQuery = `
         {
-          users(first: ${batchSize},orderBy: index, orderDirection:desc, where: { index_lt: ${lastUserId} }) {
+          profiles(first: ${batchSize},orderBy: index, orderDirection:desc, where: { index_lt: ${lastUserId} }) {
             id
-            address
-            cid
-            numReviews
+            creator
+            _to
             handle
-            rating
-            description {
-            country
-            headline
-            skills_raw
-            title
-            role
-            timezone
-            name
-            image_url
-              
-             }
-          }
+            totalPosts
+            totalComments
+            imageURI
+            dateCreated
+            }
+          
         }
       `;
 
     try {
-      const response: any = await axios.post(TALENTLAYER_SUBGRAPH_ENDPOINT, {
+      const response: any = await axios.post(GITCOIN_SUBGRAPH_ENDPOINT, {
         query: graphqlQuery,
         variables: { lastUserId },
       });
@@ -43,18 +35,20 @@ export async function fetchTalentLayerUsers() {
         response.data.errors!
       );
 
-      const userData = response.data.data.users;
+      console.log("response", response.data.data!);
+
+      const userData = response.data.data.tokens;
       if (userData.length === 0) {
         console.log("user done", userData);
 
         break;
       }
 
-      lastUserId = userData[userData.length - 1].id;
+      lastUserId = userData[userData.length - 1].index;
 
       const transformedUsers = userData.map((user: any) => {
-        const { address, id, cid, ...document } = user;
-        return { address, id, cid, document };
+        const { owner: address, id, tokenId, score, ...document } = user;
+        return { address, id, tokenId, score, document };
       });
       console.log(
         "🚀 ~ file: index.ts:98 ~ transformedUsers ~ transformedUsers:",
@@ -75,6 +69,6 @@ export async function fetchTalentLayerUsers() {
   return users;
 }
 
-fetchTalentLayerUsers().then((allUsers) => {
+fetchGitcoinPassportUsers().then((allUsers) => {
   console.log("All Users:", allUsers.length);
 });

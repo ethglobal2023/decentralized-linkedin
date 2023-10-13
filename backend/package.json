@@ -19,6 +19,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@airstack/node": "^0.0.5",
+    "@ankr.com/ankr.js": "^0.4.2",
     "@didtools/pkh-ethereum": "^0.4.1",
     "@ethereum-attestation-service/eas-sdk": "^0.29.1",
     "@supabase/supabase-js": "^2.38.0",
