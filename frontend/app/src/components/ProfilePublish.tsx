@@ -61,7 +61,6 @@ export function ProfilePublish() {
         body: JSON.stringify(requestBody),
       }).then((res) => res.json());
 
-
       setResponse(res2);
     } catch (err: any) {
       setError(err.message);

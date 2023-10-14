@@ -51,6 +51,7 @@ const makeAttestationRequest = async (vars: MakeAttestationReqVars) => {
     connector,
     issuer,
   } = vars;
+  console.log("makeAttestationRequest", vars);
   // Check if 'values' is empty
   if (!values || values.length === 0) {
     throw new Error("'values' cannot be empty");
@@ -95,7 +96,6 @@ const makeAttestationRequest = async (vars: MakeAttestationReqVars) => {
     return <div>Wallet client or connector is not connected</div>;
   }
   const eas = new EAS(contractAddress);
-
   const { account, chain, transport } = walletClient;
   console.log("walletClientToSignerFORM", walletClient);
   if (chain.id !== easChainId) {
@@ -188,7 +188,15 @@ export const CreateAttestMediaForm: React.FC = ({}) => {
     handleSubmit,
     watch,
     formState: { errors },
-  } = useForm<MediaAttestationForm>();
+  } = useForm<MediaAttestationForm>({
+    defaultValues:{
+      public: true,
+      participant: "0x9cbC225B9d08502d231a6d8c8FF0Cc66aDcc2A4F",
+      keywordsProven: ["video", "interview"],
+      refUrl: "https://www.youtube.com/watch?v=oHg5SJYRHA0",
+      refType: "video",
+    }
+  });
 
   if (!address) {
     return (
@@ -198,7 +206,6 @@ export const CreateAttestMediaForm: React.FC = ({}) => {
     );
   }
   const onSubmit: SubmitHandler<MediaAttestationForm> = async (data) => {
-    const {} = useContext(EASConfigContext);
     setAttesting(true);
     try {
       const values = [
@@ -232,31 +239,37 @@ export const CreateAttestMediaForm: React.FC = ({}) => {
   };
 
   return (
-    <FormContainer>
-      <form onSubmit={handleSubmit(onSubmit)} className={"flex-col border-2"}>
-        <div className="Title flex justify-center">
-          <p className={"text-xl"}>
+    <div className="bg-white p-8 rounded shadow-lg">
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        className="flex flex-col border-2 p-4 rounded"
+      >
+        <div className="mb-4 flex justify-center">
+          <p className="title">
             Create attestation that proves skills w/ media
           </p>
         </div>
-        <input {...(register("public"), { required: true })} />
-        <input {...(register("participant"), { required: true })} />
-        <input {...(register("keywordsProven"), { required: true })} />
-        <input {...(register("refUrl"), { required: true })} />
-        <input {...(register("refType"), { required: true })} />
-        <input type={"submit"} value={"Submit"} className={"btn"} />
+        <input type="checkbox" {...register("public", { required: true })} className="form-checkbox"/>
+        <label htmlFor="public" className="form-checkbox-label">Public</label>
+        <input {...(register("participant"), { required: true })} className="form-input" placeholder="Participant" />
+        <input {...(register("keywordsProven"), { required: true })} className="form-input" placeholder="Keywords Proven (comma separated)" />
+        <input {...(register("refUrl"), { required: true })} className="form-input" placeholder="Reference URL" />
+        <input {...(register("refType"), { required: true })} className="form-input" placeholder="Reference Type" />
+        <input type="submit" value="Submit" className="submit-button" />
         {/* errors will return when field validation fails  */}
       </form>
-      {attesting
-        ? "Attesting..."
-        : "Waiting for form submission to create attestation"}
+      <div className="mt-4">
+        {attesting
+          ? "Attesting..."
+          : "Waiting for form submission to create attestation"}
+      </div>
 
-      <div>
-        <h2>Response</h2>
-        {errorMessage && <div className="Error">{errorMessage}</div>}
+      <div className="mt-4">
+        <h2 className="response-title">Response</h2>
+        {errorMessage && <div className="error-message">{errorMessage}</div>}
         <JSONPretty id="json-pretty" data={jsonResponse} />
       </div>
-    </FormContainer>
+    </div>
   );
 };
 
@@ -325,10 +338,11 @@ export const CreateAttestPublicInterview: React.FC = ({}) => {
       >
         <div className="mb-4 flex justify-center">
           <p className="title">
-            Create attestation with media interview
+            Create attestation with public interview
           </p>
         </div>
-        <input {...(register("public"), { required: true })} className="form-input" placeholder="Public" />
+        <input type="checkbox" {...register("public", { required: true })} className="form-checkbox"/>
+        <label htmlFor="public" className="form-checkbox-label">Public</label>
         <input {...(register("interviewee"), { required: true })} className="form-input" placeholder="Interviewee" />
         <input {...(register("videoUrl"), { required: true })} className="form-input" placeholder="Video URL" />
         <input {...(register("positionTitle"), { required: true })} className="form-input" placeholder="Position Title" />

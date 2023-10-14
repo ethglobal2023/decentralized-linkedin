@@ -17,3 +17,11 @@
 .error-message {
     @apply text-red-500;
 }
+
+.form-checkbox {
+    @apply h-5 w-5 text-purple-600;
+}
+
+.form-checkbox-label{
+    @apply ml-2 text-gray-700;
+}
