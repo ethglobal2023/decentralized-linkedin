@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+
+    <meta charset="UTF-8" />
+    <title>web3.storage</title>
+    <style>
+      body {
+        font-size: 16px;
+        font-family: -apple-system, system-ui;
+        padding: 0;
+        margin: 0;
+      }
+      form {
+        width: 500px;
+        padding: 16px;
+        max-width: 100%;
+        display: block;
+        margin: 0 auto;
+        color:#333;
+      }
+      label {
+        display: block;
+        padding: 32px 0 8px;
+        font-weight: 700;
+      }
+      #token {
+        width: 100%;
+        padding: 4px;
+        font-size: 1.2rem;
+      }
+      #output {
+        display: block;
+        padding: 16px;
+        margin: 0;
+        color: lime;
+        background:#222;
+        font-family: Courier New, ui-monospace, monospace;
+        font-weight: 500;
+        line-height: 1.6;
+        position: fixed;
+        bottom: 0;
+        height: 33.3%;
+        width: 100%;
+        overflow-y: scroll;
+      }
+      #output a {
+        color: aqua
+      }
+      input[type=submit] {
+        display: block;
+        padding: 4px 16px;
+        font-weight: 700;
+        font-size: 16px;
+        margin-top: 32px;
+      }
+      h1 {
+        text-align: center;
+        font-size: 24px;
+      }
+      h1 span {
+        display: block;
+      }
+    </style>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.2/rollups/aes.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.ethers.io/lib/ethers-5.2.umd.min.js"
+    type="application/javascript"></script>
+
+  </head>
+  <body>
+    <header>
+      <h1>⁂
+        <span>Login Test </span>
+      </h1>
+    </header>
+
+    <label id="issignedin"> </label>
+    <form id="signup">
+        <input type="email" id="signup-email" required />
+        password
+        <input type="password" id="signup-password" required />
+        pin 
+        <input type="password" id="signup-key-encryption-pin" required />
+        <input type="submit" value="Signup" id="signup-submit" />
+    </form>
+
+    <form id="loginform">
+
+        <input type="email"  id="login-email" required />
+        password
+        <input type="password" id="login-password" required />
+        pin
+        <input type="password" id="login-key-encryption-pin"  />
+        <input type="submit" value="Login" id="signup-submit" />
+    </form>
+
+    <form id="logout">
+        <input type="submit" value="LogOut" id="logout-submit" />
+    </form>
+
+
+   
+
+    <script type="module">
+
+ 
+
+   
+
+    let device_key ;
+    let device_pubkey;
+    let wallet;
+    if (  localStorage.getItem("deviceprivatekey") ){
+        device_key=localStorage.getItem("deviceprivatekey")
+      device_pubkey = localStorage.getItem("devicepublickey");
+    }
+
+
+    let private_key ;
+
+
+const client = supabase.createClient('https://qbuoensvkofstuhnfxzn.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFidW9lbnN2a29mc3R1aG5meHpuIiwicm9sZSI6ImFub24iLCJpYXQiOjE2OTczMTIxMDksImV4cCI6MjAxMjg4ODEwOX0.d7WKH6x2tRcyh42ydu7GVI148PjoFS1BEOc4Adzo7dA')
+        let signupdata;
+        let logedinuser ;
+
+
+
+
+async function checkLoginStatus( ){
+    const { data: { user } } = await client.auth.getUser()
+
+    
+    if( user && user.user_metadata){
+        if(!device_key && document.getElementById('login-key-encryption-pin').value){ 
+                    private_key = CryptoJS.AES.decrypt(user.user_metadata.pin_encrypted_private_key, document.getElementById('login-key-encryption-pin').value ).toString(CryptoJS.enc.Utf8);
+                    console.log("pin decrypted private key from db :"+ private_key)
+                }
+                else if(device_key){
+                    private_key=CryptoJS.AES.decrypt(user.user_metadata.device_encrypted_private_key, device_key ).toString(CryptoJS.enc.Utf8);
+                    console.log("device key decrypted private key from db :"+ private_key)
+                }
+                else {
+                    console.log("no device key found please login with including pin")
+                }
+            if(private_key)
+                wallet = new ethers.Wallet(private_key);
+        }
+
+    1===1;
+
+    console.log(" device private key "+device_key||"no key")
+if(user){
+    console.log("logged in decrypted private key "+private_key);
+
+    document.getElementById('issignedin').innerText="your already signed in"+user.id+" pubkey decrypted: "+(wallet?.address||"no wallet");
+    logedinuser=user;
+}
+else 
+    document.getElementById('issignedin').innerText="not logged in"
+
+
+
+}
+ 
+await checkLoginStatus( );
+
+
+
+    const logoutform = document.querySelector('#logout')
+    logoutform.addEventListener('submit', async function (event) {
+        event.preventDefault()
+        const { error } = await client.auth.signOut();
+        await checkLoginStatus();
+    },false);
+
+
+    const loginform = document.querySelector('#loginform')
+    loginform.addEventListener('submit', async function (event) {
+        event.preventDefault()
+        const { data, error } = await client.auth.signInWithPassword({
+        email: document.getElementById('login-email').value,
+        password:document.getElementById('login-password').value,
+        })
+
+        const { data: { user } } = await client.auth.getUser()
+
+        if(user && user?.user_metadata){
+            if(!device_key && document.getElementById('login-key-encryption-pin').value){
+                    
+                    private_key = CryptoJS.AES.decrypt(user.user_metadata.pin_encrypted_private_key, document.getElementById('login-key-encryption-pin').value ).toString(CryptoJS.enc.Utf8);
+                    console.log("pin decrypted private key from db :"+ private_key)
+                }
+                else if(device_key){
+                    private_key=CryptoJS.AES.decrypt(user.user_metadata.device_encrypted_private_key, device_key ).toString(CryptoJS.enc.Utf8);
+                    console.log("device key decrypted private key from db :"+ private_key)
+                }
+                else {
+                    console.log("no device key found please login with including pin")
+                }
+                if(private_key)
+                    wallet = new ethers.Wallet(private_key);
+        }
+            
+        1==1;
+        await checkLoginStatus();
+    },false);
+
+    const signupform = document.querySelector('#signup')
+    signupform.addEventListener('submit', async function (event) {
+        // don't reload the page!
+        event.preventDefault()
+
+        if(!device_key){
+       
+        const devicewallet = ethers.Wallet.createRandom()
+        localStorage.setItem("devicepublickey", devicewallet.address);
+        localStorage.setItem("deviceprivatekey", devicewallet.privateKey);
+        device_pubkey = localStorage.getItem("devicepublickey");
+        device_key = localStorage.getItem("deviceprivatekey");
+
+        console.log("No device key found on signu[] createing a new one "+devicewallet.privateKey)
+        }
+
+
+        wallet = ethers.Wallet.createRandom()
+        console.log('address:', wallet.address)
+        console.log('mnemonic:', wallet.mnemonic.phrase)
+        console.log('privateKey:', wallet.privateKey)
+
+        private_key=wallet.privateKey;
+
+        let pin_encrypted_private_key = CryptoJS.AES.encrypt(wallet.privateKey, document.getElementById('signup-key-encryption-pin').value ).toString();
+        let device_encrypted_private_key = CryptoJS.AES.encrypt(wallet.privateKey,device_key ).toString();
+
+
+        const { data, error } = await client.auth.signUp({
+            email:  document.getElementById('signup-email').value,
+            password:  document.getElementById('signup-password').value,
+            options: {
+                data: {
+                    pubkey: wallet.address,
+                    pin_encrypted_private_key: pin_encrypted_private_key,
+                    device_encrypted_private_key: device_encrypted_private_key,
+                }
+            }
+            })
+           
+            await checkLoginStatus();
+        
+      }, false)
+
+
+
+ 
+      
+    </script>
+  </body>
+</html>
