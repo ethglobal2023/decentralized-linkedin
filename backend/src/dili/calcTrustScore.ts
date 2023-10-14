@@ -69,7 +69,24 @@ export const calcTrustScore = async (
   const res2 = await getAllAttestations(req.body.account);
   if(res2 && res2.length>0){
     calcScore=calcScore+1;
+  //@ts-ignore
+    const { data: attester_a_priori_trust_coef, error } = await supabase.from("attester_a_priori_trust_coef").select("*");
+    if(attester_a_priori_trust_coef){
+      //@ts-ignore
+      const a_priori_approved_attestations = res2.map( (a)=> {
+              //@ts-ignore
+          return {...attester_a_priori_trust_coef.find((aa)=>aa.pk===a.attester)};
+      })
+         //@ts-ignore
+      const extra_score_from_best_attestation = Math.max(...a_priori_approved_attestations.map((e)=>e.coef).filter((a)=>a!==undefined))  ;
+      calcScore+=extra_score_from_best_attestation
+      1==1;
+    }
   }
+
+
+
+
   //   console.log("🚀 ~ file: calcTrustScore.ts:67 ~ res2:", res2);
 
   const gitcoinCheck = checkGitcoinAttestation(res2);

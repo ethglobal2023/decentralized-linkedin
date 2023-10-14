@@ -175,6 +175,7 @@ export const getAllAttestations = async (pk: string) => {
   // +1 for attestation, + gitcoin passport score
   // 0x843829986e895facd330486a61Ebee9E1f1adB1a
 
+  try{
   const res = await rest_api_save_to_db(
     "https://optimism.easscan.org/graphql",
     "post",
@@ -186,6 +187,12 @@ export const getAllAttestations = async (pk: string) => {
     res!.data.attestations
   );
   return res!.data.attestations;
+  }
+  catch(error){
+    console.log(
+        "🚀 ~ file: util.ts:193 ~ getAllAttestations ~ error:",        error) 
+    return [];
+  }
   1 === 1;
 };
 
