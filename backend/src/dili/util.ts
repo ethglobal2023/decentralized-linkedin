@@ -127,25 +127,37 @@ export const rest_api_save_to_db = async (
   1 === 1;
   //await axios.request(config).then((response) => {save_res_to_db(url,response); callback(response); return(response)}).catch((error) => {console.error(error);});
 
+  try{
   let res = await axios.request(config);
   1 == 1;
   if (req_body === undefined || req_body === null) req_body = {};
   // @ts-ignore
-  const { data, error } = await supabase.from("rest_cache").upsert({
+  const { data, upsertError } = await supabase.from("rest_cache").upsert({
     url: url,
     method: method,
     req_body: req_body,
-    response_body: res.data.data,
+    response_body: res.data,
     status: res.status,
   });
 
-  console.log(error);
+  if( upsertError)
+    console.log(upsertError);
   1 === 1;
   return res.data;
+} catch(error){
+    console.error("error in rest_api_save_to_db  :"+error);
+}
 };
 
 export const getWeb3BioNextId = async (pk: string) => {
-  await rest_api_save_to_db("https://api.web3.bio/profile/" + pk, "get");
+    try {
+   let res = await rest_api_save_to_db("https://api.web3.bio/profile/" + pk, "get");
+   return res; 
+    }
+    catch(error){
+        console.error("error in getWeb3BioNextId()... if its a 404 ignore it b/c that just means they had no data: "+error)
+        return [];
+    }
 };
 
 //For now this is only looking on optimism ,  but we should do all other chains

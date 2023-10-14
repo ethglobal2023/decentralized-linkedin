@@ -60,43 +60,51 @@ export const calcTrustScore = async (
 
   // get domains from next.id
 
-  //const res1= await getWeb3BioNextId(req.body.account);
-  const res2 = await getAllAttestations(
-    "0xA00c50A0A97D7b4d03e7Ff4A8C1badf61d72816f"
-  );
+  let  calcScore=0;
+  const res1= await getWeb3BioNextId(req.body.account);
+  if(res1 && res1.length>0){
+    calcScore=calcScore+1;
+  }
+
+  const res2 = await getAllAttestations(req.body.account);
+  if(res2 && res2.length>0){
+    calcScore=calcScore+1;
+  }
   //   console.log("🚀 ~ file: calcTrustScore.ts:67 ~ res2:", res2);
 
   const gitcoinCheck = checkGitcoinAttestation(res2);
+  if(gitcoinCheck){
+    calcScore+=gitcoinCheck
+  }
   console.log("🚀 ~ file: calcTrustScore.ts:70 ~ gitcoinCheck:", gitcoinCheck);
 
-  /*
-  const { data } = await supabase
-  .from("attestations")
-  .select("*");
-  */
-  1 === 1;
+  const res3 = await getBalancePoints(req.body.account)
+  if(res3){
+    calcScore=calcScore+1;
+  }
+  
 
-  //AirStack is so hard to get a clean answer out of
+  let result_payload={pk:req.body.account,score:calcScore,updated_at:(new Date().toISOString())};
+  try {
+   await supabase.from("user_trust_score").upsert(result_payload);
+  }catch(errorUpsert){
+    console.error("error in calcTrustScore errorUpsert: "+errorUpsert);
 
-  //   const ll = await supabase.from("attester_a_priori_trust_coef").select("*");
+  }
 
-  //   ll.data;
-
-  //   console.log("Approved request for ", ll.data);
-
-  return res.status(200).send({ data: res2 });
+  return res.status(200).send({ result_payload});
 };
 
 const checkGitcoinAttestation = (data: any) => {
-  console.log("gitcoindata", data.length);
+  //console.log("gitcoindata", data.length);
 
   let filteredAttestations: any[] = [];
   if (data.length > 0) {
     filteredAttestations = data.filter((attestation: any) => {
-      console.log("attester960,", attestation.attester);
+      //console.log("attester960,", attestation.attester);
 
       if (
-        attestation.attester === "0x843829986e895facd330486a61Ebee9E1f1adB1a"
+        attestation.attester === "0x843829986e895facd330486a61Ebee9E1f1adB1a"//hardcoded gitcoin passport wallet 
       ) {
         return true;
       }
@@ -104,28 +112,31 @@ const checkGitcoinAttestation = (data: any) => {
   }
   if (filteredAttestations.length > 0) {
     const gitcoinAttestationData = filteredAttestations.map((attestation) => {
-      console.log("atte103", JSON.parse(attestation.decodedDataJson));
+      //console.log("atte103", JSON.parse(attestation.decodedDataJson));
       const parsedData = JSON.parse(attestation.decodedDataJson);
       return parsedData;
     });
-    const userScore = gitcoinAttestationData.map((attestation: any) => {
-      console.log("attestatio112n", attestation);
 
-      if (attestation[0].name === "score") {
-        return attestation[1].value.value;
-      } else {
-        return false;
-      }
+     
+
+    const userScoreS = gitcoinAttestationData.map((attestation: any) => {
+     // console.log("attestatio112n", attestation);
+      //@ts-ignore
+      let scoreval= parseInt(attestation.find((e)=>e.name==="score")?.value?.value?.hex||0,16) 
+      //@ts-ignore
+      let scoredec= attestation.find((e)=>e.name==="score_decimals")?.value?.value || 18
+      let finalscore = scoreval/(Math.pow(10,scoredec))
+        return finalscore
     });
-
-    return userScore[1];
+    
+    return Math.max(...userScoreS)
   } else {
     return 0;
   }
 };
 
-const getBalancePoints = async () => {
-  const balance = await filterUserAssets();
+const getBalancePoints = async (pk:string) => {
+  const balance = await filterUserAssets(pk);
   if (balance.length > 0) {
     return 1;
   } else {
