@@ -44,6 +44,7 @@ import AdminCreateAttestation from "./components/admin/AdminCreateAttestation";
 import { ProfileMediaCard } from "./components/ProfileMediaCard";
 import { AdminManualVerificationInbox } from "./components/admin/AdminManualVerificationInbox";
 import ProfileCard from "./components/ProfileCard";
+import { ProfilePublish } from "./components/ProfilePublish";
 
 const DB_VERSION = 1;
 
@@ -123,9 +124,21 @@ const router = createBrowserRouter([
     path: "/inbox",
     element: <Inbox />,
   },
-  {
+  { //TODO Delete this route, overlaps with profile/:address below
     path: "/profile",
     element: <ProfileCard />,
+  },
+  {
+    path: "/profile2",
+    element: <Profile />,
+  },
+  {
+    path: "/profile3",
+    element: <ProfileCard />,
+  },
+  {
+    path: "/publish",
+    element: <ProfilePublish />,
   },
 ]);
 

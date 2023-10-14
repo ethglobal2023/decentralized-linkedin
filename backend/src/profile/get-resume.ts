@@ -1,20 +1,11 @@
-import { NextFunction, Request, Response } from "express";
 import Joi from "joi";
-import { supabase, web3StorageClient } from "../config.js";
-import { MessageWithSignature } from "../signature-auth.js";
 import { logger } from "../index.js";
+import { Response, Request, NextFunction } from "express";
 
-type UpdateMessage = {
-  account: string;
-  cid: string;
-};
 
-const updateSchema = Joi.object<MessageWithSignature<UpdateMessage>>({
-  message: Joi.object({
-    account: Joi.string().required(),
-    cid: Joi.string().required(),
-  }),
-});
+const schema = Joi.object({
+  cid: Joi.string().required(),
+})
 
 const cloudflareIPFSDownload = async (cid: string) => {
   const dllink = `https://cloudflare-ipfs.com/ipfs/${cid}`;
@@ -58,32 +49,16 @@ const supabaseIPFSDownload = async (cid: string) => {
   return txtDoc;
 };
 
-const uploadToInternalIPFS = async (expectedCid: string, fileBody: string) => {
-  const cid = await web3StorageClient.put(fileBody, {
-    onStoredChunk: (bytes: any) =>
-      logger.info(`> 🛰 sent ${bytes.toLocaleString()} bytes to web3.storage`),
-  });
-  if (cid != expectedCid) {
-    throw new Error(
-      `CID mismatch when uploading to our IPFS instance. Expected ${expectedCid} but got ${cid}`
-    );
-  }
-  logger.info(`🔗 Content added to IPFS with CID: ${cid}`)
-  logger.info(`🔗 https://dweb.link/ipfs/${cid} (<- Double check this has filepath`)
-  return cid;
-  // showLink(`https://dweb.link/ipfs/${cid}/${last_fname_uploaded}`);
-};
 
-export const updatePolicy = async (
+export const getResume = async (
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
-  const { error: validationError, value } = updateSchema.validate(req.body, {
+  const { error: validationError, value } = schema.validate(req.body, {
     allowUnknown: true,
-  });
-
-  const { account, cid } = value.message;
+  })
+  const { cid } = value;
 
   if (cid.split("/").length < 2 || cid.split(".").length < 2) {
     console.error(
@@ -96,33 +71,16 @@ export const updatePolicy = async (
 
   try {
     const fileBody = await cloudflareIPFSDownload(cid);
-    const ourCid = await uploadToInternalIPFS(cid, fileBody);
-
-    const existingResume = await supabase
-      .from("people_search")
-      .select("json")
-      .eq("account", account)
-      .single();
-
-    //TODO recalculate trust score
-    const { error } = await supabase
-      .from("people_search")
-      .update({ text: fileBody, json: fileBody })
-      .eq("account", account);
-
-    if (error) {
-      logger.error("Failed to update resume:", error);
-      return res.status(500).json({
-        error: `Failed to update resume: ${error}`,
-      });
-    }
-    return res.status(200);
-
+    return res.status(200).send(fileBody);
   } catch (e) {
-    logger.error("Failed to update resume:", e);
-    return res.status(500).json({
-      error: `Failed to update resume: ${e}`,
-    });
+    logger.error("Failed to download resume from CloudFlare IPFS:", e);
   }
 
-};
+  try {
+    const fileBody = await supabaseIPFSDownload(cid);
+    return res.status(200).send(fileBody);
+  } catch (e) {
+    logger.error("Failed to download resume from CloudFlare IPFS:", e);
+    return res.status(500).json({error: e})
+  }
+}

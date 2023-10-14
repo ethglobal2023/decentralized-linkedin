@@ -17,6 +17,9 @@ export const Profile: FC = () => {
           .select("*")
           .eq("pk", profileAddress)
           .single();
+
+        console.log("fetchedProfile: ", fetchedProfile)
+
         setProfile(fetchedProfile);
       } catch (error: any) {
         setError(error.message);

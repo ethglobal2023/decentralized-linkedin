@@ -24,6 +24,7 @@ export const signatureVerificationMiddleware = async (
   res: Response,
   next: NextFunction
 ) => {
+  console.log(req.body)
   const { error: validationError, value } =
     signatureVerificationSchema.validate(req.body, {allowUnknown: true});
 

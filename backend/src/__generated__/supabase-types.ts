@@ -66,14 +66,17 @@ export interface Database {
       attester_a_priori_trust_coef: {
         Row: {
           coef: number
+          comment: string | null
           pk: string
         }
         Insert: {
           coef: number
+          comment?: string | null
           pk: string
         }
         Update: {
           coef?: number
+          comment?: string | null
           pk?: string
         }
         Relationships: []
@@ -198,27 +201,48 @@ export interface Database {
       rest_cache: {
         Row: {
           method: string
-          req_body: Json | null
-          response_body: Json
+          req_body: Json
+          response_body: Json | null
           status: number | null
           updated_at: string | null
           url: string
         }
         Insert: {
           method: string
-          req_body?: Json | null
-          response_body: Json
+          req_body: Json
+          response_body?: Json | null
           status?: number | null
           updated_at?: string | null
           url: string
         }
         Update: {
           method?: string
-          req_body?: Json | null
-          response_body?: Json
+          req_body?: Json
+          response_body?: Json | null
           status?: number | null
           updated_at?: string | null
           url?: string
+        }
+        Relationships: []
+      }
+      resumes: {
+        Row: {
+          address: string
+          cache: string | null
+          cid: string
+          created_at: string
+        }
+        Insert: {
+          address: string
+          cache?: string | null
+          cid: string
+          created_at?: string
+        }
+        Update: {
+          address?: string
+          cache?: string | null
+          cid?: string
+          created_at?: string
         }
         Relationships: []
       }

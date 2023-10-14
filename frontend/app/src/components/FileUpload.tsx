@@ -1,6 +1,6 @@
 import React from "react";
 import { Button, Modal, Progress } from "antd";
-import "./FileUppload.css";
+import "./FileUpload.css";
 
 interface FileUploadModalProps {
     modalOpen: boolean;

@@ -1,19 +1,59 @@
-import React, { useState, useMemo } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { HiOutlinePencil } from "react-icons/hi";
 import FileUploadModal from "./FileUpload";
 import "./ProfileCard.css";
 import SideBar from "./SideBar";
+import { SupabaseContext } from "../contexts/SupabaseContext";
+import { useParams } from "react-router-dom";
+import { Resume } from "../types";
+import { ipfsDownload } from "../ipfs";
 
 export default function ProfileCard() {
   const [allStatuses, setAllStatus] = useState([]);
-  const [currentProfile, setCurrentProfile] = useState({});
   const [currentImage, setCurrentImage] = useState({});
   const [progress, setProgress] = useState(0);
   const [modalOpen, setModalOpen] = useState(false);
   const getImage = (event: any) => {
     setCurrentImage(event.target.files[0]);
   };
-  console.log(currentProfile);
+
+  //@Sakshi, this is the logic for fetching the resume from IPFS
+  const supabase = useContext(SupabaseContext);
+  const { address: profileAddress } = useParams();
+  const [error, setError] = useState("");
+  const [fetchedProfile, setFetchedProfile] = useState<Resume>();
+  useEffect(() => {
+    const fetchProfile = async () => {
+      console.log(
+        "Fetching profile for address: ",
+        "0x9cbC225B9d08502d231a6d8c8FF0Cc66aDcc2A4F",
+      );
+      const { data } = await supabase
+        .from("resumes")
+        .select("cid")
+        .eq(
+          "address",
+          "0x9cbC225B9d08502d231a6d8c8FF0Cc66aDcc2A4F".toLowerCase(),
+        ) //TODO Replace this with pathparam
+        .single();
+      console.log("Found log for address: ", data);
+      if (!data) {
+        setError("No resume cid found. Have you uploaded your resume?");
+        return;
+      }
+      try {
+        console.log("Fetching resume from IPFS");
+        const resume = await ipfsDownload(data.cid)
+        setFetchedProfile(resume);
+      } catch (error: any) {
+        console.log(error);
+      }
+    };
+    fetchProfile();
+  }, []);
+
+  console.log("Profile: ", fetchedProfile);
+
   const uploadImage = () => {};
   const experience = [
     {
@@ -58,22 +98,23 @@ export default function ProfileCard() {
       timeline: "2015-2023",
     },
     {
-        image:
-          "https://imgs.search.brave.com/m76M_P2x6d-LP9crPYcv9_x3EgIiE7fHS3LjbpOGEl8/rs:fit:860:0:0/g:ce/aHR0cHM6Ly90NC5m/dGNkbi5uZXQvanBn/LzAyLzAwLzk5Lzk5/LzM2MF9GXzIwMDk5/OTk3OF9pWVJISUVr/VWczWHJMY01RVFp6/R20wYTg4bWYzelQy/WS5qcGc",
-        university: "Maryland University",
-        stream: "Bachelor of Science (BS),Computer Science",
-        timeline: "2015-2023",
-      },
-      {
-        image:
-          "https://imgs.search.brave.com/m76M_P2x6d-LP9crPYcv9_x3EgIiE7fHS3LjbpOGEl8/rs:fit:860:0:0/g:ce/aHR0cHM6Ly90NC5m/dGNkbi5uZXQvanBn/LzAyLzAwLzk5Lzk5/LzM2MF9GXzIwMDk5/OTk3OF9pWVJISUVr/VWczWHJMY01RVFp6/R20wYTg4bWYzelQy/WS5qcGc",
-        university: "Maryland University",
-        stream: "Bachelor of Science (BS),Computer Science",
-        timeline: "2015-2023",
-      }
+      image:
+        "https://imgs.search.brave.com/m76M_P2x6d-LP9crPYcv9_x3EgIiE7fHS3LjbpOGEl8/rs:fit:860:0:0/g:ce/aHR0cHM6Ly90NC5m/dGNkbi5uZXQvanBn/LzAyLzAwLzk5Lzk5/LzM2MF9GXzIwMDk5/OTk3OF9pWVJISUVr/VWczWHJMY01RVFp6/R20wYTg4bWYzelQy/WS5qcGc",
+      university: "Maryland University",
+      stream: "Bachelor of Science (BS),Computer Science",
+      timeline: "2015-2023",
+    },
+    {
+      image:
+        "https://imgs.search.brave.com/m76M_P2x6d-LP9crPYcv9_x3EgIiE7fHS3LjbpOGEl8/rs:fit:860:0:0/g:ce/aHR0cHM6Ly90NC5m/dGNkbi5uZXQvanBn/LzAyLzAwLzk5Lzk5/LzM2MF9GXzIwMDk5/OTk3OF9pWVJISUVr/VWczWHJMY01RVFp6/R20wYTg4bWYzelQy/WS5qcGc",
+      university: "Maryland University",
+      stream: "Bachelor of Science (BS),Computer Science",
+      timeline: "2015-2023",
+    },
   ];
   return (
-    <><SideBar/>
+    <>
+      <SideBar />
       <FileUploadModal
         getImage={getImage}
         uploadImage={uploadImage}
@@ -103,7 +144,8 @@ export default function ProfileCard() {
             <a
               className="website"
               target="_blank"
-              href="https://github.com/SakshiShah29">
+              href="https://github.com/SakshiShah29"
+            >
               Website link
             </a>
           </div>

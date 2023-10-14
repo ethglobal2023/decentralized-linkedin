@@ -1,8 +1,9 @@
 import dotenv from "dotenv";
 import { createClient } from "@supabase/supabase-js";
 import { Database } from "./__generated__/supabase-types.js";
-//@ts-ignore
+// @ts-ignore
 import { Web3Storage } from "web3.storage";
+
 
 dotenv.config();
 type Config = {
@@ -21,6 +22,7 @@ if (!process.env.SUPABASE_PROJECT_ID || !process.env.SUPABASE_API_KEY) {
 if (!process.env.WEB3_STORAGE_KEY) {
   throw new Error("Missing WEB3_STORAGE_KEY");
 }
+
 
 export const supabase = createClient<Database>(
   process.env.SUPABASE_PROJECT_ID,
