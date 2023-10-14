@@ -8,6 +8,7 @@ import { BrowserRouter, Route, Router, Routes } from "react-router-dom";
 import ProfileComponent from "./ProfileComponent";
 import { Inbox } from "./Inbox";
 import ProfileCard from "./ProfileCard";
+import SearchPage from "../pages/SearchPage";
 
 const App = () => {
   const { address } = useWallet();
@@ -26,6 +27,7 @@ const App = () => {
        <Route path="/" element={<ContentRouter/>} />
           <Route path="/profile" element={<ProfileCard/>} />
           <Route path="/inbox" element={<Inbox/>} />
+          <Route path="/search" element={<SearchPage/>} />
           {/* Add more routes for your components */}
         </Routes>
        </BrowserRouter>
