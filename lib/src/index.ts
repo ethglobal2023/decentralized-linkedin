@@ -6,7 +6,7 @@ import {
 } from "@ethereum-attestation-service/eas-sdk";
 import { hexlify, Signature, verifyTypedData } from "ethers";
 
-export const validAttestation = (
+export const verifyAttestation = (
   document: AttestationShareablePackageObject
 ) => {
   const EAS_CONFIG: PartialTypedDataConfig = {
@@ -27,7 +27,7 @@ export const batchVerifyAttestations = (
   documents: AttestationShareablePackageObject[]
 ) => {
   for (const attestation of documents) {
-    if (!validAttestation(attestation)) {
+    if (!verifyAttestation(attestation)) {
       return false;
     }
   }

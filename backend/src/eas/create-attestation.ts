@@ -3,7 +3,7 @@ import { logger } from "../index.js";
 import Joi from "joi";
 import { supabase } from "../config.js";
 import { AttestationShareablePackageObject } from "@ethereum-attestation-service/eas-sdk";
-import { extractAddressFromAttestation, validAttestation } from "lib";
+import { extractAddressFromAttestation, verifyAttestation } from "lib";
 
 export type CreateAttestationRequest = {
   uid: string;
@@ -137,7 +137,7 @@ export const createNewAttestation = async (
     value;
 
   const easDocument = appAttestationToEASFormat(value);
-  if (!validAttestation(easDocument)) {
+  if (!verifyAttestation(easDocument)) {
     const recoveredAddress = extractAddressFromAttestation(easDocument);
     logger.debug(
       `Signature is not from the attester. Expected: ${account}, signer: ${recoveredAddress}`
