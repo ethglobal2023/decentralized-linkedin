@@ -19,15 +19,11 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@ceramicnetwork/cli": "2.40.0",
-    "@ceramicnetwork/common": "2.33.0",
-    "@ceramicnetwork/http-client": "2.30.0",
-    "@composedb/cli": "0.5.0",
-    "@composedb/client": "0.5.0",
-    "@composedb/devtools": "0.5.0",
-    "@composedb/devtools-node": "0.5.0",
+    "@airstack/node": "^0.0.5",
+    "@ankr.com/ankr.js": "^0.4.2",
     "@didtools/pkh-ethereum": "^0.4.1",
     "@ethereum-attestation-service/eas-sdk": "^0.29.1",
+    "@supabase/supabase-js": "^2.38.0",
     "@types/cors": "^2.8.14",
     "axios": "^1.5.1",
     "cors": "^2.8.5",
@@ -43,6 +39,7 @@
     "morgan": "^1.10.0",
     "uint8arrays": "^4.0.6",
     "web-did-resolver": "^2.0.27",
+    "web3.storage": "^4.5.5",
     "winston": "^3.11.0"
   },
   "devDependencies": {

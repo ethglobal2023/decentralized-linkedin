@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>web3.storage</title>
+    <style>
+      body {
+        font-size: 16px;
+        font-family: -apple-system, system-ui;
+        padding: 0;
+        margin: 0;
+      }
+      form {
+        width: 500px;
+        padding: 16px;
+        max-width: 100%;
+        display: block;
+        margin: 0 auto;
+        color:#333;
+      }
+      label {
+        display: block;
+        padding: 32px 0 8px;
+        font-weight: 700;
+      }
+      #token {
+        width: 100%;
+        padding: 4px;
+        font-size: 1.2rem;
+      }
+      #output {
+        display: block;
+        padding: 16px;
+        margin: 0;
+        color: lime;
+        background:#222;
+        font-family: Courier New, ui-monospace, monospace;
+        font-weight: 500;
+        line-height: 1.6;
+        position: fixed;
+        bottom: 0;
+        height: 33.3%;
+        width: 100%;
+        overflow-y: scroll;
+      }
+      #output a {
+        color: aqua
+      }
+      input[type=submit] {
+        display: block;
+        padding: 4px 16px;
+        font-weight: 700;
+        font-size: 16px;
+        margin-top: 32px;
+      }
+      h1 {
+        text-align: center;
+        font-size: 24px;
+      }
+      h1 span {
+        display: block;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>⁂
+        <span>web3.storage</span>
+      </h1>
+    </header>
+    <form id="upload-form">
+      <label for="token">Paste your web3.storage API token here</label>
+      <input type="password" id="token" value="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkaWQ6ZXRocjoweGM2NDQ2ODEwNjVCMTIyOWM0ZDZiNDJENkE3MUU0QjIzYjhhMzVkZjYiLCJpc3MiOiJ3ZWIzLXN0b3JhZ2UiLCJpYXQiOjE2OTY3Mjk3NTE4MTMsIm5hbWUiOiJldGhHbG9iYWxPbmxpbmUyMDIzIn0.uN4O_bvnaVNnM7D7W7FJAOAMufAAs6W-WNQGo-3Jkfw" required />
+      <label>Pick files to store</label>
+      <input type="file" id="filepicker" name="fileList" multiple required />
+      <input type="submit" value="Submit" id="submit" />
+    
+    </form>
+    <form id="download-form">CID to get <input type="text" id="cidin"  />   <input type="submit" value="Download" id="downloadbutton" /> </form>
+   
+    <div id="output"></div>
+    <script type="module">
+      import { Web3Storage } from 'https://cdn.jsdelivr.net/npm/web3.storage/dist/bundle.esm.min.js'
+
+      const form = document.querySelector('#upload-form')
+      const filepicker = document.querySelector('#filepicker')
+      const tokenInput = document.querySelector('#token')
+      const output = document.querySelector('#output')
+
+      const downloadform = document.querySelector('#download-form')
+      let cidinput = document.querySelector('#cidin').value
+
+      let last_fname_uploaded="";
+      showMessage('> ⁂ waiting for form submission...')
+
+      form.addEventListener('submit', async function (event) {
+        // don't reload the page!
+        event.preventDefault()
+
+        showMessage('> 📦 creating web3.storage client')
+        const token = tokenInput.value
+        const client = new Web3Storage({ token })
+
+        showMessage('> 🤖 chunking and hashing the files (in your browser!) to calculate the Content ID')
+        const files = filepicker.files  //this allows you to pick multiple files but we shoul just get one.  For now I will assume that the filename in the first location is the one that matters 
+        if(files[0])
+          last_fname_uploaded=files[0].name;
+        const cid = await client.put(files, {
+          onRootCidReady: (localCid) => {
+            showMessage(`>  Selected file : ${last_fname_uploaded} `)
+            showMessage(`> 🔑 locally calculated Content ID: ${localCid} `)
+            showMessage('> 📡 sending files to web3.storage ')
+          },
+          onStoredChunk: (bytes) => showMessage(`> 🛰 sent ${bytes.toLocaleString()} bytes to web3.storage`)
+        })
+        showMessage(`> ✅ web3.storage now hosting ${cid}`)
+        showLink(`https://dweb.link/ipfs/${cid}/${last_fname_uploaded}`)
+        document.getElementById('cidin').value = `${cid}/${last_fname_uploaded}`;
+        
+      }, false)
+
+      downloadform.addEventListener('submit', async function (event) {
+        // don't reload the page!
+        event.preventDefault()
+
+
+            cidinput = document.querySelector('#cidin').value
+
+            if(cidinput.split('/').length<2 || cidinput.split('.').length<2  ){
+              showMessage("REMEMBER to include the file at the end of the CID  "+ cidinput)
+
+              console.error("REMEMBER to include the file at the end of the CID  "+ cidinput)
+            }
+
+            const dllink = `https://cloudflare-ipfs.com/ipfs/${cidinput}`;
+
+            try {
+
+            const response = await fetch(dllink);
+            showMessage("-- fetch finished ---")
+            const txtdoc = await response.text()
+
+           
+             
+            showMessage("-- TEXT format  ---")
+              showMessage("txtdoc: "+txtdoc)
+ 
+
+
+              try{
+              var myHeaders = new Headers();
+              myHeaders.append("Authorization", "Bearer  eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFidW9lbnN2a29mc3R1aG5meHpuIiwicm9sZSI6ImFub24iLCJpYXQiOjE2OTY4MDc3MTksImV4cCI6MjAxMjM4MzcxOX0.WiGeLc4r2OZhX_4bkIUeAOGjq-cXGmBN65i2qXfPnn4");
+              myHeaders.append("apikey", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFidW9lbnN2a29mc3R1aG5meHpuIiwicm9sZSI6ImFub24iLCJpYXQiOjE2OTY4MDc3MTksImV4cCI6MjAxMjM4MzcxOX0.WiGeLc4r2OZhX_4bkIUeAOGjq-cXGmBN65i2qXfPnn4");
+              myHeaders.append("Content-Type", "application/json");
+             // myHeaders.append("Access-Control-Allow-Origin","http://localhost:8080")
+
+              var raw = JSON.stringify({
+                "_cid": cidinput
+              });
+
+              var requestOptions = {
+                method: 'POST',
+                headers: myHeaders,
+                body: raw,
+                redirect: 'follow'
+              };
+
+              console.log("Now reading agian from our server to make sure we have it saved, should be faster ")
+              const response2 = await  fetch("https://qbuoensvkofstuhnfxzn.supabase.co/rest/v1/rpc/ipfs", requestOptions);
+              showMessage("-- FROM our servers   ---")
+              const txtdoc2 = await response.text()
+              console.log("OUr reply "+txtdoc2)
+            
+          } catch (error2) {
+              showMessage("error2:"+error2)
+                console.error("Error2:", error2);
+              }
+        
+ 
+   
+             // showMessage("JSON:"+JSON.stringify(txtdoc))
+         
+            1==1;
+            } catch (error) {
+              showMessage("error:"+error)
+                console.error("Error:", error);
+              }
+ 
+
+            },false);
+ 
+
+
+      function showMessage (text) {
+        const node = document.createElement('div')
+        node.innerText = text
+        output.appendChild(node)
+      }
+
+      function showLink (url) {
+        const node = document.createElement('a')
+        node.href = url
+        node.innerText = `> 🔗 ${url}`
+        output.appendChild(node)
+      }
+    </script>
+  </body>
+</html>
