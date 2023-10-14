@@ -1,0 +1,19 @@
+.form-input {
+    @apply p-2 mb-4 border rounded;
+}
+
+.submit-button {
+    @apply p-2 bg-blue-500 text-white rounded cursor-pointer;
+}
+
+.title {
+    @apply text-xl font-semibold;
+}
+
+.response-title {
+    @apply font-semibold text-lg mb-2;
+}
+
+.error-message {
+    @apply text-red-500;
+}
