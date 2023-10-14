@@ -1,7 +1,7 @@
 import React, { ReactNode, useContext, useState } from "react";
 import { useWallet } from "../../hooks/useWallet";
 import JSONPretty from "react-json-pretty";
-import { SubmitHandler, useForm } from "react-hook-form";
+import { Controller, SubmitHandler, useFieldArray, useForm } from "react-hook-form";
 import { BACKEND_URL, EASConfigContext } from "./EASConfigContext";
 import { useAccount, useWalletClient } from "wagmi";
 import { EAS, SchemaEncoder } from "@ethereum-attestation-service/eas-sdk";
@@ -11,15 +11,15 @@ import "./AdminCreateAttestation.css"
 
 
 interface MediaAttestationForm {
-  public: boolean;
+  hidden: boolean;
   participant: string;
-  keywordsProven: string[];
+  keywordsProven: { keyword: string }[];
   refUrl: string;
   refType: string;
 }
 
 interface PublicInterviewForm {
-  public: boolean;
+  hidden: boolean;
   interviewee: string;
   videoUrl: string;
   positionTitle: string;
@@ -30,6 +30,7 @@ interface PublicInterviewForm {
 type MakeAttestationReqVars = {
   schema: string;
   schemaId: string;
+  attestationType: string;
   easChainId: number;
   issuer: string;
   recipient: string;
@@ -43,6 +44,7 @@ const makeAttestationRequest = async (vars: MakeAttestationReqVars) => {
   const {
     schema,
     schemaId,
+    attestationType,
     easChainId,
     recipient,
     values,
@@ -117,8 +119,9 @@ const makeAttestationRequest = async (vars: MakeAttestationReqVars) => {
   eas.connect(signer);
   const offchain = await eas.getOffchain();
 
-  console.log("Encoding schema");
+  console.log("Encoding schema `", schema, "`");
   const schemaEncoder = new SchemaEncoder(schema);
+  console.log("Encoding data", values)
   const encoded = schemaEncoder.encodeData(values);
   const time = Math.floor(Date.now() / 1000);
 
@@ -141,6 +144,7 @@ const makeAttestationRequest = async (vars: MakeAttestationReqVars) => {
     },
     signer,
   );
+
   // un-comment the below to process an on-chain timestamp
   // console.log("Adding an on-chain timestamp")
   // const transaction = await eas.timestamp(offchainAttestation.uid);
@@ -148,14 +152,16 @@ const makeAttestationRequest = async (vars: MakeAttestationReqVars) => {
   // await transaction.wait();
   // ts ignore nextline because Bigint doesn't have toJSON as a function
 
+  console.log("offchainAttestation", offchainAttestation)
+  console.log(account)
   // @ts-ignore-next-line
   BigInt.prototype.toJSON = function () {
     return this.toString();
   };
   const requestBody = {
     ...offchainAttestation,
-    account: account.toLowerCase(),
-    attestationType: "met_irl",
+    account: account.address.toLowerCase(),
+    attestationType,
   };
 
   const requestOptions = {
@@ -178,26 +184,35 @@ export const CreateAttestMediaForm: React.FC = ({}) => {
   const [attesting, setAttesting] = useState(false);
   const [jsonResponse, setJsonResponse] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
-  const schema =
-    "bool public,string participant,string[] keywordsProven,string refUrl,string refType";
-  const schemaId =
-    "0x3bd56e81d71d4552327d80c7adc5ab73afcd3d6bdd02668c82f8d65141b6e7c0";
+
+
+
+
   const { chainId: easChainId, contractAddress } = useContext(EASConfigContext);
   const {
     register,
     handleSubmit,
     watch,
     formState: { errors },
+    control
   } = useForm<MediaAttestationForm>({
     defaultValues:{
-      public: true,
+      hidden: false,
       participant: "0x9cbC225B9d08502d231a6d8c8FF0Cc66aDcc2A4F",
-      keywordsProven: ["video", "interview"],
+      keywordsProven: [{keyword: "video"}, {keyword: "interview"}],
       refUrl: "https://www.youtube.com/watch?v=oHg5SJYRHA0",
       refType: "video",
     }
   });
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name: "keywordsProven",
+  });
 
+  const schema =
+    "bool hidden,string[] keywordsProven,string refUrl,string refType";
+  const schemaId =
+    "0x05c2e1f0b48be70e62aa2f5b5ee334b6bab15722c7c859d8c22c4b6ca7166c14";
   if (!address) {
     return (
       <div>
@@ -205,24 +220,27 @@ export const CreateAttestMediaForm: React.FC = ({}) => {
       </div>
     );
   }
+
   const onSubmit: SubmitHandler<MediaAttestationForm> = async (data) => {
     setAttesting(true);
     try {
       const values = [
-        { name: "public", type: "bool", value: data.public },
-        { name: "participant", type: "string", value: data.participant },
+        { name: "hidden", type: "bool", value: data.hidden },
         {
           name: "keywordsProven",
           type: "string[]",
-          value: data.keywordsProven,
+          value: data.keywordsProven.map((item) => item.keyword),
         },
         { name: "refUrl", type: "string", value: data.refUrl },
         { name: "refType", type: "string", value: data.refType },
       ];
 
+      console.log("Making attestation request with values", values)
+
       const res = await makeAttestationRequest({
         schema,
         schemaId,
+        attestationType: "proveSkills",
         easChainId,
         issuer: address,
         recipient: data.participant,
@@ -231,10 +249,13 @@ export const CreateAttestMediaForm: React.FC = ({}) => {
         walletClient,
         connector,
       });
+      console.log("res", res)
       setJsonResponse(res);
     } catch (error: any) {
+      console.log("error", error)
       setErrorMessage(error);
     }
+
     setAttesting(false);
   };
 
@@ -249,12 +270,54 @@ export const CreateAttestMediaForm: React.FC = ({}) => {
             Create attestation that proves skills w/ media
           </p>
         </div>
-        <input type="checkbox" {...register("public", { required: true })} className="form-checkbox"/>
-        <label htmlFor="public" className="form-checkbox-label">Public</label>
-        <input {...(register("participant"), { required: true })} className="form-input" placeholder="Participant" />
-        <input {...(register("keywordsProven"), { required: true })} className="form-input" placeholder="Keywords Proven (comma separated)" />
-        <input {...(register("refUrl"), { required: true })} className="form-input" placeholder="Reference URL" />
-        <input {...(register("refType"), { required: true })} className="form-input" placeholder="Reference Type" />
+        <div className="flex items-center mb-2">
+          <input type="checkbox" id="hidden" {...register("hidden", { required: true })} className="form-checkbox"/>
+          <label htmlFor="hidden" className="form-checkbox-label ml-2">Hidden</label>
+        </div>
+        <input {...(register("participant"), { required: true })} className="form-input" placeholder="Participant"
+        defaultValue={"0x9cbC225B9d08502d231a6d8c8FF0Cc66aDcc2A4F"}
+        />
+
+        <ul className="space-y-4">
+          {fields.map((item, index) => (
+            <li key={item.id} className="flex items-center space-x-4">
+              <Controller
+                name={`keywordsProven.${index}.keyword`}
+                control={control}
+                defaultValue={item.keyword} // make sure to set up defaultValue
+                render={({ field }) => (
+                  <input
+                    {...field}
+                    className="border p-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                    placeholder="Keyword"
+                  />
+                )}
+              />
+              <button
+                type="button"
+                onClick={() => remove(index)}
+                className="bg-red-500 text-white p-2 rounded-lg hover:bg-red-600 transition duration-300 ease-in-out"
+              >
+                Remove
+              </button>
+            </li>
+          ))}
+        </ul>
+
+        {/*TODO style is heresy*/}
+        <button
+          type="button"
+          className={"submit-button"}
+          onClick={() => append({ keyword: "" })}
+        >
+          Add Keyword
+        </button>
+        <input {...(register("refUrl"), { required: true })} className="form-input" placeholder="Reference URL"
+        defaultValue={"https://www.youtube.com/watch?v=oHg5SJYRHA0"}
+        />
+        <input {...(register("refType"), { required: true })} className="form-input" placeholder="Reference Type"
+        defaultValue={"video"}/>
+
         <input type="submit" value="Submit" className="submit-button" />
         {/* errors will return when field validation fails  */}
       </form>
@@ -273,6 +336,7 @@ export const CreateAttestMediaForm: React.FC = ({}) => {
   );
 };
 
+
 export const CreateAttestPublicInterview: React.FC = ({}) => {
   const { address } = useWallet();
   const { connector } = useAccount();
@@ -289,9 +353,9 @@ export const CreateAttestPublicInterview: React.FC = ({}) => {
   } = useForm<PublicInterviewForm>();
 
   const schema =
-    "bool public,string interviewee,string videoUrl,string positionTitle,string[] keywords";
+    "bool hidden,string videoUrl,string positionTitle,string[] keywords";
   const schemaId =
-    "0x3cbc700e482fc1444abb73c329a02d52fd12adaca8d16eabf1343ffa9f3fd6a0"; // Update if necessary
+    "0x378de8339306aba178801652f305e6d8c92237819a761eae3d432bd96ce3c8f4"; // Update if necessary
 
   if (!address) {
     return (
@@ -305,8 +369,7 @@ export const CreateAttestPublicInterview: React.FC = ({}) => {
     setAttesting(true);
     try {
       const values = [
-        { name: "public", type: "bool", value: data.public },
-        { name: "interviewee", type: "string", value: data.interviewee },
+        { name: "hidden", type: "bool", value: data.hidden },
         { name: "videoUrl", type: "string", value: data.videoUrl },
         { name: "positionTitle", type: "string", value: data.positionTitle },
         { name: "keywords", type: "string[]", value: data.keywords },
@@ -315,6 +378,7 @@ export const CreateAttestPublicInterview: React.FC = ({}) => {
       const res = await makeAttestationRequest({
         schema,
         schemaId,
+        attestationType: "publicInterview",
         easChainId,
         issuer: address,
         recipient: data.interviewee,
@@ -341,8 +405,11 @@ export const CreateAttestPublicInterview: React.FC = ({}) => {
             Create attestation with public interview
           </p>
         </div>
-        <input type="checkbox" {...register("public", { required: true })} className="form-checkbox"/>
-        <label htmlFor="public" className="form-checkbox-label">Public</label>
+
+        <div className="flex items-center mb-2">
+          <input type="checkbox" id="hidden" {...register("hidden", { required: true })} className="form-checkbox"/>
+          <label htmlFor="hidden" className="form-checkbox-label ml-2">Hidden</label>
+        </div>
         <input {...(register("interviewee"), { required: true })} className="form-input" placeholder="Interviewee" />
         <input {...(register("videoUrl"), { required: true })} className="form-input" placeholder="Video URL" />
         <input {...(register("positionTitle"), { required: true })} className="form-input" placeholder="Position Title" />
@@ -358,19 +425,8 @@ export const CreateAttestPublicInterview: React.FC = ({}) => {
 
       <div className="mt-4">
         <h2 className="response-title">Response</h2>
-        {errorMessage && <div className="error-message">{errorMessage}</div>}
-        <JSONPretty id="json-pretty" data={jsonResponse} />
+        <JSONPretty id="json-pretty" data={jsonResponse || errorMessage} />
       </div>
-    </div>
-  );
-};
-
-const FormContainer: React.FC<{
-  children: any;
-}> = ({ children }) => {
-  return (
-    <div className="Container">
-      <div className="WhiteBox">{children}</div>
     </div>
   );
 };

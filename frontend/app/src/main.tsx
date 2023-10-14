@@ -4,7 +4,6 @@ import { createRoot } from "react-dom/client";
 import "@rainbow-me/rainbowkit/styles.css";
 import {
   connectorsForWallets,
-  darkTheme,
   RainbowKitProvider,
 } from "@rainbow-me/rainbowkit";
 import {
@@ -34,19 +33,17 @@ import ShowConnectDialogWhenNotConnected from "./components/ShowConnectDialogWhe
 import "@xmtp/react-components/styles.css";
 import { WalletProvider } from "./contexts/WalletContext";
 import "./index.css";
-import { ChangeNetworkButton } from "./components/ChangeNetworkButton";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { Inbox } from "./components/Inbox";
-import { Profile } from "./components/Profile";
 import { SupabaseProvider } from "./contexts/SupabaseContext";
 import { Search } from "./components/Search";
 import { EasConfigContextProvider } from "./components/admin/EASConfigContext";
-import AdminCreateAttestation from "./components/admin/AdminCreateAttestation";
 import { ProfileMediaCard } from "./components/ProfileMediaCard";
 import { AdminManualVerificationInbox } from "./components/admin/AdminManualVerificationInbox";
 import ProfileCard from "./components/ProfileCard";
 import { ProfilePublish } from "./components/ProfilePublish";
 import Navbar from "./components/Navbar";
+import { AdminHome } from "./components/admin/AdminHome";
 
 const DB_VERSION = 1;
 
@@ -94,10 +91,6 @@ const router = createBrowserRouter([
     element: <Inbox />, //TODO this should probably be the "Message" and "NewMessage" components in the Inbox.tsx file
   },
   {
-    path: "/profile/:address",
-    element: <Profile />,
-  },
-  {
     path: "/search",
     element: <Search />,
   },
@@ -105,7 +98,7 @@ const router = createBrowserRouter([
     path: "/admin",
     element: (
       <EasConfigContextProvider>
-        <AdminCreateAttestation />
+        <AdminHome />
         <ProfileMediaCard cid={"cid:testcid4"} mediaType={"publication"} />
         <ProfileMediaCard
           cid={`cid:testcid${Date.now()}`}
@@ -126,16 +119,8 @@ const router = createBrowserRouter([
     path: "/inbox",
     element: <Inbox />,
   },
-  { //TODO Delete this route, overlaps with profile/:address below
-    path: "/profile",
-    element: <ProfileCard />,
-  },
   {
-    path: "/profile2",
-    element: <Profile />,
-  },
-  {
-    path: "/profile3",
+    path: "/profile/:address",
     element: <ProfileCard />,
   },
   {
@@ -146,17 +131,17 @@ const router = createBrowserRouter([
 
 createRoot(document.getElementById("root") as HTMLElement).render(
   <WagmiConfig config={wagmiConfig}>
-    <RainbowKitProvider  chains={chains}>
+    <RainbowKitProvider chains={chains}>
       <StrictMode>
         <SupabaseProvider>
           <WalletProvider>
             <XMTPProvider
               dbVersion={DB_VERSION}
               contentTypeConfigs={contentTypeConfigs}
-            ><Navbar/>
+            >
+              <Navbar />
               <div className="container mx-auto">
                 <ShowConnectDialogWhenNotConnected>
-                  {/* <ChangeNetworkButton /> */}
                   <RouterProvider router={router} />
                 </ShowConnectDialogWhenNotConnected>
               </div>

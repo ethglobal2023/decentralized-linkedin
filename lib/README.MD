@@ -1,0 +1,1 @@
+Import with "lib": "workspace:*"

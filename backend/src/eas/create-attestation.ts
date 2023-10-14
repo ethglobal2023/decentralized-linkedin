@@ -1,14 +1,11 @@
 import { NextFunction, Request, Response } from "express";
 import { logger } from "../index.js";
 import Joi from "joi";
-import {
-  extractAddressFromAttestation,
-  signatureIsFromAttester,
-  VerifyEasRequest,
-} from "./util.js";
-import { config, supabase } from "../config.js";
+import { supabase } from "../config.js";
+import { AttestationShareablePackageObject } from "@ethereum-attestation-service/eas-sdk";
+import { extractAddressFromAttestation, validAttestation } from "lib";
 
-type AttestationRequest = {
+export type CreateAttestationRequest = {
   uid: string;
   account: string;
   signature: {
@@ -16,7 +13,7 @@ type AttestationRequest = {
     s: string;
     v: number;
   };
-  types: any;  // The exact type needs to be determined
+  types: any; // The exact type needs to be determined
   domain: {
     name: string;
     version: string;
@@ -35,10 +32,17 @@ type AttestationRequest = {
     revocable?: boolean;
     nonce?: number;
   };
-  attestationType: "todo" | "humanity" | "met_irl" | "resume" | "review" | "confirmed_skill" | "confirmed_language";
+  attestationType: //TODO add check to db
+    | "todo"
+    | "humanity"
+    | "met_irl" //Left here so old code samples work
+    | "resume"
+    | "review"
+    | "media"
+    | "publicInterview";
 };
 
-const attestationRequestSchema = Joi.object<AttestationRequest>({
+const attestationRequestSchema = Joi.object<CreateAttestationRequest>({
   uid: Joi.string().required(),
   account: Joi.string().required(),
   signature: Joi.object({
@@ -65,14 +69,23 @@ const attestationRequestSchema = Joi.object<AttestationRequest>({
     revocable: Joi.boolean().optional(),
     nonce: Joi.number().optional(),
   }),
-  attestationType: Joi.string().valid("todo", "humanity", "met_irl", "resume", "review", "confirmed_skill", "confirmed_language")
+  attestationType: Joi.string().valid(
+    "todo",
+    "humanity",
+    "met_irl",
+    "resume",
+    "review",
+    "confirmed_skill",
+    "confirmed_language"
+  ),
 });
 
 // The EAS format supplied matches when it's fetched from Ceramic, but doesn't match when it's created through the app
 // This is because the message has additional fields to prevent replay attacks
 // This function converts the format from the app to the format fetched from Ceramic
-const appAttestationToEASFormat = (data: any): VerifyEasRequest => {
-
+const appAttestationToEASFormat = (
+  data: any
+): AttestationShareablePackageObject => {
   const attestation2 = {
     sig: {
       domain: {
@@ -109,20 +122,22 @@ export const createNewAttestation = async (
   res: Response,
   next: NextFunction
 ) => {
-
   // Attestation is verified in middleware before this function is called
   logger.debug("Create attestation request:", req.body);
 
-  const { error: validationError, value } = attestationRequestSchema.validate(req.body);
+  const { error: validationError, value } = attestationRequestSchema.validate(
+    req.body
+  );
   if (validationError) {
     logger.error("Attestation request validation error:", validationError);
     return res.status(400).send(validationError.details[0].message);
   }
 
-  const { message, uid, account, domain, types, signature, attestationType } = value;
+  const { message, uid, account, domain, types, signature, attestationType } =
+    value;
 
   const easDocument = appAttestationToEASFormat(value);
-  if (!signatureIsFromAttester(account, easDocument)) {
+  if (!validAttestation(easDocument)) {
     const recoveredAddress = extractAddressFromAttestation(easDocument);
     logger.debug(
       `Signature is not from the attester. Expected: ${account}, signer: ${recoveredAddress}`
@@ -137,7 +152,10 @@ export const createNewAttestation = async (
       .send("Attestation recipient is the same as the attester");
   }
 
-  const adminAccount = supabase.from("admin_signers").select("account").single();
+  const adminAccount = supabase
+    .from("admin_signers")
+    .select("account")
+    .single();
   if (!adminAccount) {
     logger.warn(
       `Signature is not from an admin account, got signer: ${account}`
@@ -145,35 +163,34 @@ export const createNewAttestation = async (
     return res.status(401).send("Signature is not from the trusted issuer");
   }
 
-  const {error} = await supabase
-    .from('attestations')
-    .insert({
-      id: uid,
-      ref_uid: message.refUID,
-      attester_address: account,
-      recipient_address: message.recipient,
-      eas_schema_address: message.schema,
-      revoked: false,
-      type: attestationType,
-      expiration_time: 0, //TODO, make sure this is populated in the ui
-      document: JSON.stringify(easDocument),
-    })
+  const { error } = await supabase.from("attestations").insert({
+    id: uid,
+    ref_uid: message.refUID,
+    attester_address: account,
+    recipient_address: message.recipient,
+    eas_schema_address: message.schema,
+    revoked: false,
+    type: attestationType,
+    expiration_time: 0, //TODO, make sure this is populated in the ui
+    document: JSON.stringify(easDocument),
+  });
 
-
-  if(error){
+  if (error) {
     logger.error("Failed to insert attestation error:", error);
-    res.status(500).json({error: `Failed to insert attestation: ${error}`})
+    res.status(500).json({ error: `Failed to insert attestation: ${error}` });
   }
-  const {data, error: selectError} = await supabase
+  const { data, error: selectError } = await supabase
     .from("attestations")
     .select()
-    .eq("id", uid)
-  console.log("Attestation created:", data)
+    .eq("id", uid);
+  console.log("Attestation created:", data);
 
-  if(selectError){
+  if (selectError) {
     logger.error("Failed to select attestation error:", selectError);
-    res.status(500).json({error: `Failed to select attestation: ${selectError}`})
+    res
+      .status(500)
+      .json({ error: `Failed to select attestation: ${selectError}` });
   }
 
-  return res.status(200).send(data)
+  return res.status(200).send(data);
 };

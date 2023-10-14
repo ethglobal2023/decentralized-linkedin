@@ -120,14 +120,14 @@ export const getOnChainAttestations = async (pk: string) => {
     {}
   );
   console.log(
-    "🚀 ~ file: util.ts:172 ~ getOnChainAttestations ~ res:",
+    "🚀 ~ file: index.ts:172 ~ getOnChainAttestations ~ res:",
     res!.data.attestations
   );
   return res!.data.attestations;
   }
   catch(error){
     console.log(
-        "🚀 ~ file: util.ts:193 ~ getOnChainAttestations ~ error:",        error) 
+        "🚀 ~ file: index.ts:193 ~ getOnChainAttestations ~ error:",        error)
     return [];
   }
   1 === 1;

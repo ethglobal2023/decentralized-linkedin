@@ -3,7 +3,6 @@ import {
   OFFCHAIN_ATTESTATION_VERSION,
   PartialTypedDataConfig,
 } from "@ethereum-attestation-service/eas-sdk";
-import { hexlify, Signature, verifyTypedData } from "ethers";
 
 export type VerifyEasRequest = {
   sig: any;
@@ -31,18 +30,3 @@ export const signatureIsFromAttester = (
   );
 };
 
-export const extractAddressFromAttestation = (
-  attestation: VerifyEasRequest
-) => {
-  const sig = Signature.from({
-    v: attestation.sig.signature.v,
-    r: hexlify(attestation.sig.signature.r),
-    s: hexlify(attestation.sig.signature.s),
-  }).serialized;
-  return verifyTypedData(
-    attestation.sig.domain,
-    attestation.sig.types,
-    attestation.sig.message,
-    sig
-  );
-};
