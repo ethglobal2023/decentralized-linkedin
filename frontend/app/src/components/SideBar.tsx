@@ -8,7 +8,7 @@ import {LuMessagesSquare} from "react-icons/lu"
 import { Link } from 'react-router-dom';
 const SideBar = () => {
   return (
-    <div style={{ display: 'flex', height: '100%', minHeight: '400px' }}>
+    <div style={{ display: 'flex', height: 'auto', minHeight: '400px' }} className=' border-r-2'>
     <Sidebar>
     <Menu>
         <MenuItem icon={<AiOutlineSearch/>} >Search</MenuItem>

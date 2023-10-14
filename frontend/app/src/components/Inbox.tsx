@@ -41,7 +41,7 @@ export const Inbox: React.FC = () => {
   }, [disconnect]);
 
   return (
-    <><SideBar/>
+    <div className=" flex"><SideBar/>
     <div className="Inbox">
       <div className="InboxHeader">
         <div className="InboxHeader__xmtp">
@@ -81,6 +81,6 @@ export const Inbox: React.FC = () => {
           )}
         </div>
       </div>
-    </div></>
+    </div></div>
   );
 };

@@ -4,6 +4,7 @@ import { createRoot } from "react-dom/client";
 import "@rainbow-me/rainbowkit/styles.css";
 import {
   connectorsForWallets,
+  darkTheme,
   RainbowKitProvider,
 } from "@rainbow-me/rainbowkit";
 import {
@@ -45,6 +46,7 @@ import { ProfileMediaCard } from "./components/ProfileMediaCard";
 import { AdminManualVerificationInbox } from "./components/admin/AdminManualVerificationInbox";
 import ProfileCard from "./components/ProfileCard";
 import { ProfilePublish } from "./components/ProfilePublish";
+import Navbar from "./components/Navbar";
 
 const DB_VERSION = 1;
 
@@ -144,17 +146,17 @@ const router = createBrowserRouter([
 
 createRoot(document.getElementById("root") as HTMLElement).render(
   <WagmiConfig config={wagmiConfig}>
-    <RainbowKitProvider chains={chains}>
+    <RainbowKitProvider  chains={chains}>
       <StrictMode>
         <SupabaseProvider>
           <WalletProvider>
             <XMTPProvider
               dbVersion={DB_VERSION}
               contentTypeConfigs={contentTypeConfigs}
-            >
+            ><Navbar/>
               <div className="container mx-auto">
                 <ShowConnectDialogWhenNotConnected>
-                  <ChangeNetworkButton />
+                  {/* <ChangeNetworkButton /> */}
                   <RouterProvider router={router} />
                 </ShowConnectDialogWhenNotConnected>
               </div>
