@@ -131,19 +131,17 @@ export const rest_api_save_to_db = async (
   1 == 1;
   if (req_body === undefined || req_body === null) req_body = {};
   // @ts-ignore
-  const { data, error } = await supabase
-    .from("rest_cache")
-    .upsert({
-      url: url,
-      method: method,
-      req_body: req_body,
-      response_body: res.data.data,
-      status: res.status,
-    });
+  const { data, error } = await supabase.from("rest_cache").upsert({
+    url: url,
+    method: method,
+    req_body: req_body,
+    response_body: res.data.data,
+    status: res.status,
+  });
 
   console.log(error);
   1 === 1;
-  return res;
+  return res.data;
 };
 
 export const getWeb3BioNextId = async (pk: string) => {
@@ -162,12 +160,20 @@ export const getAllAttestations = async (pk: string) => {
 
   //let res =await axios.post("https://optimism.easscan.org/graphql",{query:query,variables:variables})
 
-  await rest_api_save_to_db(
+  // +1 for attestation, + gitcoin passport score
+  // 0x843829986e895facd330486a61Ebee9E1f1adB1a
+
+  const res = await rest_api_save_to_db(
     "https://optimism.easscan.org/graphql",
     "post",
     { query: query, variables: variables },
     {}
   );
+  console.log(
+    "🚀 ~ file: util.ts:172 ~ getAllAttestations ~ res:",
+    res!.data.attestations
+  );
+  return res!.data.attestations;
   1 === 1;
 };
 

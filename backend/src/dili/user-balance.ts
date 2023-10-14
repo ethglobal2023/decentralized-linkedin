@@ -20,7 +20,7 @@ interface Asset {
   tokenType: string;
 }
 
-const filterUserAssets = async (): Promise<Asset[]> => {
+export const filterUserAssets = async (): Promise<Asset[]> => {
   const userAssets: GetAccountBalanceReply = await balances();
 
   const nativeCoins = ["ETH", "BNB", "MATIC"];
@@ -75,5 +75,5 @@ const filterUserAssets = async (): Promise<Asset[]> => {
 //   ],
 // };
 
-const filteredAssets = await filterUserAssets();
-console.log("filtered", filteredAssets);
+// const filteredAssets = await filterUserAssets();
+// console.log("filtered", filteredAssets);
