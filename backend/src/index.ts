@@ -3,7 +3,6 @@ import winston from "winston";
 import morgan from "morgan";
 import cors from "cors";
 import { config } from "./config.js";
-import { search } from "./search.js";
 import { createNewAttestation } from "./eas/create-attestation.js";
 import { requestVerification } from "./eas/request-manual-verification.js";
 import { signatureVerificationMiddleware } from "./signature-auth.js";
@@ -42,7 +41,6 @@ if (process.env.NODE_ENV !== "production") {
   app.use(morgan("combined"));
 }
 
-app.get("/search", search);
 app.get("/profile", getResume);
 app.get("/attestations", getAttestationsForAddress);
 app.post("/eas/verify", verifyAttestations);

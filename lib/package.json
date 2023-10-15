@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "description": "",
   "main": "dist/index.js",
+  "files": [
+    "lib"
+  ],
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -12,8 +15,7 @@
     "codegen": "graphql-codegen --config codegen.ts",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
-    "prettier": "prettier src --check",
-    "prettier:fix": "prettier -- --write"
+    "prettier": "prettier src --check"
   },
   "keywords": [],
   "author": "",
