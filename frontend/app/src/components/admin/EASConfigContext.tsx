@@ -15,7 +15,7 @@ export type EASChainConfig = {
   rpcProvider: string;
 };
 
-//TODO This is sloppy, fix it when we port to NextJS
+// @ts-ignore
 export const BACKEND_URL = import.meta.env.VITE_API_BASE_URL;
 console.log("BACKEND_URL: ", BACKEND_URL);
 console.log("import.meta.env: ", import.meta.env);
