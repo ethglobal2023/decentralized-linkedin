@@ -1,0 +1,168 @@
+<!--   NOTE THIS HAS NOT BEEN TESTED --><!--   NOTE THIS HAS NOT BEEN TESTED --><!--   NOTE THIS HAS NOT BEEN TESTED --><!--   NOTE THIS HAS NOT BEEN TESTED --><!--   NOTE THIS HAS NOT BEEN TESTED --><!--   NOTE THIS HAS NOT BEEN TESTED --><!--   NOTE THIS HAS NOT BEEN TESTED --><!--   NOTE THIS HAS NOT BEEN TESTED --><!--   NOTE THIS HAS NOT BEEN TESTED --><!--   NOTE THIS HAS NOT BEEN TESTED --><!--   NOTE THIS HAS NOT BEEN TESTED --><!--   NOTE THIS HAS NOT BEEN TESTED --><!--   NOTE THIS HAS NOT BEEN TESTED --><!--   NOTE THIS HAS NOT BEEN TESTED --><!--   NOTE THIS HAS NOT BEEN TESTED --><!--   NOTE THIS HAS NOT BEEN TESTED --><!--   NOTE THIS HAS NOT BEEN TESTED --><!--   NOTE THIS HAS NOT BEEN TESTED --><!--   NOTE THIS HAS NOT BEEN TESTED --><!--   NOTE THIS HAS NOT BEEN TESTED --><!--   NOTE THIS HAS NOT BEEN TESTED --><!--   NOTE THIS HAS NOT BEEN TESTED --><!--   NOTE THIS HAS NOT BEEN TESTED --><!--   NOTE THIS HAS NOT BEEN TESTED --><!--   NOTE THIS HAS NOT BEEN TESTED -->
+
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+
+    <meta charset="UTF-8" />
+    <title>web3.storage</title>
+    <style>
+      body {
+        font-size: 16px;
+        font-family: -apple-system, system-ui;
+        padding: 0;
+        margin: 0;
+      }
+      form {
+        width: 500px;
+        padding: 16px;
+        max-width: 100%;
+        display: block;
+        margin: 0 auto;
+        color:#333;
+      }
+      label {
+        display: block;
+        padding: 32px 0 8px;
+        font-weight: 700;
+      }
+      #token {
+        width: 100%;
+        padding: 4px;
+        font-size: 1.2rem;
+      }
+      #output {
+        display: block;
+        padding: 16px;
+        margin: 0;
+        color: lime;
+        background:#222;
+        font-family: Courier New, ui-monospace, monospace;
+        font-weight: 500;
+        line-height: 1.6;
+        position: fixed;
+        bottom: 0;
+        height: 33.3%;
+        width: 100%;
+        overflow-y: scroll;
+      }
+      #output a {
+        color: aqua
+      }
+      input[type=submit] {
+        display: block;
+        padding: 4px 16px;
+        font-weight: 700;
+        font-size: 16px;
+        margin-top: 32px;
+      }
+      h1 {
+        text-align: center;
+        font-size: 24px;
+      }
+      h1 span {
+        display: block;
+      }
+    </style>
+
+
+  </head>
+  <body>
+    <header>
+      <h1>⁂
+        <span>Login Test </span>
+      </h1>
+    </header>
+
+    <label id="issignedin"> </label>
+    <form id="signup">
+        <input type="email" id="signup-email" required />
+        password
+        <input type="password" id="signup-password" required />
+        pin 
+        <input type="password" id="signup-key-encryption-pin" required />
+        <input type="submit" value="Signup" id="signup-submit" />
+    </form>
+
+    <form id="loginform">
+
+        <input type="email"  id="login-email" required />
+        password
+        <input type="password" id="login-password" required />
+        pin
+        <input type="password" id="login-key-encryption-pin"  />
+        <input type="submit" value="Login" id="signup-submit" />
+    </form>
+
+    <form id="logout">
+        <input type="submit" value="LogOut" id="logout-submit" />
+    </form>
+
+
+   
+
+    <script type="module">
+   import  {
+    supabaseSignUpWithEmail,
+    loginSupabase,
+    signOutSupabase,
+    checkLoginStatusSupabase,
+    decryptWithDeviceKey,
+    decryptWithDeviceKeyImplied,
+    decryptWithPin,
+    derivePinSaltKey,
+    createNewWallet,
+    startup,
+    logedinuser,
+    wallet} from "../embedded_wallet.js";
+ 
+ 
+await startup();
+
+
+
+
+    const logoutform = document.querySelector('#logout')
+    logoutform.addEventListener('submit', async function (event) {
+        await signOutSupabase()
+    },false);
+
+
+    const loginform = document.querySelector('#loginform')
+    loginform.addEventListener('submit', async function (event) {
+        event.preventDefault()
+
+        try{
+        let user = await loginSupabase(document.getElementById('login-email').value,document.getElementById('login-password').value)
+
+        if (!localStorage.getItem("deviceprivatekey") && document.getElementById('login-key-encryption-pin').value){
+            decryptWithPin(document.getElementById('login-key-encryption-pin').value,user.user_metadata,user.user.user_metadta.pin_encrypted_private_key)
+        }
+        else {
+            console.error("loginform.addEventListener() ~~ You are missing a Device key, please login with a pin to recover");
+        }
+    }
+    catch(error){
+        console.log("loginform.addEventListener() ~~ "+error)
+
+    }
+         
+       
+
+    },false);
+
+    const signupform = document.querySelector('#signup')
+    signupform.addEventListener('submit', async function (event) {
+        // don't reload the page!
+        event.preventDefault()
+        supabaseSignUpWithEmail(document.getElementById('signup-email').value,document.getElementById('signup-password').value,document.getElementById('signup-key-encryption-pin').value)
+      }, false)
+
+
+
+ 
+      
+    </script>
+  </body>
+</html>
