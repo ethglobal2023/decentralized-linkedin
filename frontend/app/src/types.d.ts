@@ -1,3 +1,13 @@
+type OrganizationData = {
+  organizationName: string;
+  titleAtWork: string;
+  relationshipTimestamp: {
+    startDate: Date;
+    endDate: Date;
+  };
+  organizationWebsite: string;
+  type: "education" | "work" | "volunteer";
+};
 export type Resume = {
   dids: string[];
   pubKey: string;
@@ -7,6 +17,7 @@ export type Resume = {
     name: string;
     level: string;
   }[];
+  organization: OrganizationData[];
   educations: {
     end: string;
     links: {

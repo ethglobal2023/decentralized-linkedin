@@ -93,10 +93,10 @@ const router = createBrowserRouter([
     path: "/",
     element: <Inbox />, //TODO this should probably be the "Message" and "NewMessage" components in the Inbox.tsx file
   },
-  {
-    path: "/profile/:address",
-    element: <Profile />,
-  },
+  // {
+  //   path: "/profile/:address",
+  //   element: <Profile />,
+  // },
   {
     path: "/search",
     element: <Search />,
@@ -127,7 +127,7 @@ const router = createBrowserRouter([
     element: <Inbox />,
   },
   { //TODO Delete this route, overlaps with profile/:address below
-    path: "/profile",
+    path: "/profile/:address",
     element: <ProfileCard />,
   },
   {

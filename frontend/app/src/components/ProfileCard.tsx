@@ -9,6 +9,8 @@ import { Resume } from "../types";
 import { ipfsDownload } from "../ipfs";
 
 export default function ProfileCard() {
+  const { address: profileAddress } = useParams();
+  console.log(profileAddress);
   const [allStatuses, setAllStatus] = useState([]);
   const [currentImage, setCurrentImage] = useState({});
   const [progress, setProgress] = useState(0);
@@ -23,6 +25,7 @@ export default function ProfileCard() {
   const [error, setError] = useState("");
   const [fetchedProfile, setFetchedProfile] = useState<Resume>();
   useEffect(() => {
+   
     const fetchProfile = async () => {
       console.log(
         "Fetching profile for address: ",
@@ -33,7 +36,7 @@ export default function ProfileCard() {
         .select("cid")
         .eq(
           "address",
-          "0x9cbC225B9d08502d231a6d8c8FF0Cc66aDcc2A4F".toLowerCase(),
+          "0x6B72Dab4e5EbC5f18e298E9Fd1aa4Ff8cf636605".toLowerCase(),
         ) //TODO Replace this with pathparam
         .single();
       console.log("Found log for address: ", data);
@@ -54,6 +57,15 @@ export default function ProfileCard() {
 
   console.log("Profile: ", fetchedProfile);
 
+
+  const educationOrganization = fetchedProfile?.organization.filter(
+    organization => organization.type === "education"
+  );
+  console.log(educationOrganization);
+  const workOrganization = fetchedProfile?.organization.filter(
+    organization => organization.type === "work"
+  );
+  console.log(workOrganization);
   const uploadImage = () => {};
   const experience = [
     {
@@ -136,10 +148,10 @@ export default function ProfileCard() {
               src="https://avatars.githubusercontent.com/u/65860201?s=96&v=4"
               alt="profile-image"
             />
-            <h3 className="userName">Sakshi Shah</h3>
-            <p className="heading">Frontend Developer</p>
+            <h3 className="userName">{fetchedProfile?.firstName} {fetchedProfile?.lastName}</h3>
+            <p className="heading">{fetchedProfile?.description}</p>
 
-            <p className="location">Jamnagar,Gujarat,India</p>
+            <p className="location">{fetchedProfile?.preferredLocation}</p>
 
             <a
               className="website"
@@ -151,20 +163,19 @@ export default function ProfileCard() {
           </div>
 
           <div className="right-info">
-            <p className="college">Charusat University</p>
+            <p className="college">University</p>
             <p className="company">Techie Amigos</p>
           </div>
         </div>
-        <p className="about-me">Frontend and Blockchain Developer</p>
 
         <p className="skills">
           <span className="skill-label">Skills</span>:&nbsp;
-          Reactjs,Tailwind,Solidity
+          {fetchedProfile?.description}
         </p>
       </div>
 
       <div className="profile-card">
-        <h1 className="heading-2">Experience</h1>
+       { workOrganization && workOrganization.length > 0 &&<div><h1 className="heading-2">Experience</h1>
         <ul>
           {experience.map((item, index) => (
             <li key={index} className="experience-card">
@@ -187,30 +198,30 @@ export default function ProfileCard() {
               </div>
             </li>
           ))}
-        </ul>
-        <h1 className="heading-2">Education</h1>
+        </ul></div>}
+        {educationOrganization && educationOrganization.length>0 && <div><h1 className="heading-2">Education</h1>
         <ul>
-          {education.map((item, index) => (
+          {educationOrganization.map((item, index) => (
             <li key={index} className="experience-card">
               <div>
                 <br />
                 <img
                   className="experience-image"
-                  src={item.image}
+                  src="https://imgs.search.brave.com/m76M_P2x6d-LP9crPYcv9_x3EgIiE7fHS3LjbpOGEl8/rs:fit:860:0:0/g:ce/aHR0cHM6Ly90NC5m/dGNkbi5uZXQvanBn/LzAyLzAwLzk5Lzk5/LzM2MF9GXzIwMDk5/OTk3OF9pWVJISUVr/VWczWHJMY01RVFp6/R20wYTg4bWYzelQy/WS5qcGc"
                   alt="company-logo"
                 />
               </div>
               <div>
                 <br />
-                <strong>{item.university}</strong>
+                <strong>{item.organizationName}</strong>
                 <br />
-                <h3>{item.stream}</h3>
-                <p>{item.timeline}</p>
+                <h3>{item.titleAtWork}</h3>
+                <p>{new Intl.DateTimeFormat('en-US', { year: 'numeric', month: 'short' }).format(new Date(item.relationshipTimestamp.startDate))} - {new Intl.DateTimeFormat('en-US', { year: 'numeric', month: 'short' }).format(new Date(item.relationshipTimestamp.endDate))}</p>
                 <br />
               </div>
             </li>
           ))}
-        </ul>
+        </ul></div>}
       </div>
       {/* <div className="post-status-main">
         {allStatuses?.map((posts) => {

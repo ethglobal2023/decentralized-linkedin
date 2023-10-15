@@ -1,17 +1,43 @@
 import { useState } from "react";
-import { SubmitHandler, useForm } from "react-hook-form";
+import {
+  SubmitHandler,
+  useForm,
+  useFieldArray,
+  Controller,
+} from "react-hook-form";
 import { BACKEND_URL } from "./admin/EASConfigContext";
 import { MessageWithViemSignature } from "./admin/types";
 import { useWallet } from "../hooks/useWallet";
 import { useWalletClient } from "wagmi";
+import { DatePicker } from "antd";
 
 type PublishResumeMessage = {
   account: string;
   resume: string;
 };
-type FormInputs = {
-  payload: string;
+type OrganizationData = {
+  organizationName: string;
+  titleAtWork: string;
+  relationshipTimestamp: {
+    startDate: Date;
+    endDate: Date;
+  };
+  organizationWebsite: string;
+  type: "education" | "work" | "volunteer";
 };
+type FormInputs = {
+  firstName: string;
+  lastName: string;
+  language: string;
+  organizations: OrganizationData[];
+  description: string;
+  preferredName: string;
+  preferredTitle: string;
+  skillKeywords: string;
+  preferredLocation: string;
+};
+
+
 
 export function ProfilePublish() {
   const [payload, setPayload] = useState("");
@@ -20,16 +46,16 @@ export function ProfilePublish() {
   const [error, setError] = useState(null);
   const { address } = useWallet();
   const { data: walletClient } = useWalletClient();
-
+console.log(address)
   const {
     register,
     handleSubmit,
-    watch,
+    control,
     formState: { errors },
-  } = useForm<FormInputs>({
-    defaultValues: {
-      payload: `{"vc":[{"type":"VerifiablePresentation","proof":{"type":"DataIntegrityProof","domain":"4jt78h47fh47","created":"2018-09-14T21:19:10Z","challenge":"1f44d55f-f161-4938-a659-f8026467f126","proofValue":"zqpLMweBrSxMY2xHX5XTYV8nQAJeV6doDwLWxQeVbY4oey5q2pmEcqaqA3Q1gVHMrXFkXM3XKaxup3tmzN4DRFTLV","cryptosuite":"eddsa-2022","proofPurpose":"authentication","verificationMethod":"did:example:ebfeb1f712ebc6f1c276e12ec21#keys-1"},"@context":["https://www.w3.org/ns/credentials/v2","https://www.w3.org/ns/credentials/examples/v2"],"verifiableCredential":[{"id":"http://university.example/credentials/1872","type":["VerifiableCredential","ExampleAlumniCredential"],"proof":{"type":"DataIntegrityProof","created":"2023-06-18T21:19:10Z","proofValue":"zQeVbY4oey5q2M3XKaxup3tmzN4DRFTLVqpLMweBrSxMY2xHX5XTYV8nQApmEcqaqA3Q1gVHMrXFkXJeV6doDwLWx","cryptosuite":"eddsa-2022","proofPurpose":"assertionMethod","verificationMethod":"https://university.example/issuers/565049#key-1"},"issuer":"https://university.example/issuers/565049","@context":["https://www.w3.org/ns/credentials/v2","https://www.w3.org/ns/credentials/examples/v2"],"validFrom":"2010-01-01T19:23:24Z","credentialSubject":{"id":"did:example:ebfeb1f712ebc6f1c276e12ec21","alumniOf":{"id":"did:example:c276e12ec21ebfeb1f712ebc6f1","name":"Example University"}}}]}],"dids":["did:pkh:arweave:7wIU:kY9RAgTJEImkBpiKgVeXrsGV02T-D4dI3ZvSpnn7HSk","did:pkh:eip155:1:0xb9c5714089478a327f09197987f16f9e5d936e8a"],"pubKey":"0xb9c5714089478a327f09197987f16f9e5d936XXX","lastName":"von Neumann","firstName":"John","languages":[{"name":"english","level":"a2"},{"name":"german","level":"native"},{"name":"hungarian","level":"native"}],"educations":[{"end":"1929-10-12 00:00:00.00Z","links":[{"href":"ia903008.us.archive.org/31/items/A_C_WalczakTypke___Axiomatic_Set_Theory/Lecturenotes2006-2007eng.pdf","name":"Full thesis"},{"href":"en.wikipedia.org/wiki/Von_Neumann%E2%80%93Bernays%E2%80%93G%C3%B6del_set_theory","name":"Discussion"}],"start":"1925-10-12 00:00:00.00Z","title":"PHD","company":{"dns":"eth.ch","name":"ETH Zurich","preferredIcon":"https://ethz.ch/etc/designs/ethz/img/icons/ETH-APP-Icons-Theme-white/192-xxxhpdi.png"},"keywords":["set theory","ZFC","first order logic"],"description":"PHD title The axiomatic construction of general set theory"}],"description":"Hungarian-American mathematician, physicist, computer scientist, engineer and polymath.","occupations":[{"end":"1929-10-12 00:00:00.00Z","links":[{"href":"ia903008.us.archive.org/31/items/A_C_WalczakTypke___Axiomatic_Set_Theory/Lecturenotes2006-2007eng.pdf","name":"Full thesis"},{"href":"en.wikipedia.org/wiki/Von_Neumann%E2%80%93Bernays%E2%80%93G%C3%B6del_set_theory","name":"Discussion"}],"start":"1925-10-12 00:00:00.00Z","title":"Theoretical Chemistry Researcher","company":{"dns":"eth.ch","name":"ETH Zurich","preferredIcon":"https://ethz.ch/etc/designs/ethz/img/icons/ETH-APP-Icons-Theme-white/192-xxxhpdi.png"},"keywords":["set theory","ZFC","first order logic"],"description":"Research work related to The axiomatic construction of general set theory"}],"publications":[{"cid":"bafybeibhh6xja3u2gtegmz4afhi53r2xijn73al6b7yfdytsn43fcujoeq","doi":"doi.org/10.1007/978-3-642-61812-3_32","ISBN":"978-3-642-61812-3","href":"link.springer.com/chapter/10.1007/978-3-642-61812-3_32","type":"classic-peer-reviewed","title":"Preliminary Discussion of the Logical Design of an Electronic Computing Instrument","idChecks":[{"did":"did:pkh:arweave:XXXX:kY9RAgTJEImkBpiKgVeXrsGV02T-D4dI3ZvSpnn7HSk","sig":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"}],"keywords":["Memory Capacity","Delay Line","Memory Location","Function Table","Memory Organ"],"description":"Inasmuch as the completed device will be a general-purpose computing machine it should contain certain main organs relating to arithmetic, memory- storage, control and connection with the human operator. It is intended that the machine be fully automatic in character, i.e. independent of the human operator after the computation starts","contentChecks":[{"did":"did:pkh:arweave:XXXX:kY9RAgTJEImkBpiKgVeXrsGV02T-D4dI3ZvSpnn7HSk","sig":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"}]},{"cid":"bafybeic4gxngkwll4lfoljlvtxij5oewqbxsgayubxhhqdyipjmozp5ymu","href":"https://www.youtube.com/watch?v=vLbllFHBQM4","type":"media-interview","title":"America's Youth Wants To Know"},{}],"preferredName":"von Neumann","preferredTitle":"Lecturer","skill_keywords":["set theory","methematics"],"eoaAttestations":[],"preferredLocation":"Zurich and London"}`,
-    }
+  } = useForm<FormInputs>({});
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name: "organizations",
   });
 
   const onSubmit: SubmitHandler<FormInputs> = async (data, event) => {
@@ -38,10 +64,21 @@ export function ProfilePublish() {
     try {
       if (!walletClient) throw new Error("Wallet client not initialized");
       if (!address) throw new Error("Wallet address not initialized");
-
+      const formData = {
+        firstName: data.firstName,
+        lastName: data.lastName,
+        language: data.language,
+        organization: data.organizations,
+        description: data.description,
+        preferredName: data.preferredName,
+        preferredTitle: data.preferredTitle,
+        skillKeywords: data.skillKeywords,
+        preferredLocation: data.preferredLocation,
+      };
+      console.log(JSON.stringify(formData));
       const message: PublishResumeMessage = {
         account: address?.toLowerCase(),
-        resume: data.payload,
+        resume: JSON.stringify(formData),
       };
 
       const signature = await walletClient.signMessage({
@@ -61,7 +98,6 @@ export function ProfilePublish() {
         body: JSON.stringify(requestBody),
       }).then((res) => res.json());
 
-
       setResponse(res2);
     } catch (err: any) {
       setError(err.message);
@@ -70,18 +106,218 @@ export function ProfilePublish() {
 
   return (
     <div>
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <textarea
-          rows={20}
-          placeholder="Enter payload"
-          className={"border-2 border-blue-300 w-96"}
-          {...register("payload", { required: true })}
-        />
-        <button className={"bg-blue-300"} type="submit">Upload to IPFS</button>
+      <form onSubmit={handleSubmit(onSubmit)} className="bg-opacity-25 bg-black backdrop-blur-8.5 border border-opacity-20 rounded-lg shadow-lg p-8">
+        <label>
+          First Name:
+          <input
+            type="text"
+            {...register("firstName", { required: true })}
+            defaultValue="John"
+          />
+        </label>
+        <br />
+        <label>
+          Last Name:
+          <input
+            type="text"
+            {...register("lastName", { required: true })}
+            defaultValue="von Neumann"
+          />
+        </label>
+        <br />
+        <label>
+          Languages:
+          <label
+            htmlFor="languages"
+            className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+          >
+            Select an option
+          </label>
+          <select
+            {...register("language", { required: true })}
+            id="languages"
+            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+          >
+            <option selected>Choose a Language</option>
+            <option value="English">Englishs</option>
+            <option value="Hindi">Hindi</option>
+            <option value="French">French</option>
+            <option value="German">German</option>
+          </select>
+        </label>
+        <br />
+        {fields.map((organization, index) => (
+          <div key={organization.id}>
+            <label>
+              Organization Name:
+              <input
+                type="text"
+                {...register(`organizations.${index}.organizationName`, {
+                  required: true,
+                })}
+              />
+            </label>
+            <label>
+              Title:
+              <input
+                type="text"
+                {...register(`organizations.${index}.titleAtWork`, {
+                  required: true,
+                })}
+              />
+            </label>
+            <label>TimeLine</label>
+
+            <div date-rangepicker className="flex items-center">
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                  <svg
+                    className="w-4 h-4 text-gray-500 dark:text-gray-400"
+                    aria-hidden="true"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                  >
+                    <path d="M20 4a2 2 0 0 0-2-2h-2V1a1 1 0 0 0-2 0v1h-3V1a1 1 0 0 0-2 0v1H6V1a1 1 0 0 0-2 0v1H2a2 2 0 0 0-2 2v2h20V4ZM0 18a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8H0v10Zm5-8h10a1 1 0 0 1 0 2H5a1 1 0 0 1 0-2Z" />
+                  </svg>
+                </div>
+                <input
+                  {...register(
+                    `organizations.${index}.relationshipTimestamp.startDate`,
+                    {
+                      required: true,
+                    }
+                  )}
+                  name="start"
+                  type="text"
+                  date-rangepicker="true"
+                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                  placeholder="Select date start"
+                />
+              </div>
+              <span className="mx-4 text-gray-500">to</span>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                  <svg
+                    className="w-4 h-4 text-gray-500 dark:text-gray-400"
+                    aria-hidden="true"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                  >
+                    <path d="M20 4a2 2 0 0 0-2-2h-2V1a1 1 0 0 0-2 0v1h-3V1a1 1 0 0 0-2 0v1H6V1a1 1 0 0 0-2 0v1H2a2 2 0 0 0-2 2v2h20V4ZM0 18a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8H0v10Zm5-8h10a1 1 0 0 1 0 2H5a1 1 0 0 1 0-2Z" />
+                  </svg>
+                </div>
+                <input
+                  {...register(
+                    `organizations.${index}.relationshipTimestamp.endDate`,
+                    {
+                      required: true,
+                    }
+                  )}
+                  name="end"
+                  type="text"
+                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                  placeholder="Select date end"
+                />
+              </div>
+            </div>
+            <label>Type</label>
+            <select
+              {...register("language", { required: true })}
+              id="languages"
+              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            >
+              <option selected>Choose a Type</option>
+              <option value="Education">Education</option>
+              <option value="Experience">Experience</option>
+              <option value="Volunteer">Volunteer</option>
+            </select>
+            <button type="button" onClick={() => remove(index)}>
+              Remove Organization
+            </button>
+          </div>
+        ))}
+        <button
+          type="button"
+          onClick={() =>
+            append({
+              organizationName: "",
+              titleAtWork: "",
+              relationshipTimestamp: {
+                startDate: new Date(),
+                endDate: new Date(),
+              },
+              organizationWebsite: "",
+              type: "education",
+            })
+          }
+        >
+          Add Organization
+        </button>
+        <br />
+        <label>
+          Description:
+          <textarea
+            {...register("description", { required: true })}
+            defaultValue="Hungarian-American mathematician, physicist, computer scientist, engineer and polymath."
+          />
+        </label>
+        <br />
+        <label>
+          Preferred Name:
+          <input
+            type="text"
+            {...register("preferredName", { required: true })}
+            defaultValue="von Neumann"
+          />
+        </label>
+        <br />
+        <label>
+          Preferred Title:
+          <input
+            type="text"
+            {...register("preferredTitle", { required: true })}
+            defaultValue="Lecturer"
+          />
+        </label>
+        <br />
+        <label>
+          Skill Keywords:
+          <input
+            type="text"
+            {...register("skillKeywords", { required: true })}
+            defaultValue="set theory, mathematics"
+          />
+        </label>
+        <br />
+
+        <label>
+          Preferred Location:
+          <input
+            type="text"
+            {...register("preferredLocation", { required: true })}
+            defaultValue="Zurich and London"
+          />
+        </label>
+        <br />
+        <button className={"bg-blue-300"} type="submit">
+          Upload to IPFS
+        </button>
       </form>
       {cid && <div>CID: {cid}</div>}
       {error && <div>Error: {error}</div>}
       {response && JSON.stringify(response)}
     </div>
   );
+}
+
+function append(arg0: {
+  organizationName: string;
+  titleAtWork: string;
+  relationshipTimestamp: string;
+  organizationWebsite: string;
+  type: string;
+}) {
+  throw new Error("Function not implemented.");
 }
