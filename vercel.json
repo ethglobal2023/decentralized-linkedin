@@ -12,7 +12,7 @@
   "routes": [
     {
       "src": "/(.*)",
-      "dest": "/backend/dist/index.js"
+      "dest": "backend/dist/index.js"
     }
   ]
 }
