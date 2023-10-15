@@ -29,7 +29,17 @@ async function handleHttp(conn: Deno.Conn) {
     const readableStream = file.readable;
 
     // Build and send the response
-    const response = new Response(readableStream);
+    if(filepath.includes(".js")){
+    const response = new Response(readableStream,{
+      headers: {
+          'content-type': 'application/javascript'
+      }
+  });
     await requestEvent.respondWith(response);
+    }
+    else{
+      const response = new Response(readableStream);
+      await requestEvent.respondWith(response);
+    }
   }
 }
