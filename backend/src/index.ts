@@ -11,6 +11,8 @@ import { calcTrustScore } from "./dili/calcTrustScore.js";
 import { updateProfile } from "./profile/upsert-resume.js";
 import { confirmVerification } from "./eas/confirm-manual-verification.js";
 import { getResume } from "./profile/get-resume.js";
+import { getAttestationsForAddress } from "./eas/get-attestations.js";
+import { verifyAttestations } from "./eas/verify.js";
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -41,7 +43,9 @@ if (process.env.NODE_ENV !== "production") {
 }
 
 app.get("/search", search);
-app.get('/profile', getResume)
+app.get("/profile", getResume);
+app.get("/attestations", getAttestationsForAddress);
+app.post("/eas/verify", verifyAttestations);
 app.post("/eas/attest", createNewAttestation); //Signature verification is handled w/ EAS here, not in middleware
 app.post(
   "/eas/request-verification",

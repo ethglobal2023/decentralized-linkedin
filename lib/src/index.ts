@@ -23,14 +23,20 @@ export const verifyAttestation = (
   );
 };
 
-export const batchVerifyAttestations = (
-  documents: AttestationShareablePackageObject[]
+export const bulkVerifyAttestations: (documents: AttestationShareablePackageObject[]) => {validAttestations: AttestationShareablePackageObject[], invalidAttestations: AttestationShareablePackageObject[]} = (
+  documents
 ) => {
+  const validAttestations: AttestationShareablePackageObject[] = [];
+  const invalidAttestations: AttestationShareablePackageObject[] = [];
   for (const attestation of documents) {
-    if (!verifyAttestation(attestation)) {
-      return false;
+    const valid = verifyAttestation(attestation)
+    if (valid) {
+      validAttestations.push(attestation);
+    } else {
+      invalidAttestations.push(attestation);
     }
   }
+  return {validAttestations, invalidAttestations}
 };
 
 export const extractAddressFromAttestation = (
@@ -48,3 +54,4 @@ export const extractAddressFromAttestation = (
     sig
   );
 };
+

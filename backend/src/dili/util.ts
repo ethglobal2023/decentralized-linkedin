@@ -1,11 +1,6 @@
-import { NextFunction, Request, Response } from "express";
-import { logger } from "../index.js";
-import Joi from "joi";
 import { supabase } from "../config.js";
 
 import axios from "axios";
-
-
 
 const MAX_SCORE_CALC_AGE = 30; //TODO move to config
 
@@ -86,7 +81,7 @@ export const rest_api_save_to_db = async (
 export const getWeb3BioNextId = async (pk: string) => {
     try {
    let res = await rest_api_save_to_db("https://api.web3.bio/profile/" + pk, "get");
-   return res; 
+   return res;
     }
     catch(error){
         console.error("error in getWeb3BioNextId()... if its a 404 ignore it b/c that just means they had no data: "+error)
@@ -95,72 +90,6 @@ export const getWeb3BioNextId = async (pk: string) => {
 };
 
 
-
-//For now this is only looking on optimism ,  but we should do all other chains
-export const getOnChainAttestations = async (pk: string) => {
- 
-
-    //get on chain attestaitons 
-  let query =
-    "query Query($where: AttestationWhereInput) {  attestations(where: $where) {    id    data    attester    decodedDataJson    expirationTime    ipfsHash    isOffchain    recipient    refUID    revocable    revocationTime    revoked    schemaId    time    timeCreated    txid  }}";
-  let variables = { where: { recipient: { equals: pk } } };
-
-  console.log("LOOOK HERE variables=" + JSON.stringify(variables));
-
-  //let res =await axios.post("https://optimism.easscan.org/graphql",{query:query,variables:variables})
-
-  // +1 for attestation, + gitcoin passport score
-  // 0x843829986e895facd330486a61Ebee9E1f1adB1a
-
-  try{
-  const res = await rest_api_save_to_db(
-    "https://optimism.easscan.org/graphql",
-    "post",
-    { query: query, variables: variables },
-    {}
-  );
-  console.log(
-    "🚀 ~ file: index.ts:172 ~ getOnChainAttestations ~ res:",
-    res!.data.attestations
-  );
-  return res!.data.attestations;
-  }
-  catch(error){
-    console.log(
-        "🚀 ~ file: index.ts:193 ~ getOnChainAttestations ~ error:",        error)
-    return [];
-  }
-  1 === 1;
-};
-
-
-//For now this is only looking on optimism ,  but we should do all other chains
-export const getAllAttestations = async (pk: string) => {
-
-    try {
-         
-    //get internall offchain attestations 
-    const { data, error } = await supabase.from("attestations").select("*").eq("recipient_address", pk);
-    let offChain = data;
-
-    let onChain = await getOnChainAttestations(pk);
-    let all=onChain;
-    if(offChain && !!offChain.forEach){
-        // @ts-ignore
-        all= [...all, ...(offChain?.map( (r)=>{
-            return( {id:r.id,data:''+r.type,attester:r.attester_address,decodedDataJson:r.document,isOffCHain:true,recipient:r.recipient_address,refUID:r.ref_uid,revoked:r.revoked,revocable:true,schemaId:r.eas_schema_address,timeCreated:r.created_at,revocationTime:r.expiration_time})
-            }  ))]
-            
-    }
-    return all;
-    
-    }
-    catch (error){
-        console.error("getAllAttestations :::"+error)
-
-    }
-  1 === 1;
-};
 
 /*
 curl --request POST \

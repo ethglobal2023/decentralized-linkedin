@@ -359,10 +359,37 @@ importers:
       '@supabase/supabase-js':
         specifier: ^2.38.0
         version: 2.38.0
+      axios:
+        specifier: ^1.5.1
+        version: 1.5.1
+      dotenv:
+        specifier: ^16.3.1
+        version: 16.3.1
       ethers:
         specifier: ^6.7.1
         version: 6.7.1
+      graphql:
+        specifier: ^16.8.1
+        version: 16.8.1
+      graphql-tag:
+        specifier: ^2.12.6
+        version: 2.12.6(graphql@16.8.1)
     devDependencies:
+      '@graphql-codegen/cli':
+        specifier: 5.0.0
+        version: 5.0.0(@types/node@17.0.45)(graphql@16.8.1)(typescript@5.2.2)
+      '@graphql-codegen/introspection':
+        specifier: 4.0.0
+        version: 4.0.0(graphql@16.8.1)
+      '@graphql-codegen/typescript':
+        specifier: 4.0.1
+        version: 4.0.1(graphql@16.8.1)
+      '@graphql-codegen/typescript-document-nodes':
+        specifier: 4.0.1
+        version: 4.0.1(graphql@16.8.1)
+      '@graphql-codegen/typescript-resolvers':
+        specifier: 4.0.1
+        version: 4.0.1(graphql@16.8.1)
       '@types/node':
         specifier: ^17.0.45
         version: 17.0.45
@@ -13039,7 +13066,6 @@ packages:
     dependencies:
       graphql: 16.8.1
       tslib: 2.6.2
-    dev: true
 
   /graphql-ws@5.14.1(graphql@16.8.1):
     resolution: {integrity: sha512-aqkls1espsygP1PfkAuuLIV96IbztQ6EaADse97pw8wRIMT3+AL/OYfS8V2iCRkc0gzckitoDRGCQEdnySggiA==}
@@ -13058,7 +13084,6 @@ packages:
   /graphql@16.8.1:
     resolution: {integrity: sha512-59LZHPdGZVh695Ud9lRzPBVTtlX9ZCV150Er2W43ro37wVof0ctenSaskPPjN7lVTIN8mSZt8PHUNKZuNQUuxw==}
     engines: {node: ^12.22.0 || ^14.16.0 || ^16.0.0 || >=17.0.0}
-    dev: true
 
   /gunzip-maybe@1.4.2:
     resolution: {integrity: sha512-4haO1M4mLO91PW57BMsDFf75UmwoRX0GkdD+Faw+Lr+r/OZrOCS0pIBwOL1xCKQqnQzbNFGgK2V2CpBUPeFNTw==}
