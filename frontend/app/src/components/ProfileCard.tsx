@@ -114,7 +114,6 @@ export default function ProfileCard() {
   ];
   return (
     <div className=" flex">
-      <SideBar />
       <FileUploadModal
         getImage={getImage}
         uploadImage={uploadImage}

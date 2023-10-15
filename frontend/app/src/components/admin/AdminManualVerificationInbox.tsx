@@ -25,13 +25,14 @@ export const AdminManualVerificationInbox: React.FC = () => {
       const { data, error } = await supabase
         .from("manual_review_inbox")
         .select("*")
-        .eq("fulfilled", false);
+        .eq("status", "pending");
 
       if (error) {
         console.error(error);
         return;
       }
 
+      console.log("data", data);
       setRequests(data);
     };
     fetchData();
@@ -40,7 +41,7 @@ export const AdminManualVerificationInbox: React.FC = () => {
   }, []);
 
   return (
-    <div className="border p-4 rounded-lg bg-white shadow-lg">
+    <div className="min-w-72 border-2 p-4 rounded-lg m-2">
       <h2 className="text-xl font-bold mb-4 text-gray-800">Admin Inbox</h2>
       {requests.map((request) => (
         <InboxRow
@@ -123,22 +124,25 @@ const InboxRow: React.FC<{ account: string; cid: string }> = ({
   };
 
   return (
-    <>
-      <form
-        onSubmit={handleSubmit(onConfirmManualVerificationRequest)}
-        className="flex items-center border p-2 mb-2 rounded-lg bg-gray-50 hover:bg-gray-100"
+    <form
+      onSubmit={handleSubmit(onConfirmManualVerificationRequest)}
+      className="flex items-center border-b p-4 hover:bg-gray-100 transition duration-150 ease-in-out"
+    >
+      <img
+        className="border-2 mr-4 rounded w-24 h-24 object-cover"
+        alt="MEDIA"
+      />
+      <div className="flex-grow flex flex-col">
+        <p className="text-gray-700 mb-2">{cid}</p>
+        <p className="text-gray-700">{account}</p>
+      </div>
+      <button
+        type="submit"
+        className="p-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 focus:ring-2 focus:ring-purple-400 focus:outline-none"
       >
-        <img className="h-8 w-8 border-2 mr-4 rounded-full" alt="MEDIA" />
-        <p className="mr-4 flex-grow text-gray-700">{cid}</p>
-        <p className="mr-4 flex-grow text-gray-700">{account}</p>
-        <button
-          type="submit"
-          className="p-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 focus:ring-2 focus:ring-purple-400 focus:outline-none"
-        >
-          SUBMIT
-        </button>
-      </form>
-      {error && <p className="text-red-500">{error}</p>}
-    </>
+        Accept
+      </button>
+      {error && <p className="text-red-500 mt-2">{error}</p>}
+    </form>
   );
 };

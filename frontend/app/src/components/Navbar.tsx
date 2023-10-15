@@ -1,21 +1,28 @@
-import { ConnectButton } from '@rainbow-me/rainbowkit'
-import React from 'react'
+import { ConnectButton } from "@rainbow-me/rainbowkit";
+import React from "react";
 
 const Navbar = () => {
   return (
-<nav className="bg-white border-gray-200 border-b-2">
-  <div className="max-w-screen-xl flex flex-wrap items-center justify-between  p-4">
-    <a href="https://flowbite.com/" className="flex items-start ">
-        <img src="https://flowbite.com/docs/images/logo.svg" className="h-8 mr-3" alt="Flowbite Logo" />
-        <span className="self-start text-2xl font-semibold whitespace-nowrap ">Decentralized LinkedIn</span>
-    </a>
-    <div className='absolute right-10'>
-    <ConnectButton/>
-    </div>
-   
-  </div>
-</nav>
-  )
-}
+    <nav className="border-gray-200 border-b-2 mb-4">
+      <div className="container mx-auto">
+        <div className="flex justify-between p-4 ">
+          <a href="/" className="flex">
+            <img
+              src="https://flowbite.com/docs/images/logo.svg"
+              className="h-8 mr-3"
+              alt="Logo"
+            />
+            <span className="text-2xl font-semibold whitespace-nowrap">
+              Decentralized LinkedIn
+            </span>
+          </a>
+          <div className="ml-auto">
+            <ConnectButton />
+          </div>
+        </div>
+      </div>
+    </nav>
+  );
+};
 
-export default Navbar
+export default Navbar;

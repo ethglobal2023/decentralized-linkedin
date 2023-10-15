@@ -1,14 +1,18 @@
-import React, { ReactNode, useContext, useState } from "react";
+import React, { useContext, useState } from "react";
 import { useWallet } from "../../hooks/useWallet";
 import JSONPretty from "react-json-pretty";
-import { Controller, SubmitHandler, useFieldArray, useForm } from "react-hook-form";
+import {
+  Controller,
+  SubmitHandler,
+  useFieldArray,
+  useForm,
+} from "react-hook-form";
 import { BACKEND_URL, EASConfigContext } from "./EASConfigContext";
 import { useAccount, useWalletClient } from "wagmi";
 import { EAS, SchemaEncoder } from "@ethereum-attestation-service/eas-sdk";
 import { BrowserProvider } from "ethers";
 import { SchemaItem } from "@ethereum-attestation-service/eas-sdk/dist/schema-encoder";
-import "./AdminCreateAttestation.css"
-
+import "./AdminCreateAttestation.css";
 
 interface MediaAttestationForm {
   hidden: boolean;
@@ -121,7 +125,7 @@ const makeAttestationRequest = async (vars: MakeAttestationReqVars) => {
 
   console.log("Encoding schema `", schema, "`");
   const schemaEncoder = new SchemaEncoder(schema);
-  console.log("Encoding data", values)
+  console.log("Encoding data", values);
   const encoded = schemaEncoder.encodeData(values);
   const time = Math.floor(Date.now() / 1000);
 
@@ -152,8 +156,8 @@ const makeAttestationRequest = async (vars: MakeAttestationReqVars) => {
   // await transaction.wait();
   // ts ignore nextline because Bigint doesn't have toJSON as a function
 
-  console.log("offchainAttestation", offchainAttestation)
-  console.log(account)
+  console.log("offchainAttestation", offchainAttestation);
+  console.log(account);
   // @ts-ignore-next-line
   BigInt.prototype.toJSON = function () {
     return this.toString();
@@ -185,24 +189,21 @@ export const CreateAttestMediaForm: React.FC = ({}) => {
   const [jsonResponse, setJsonResponse] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
 
-
-
-
   const { chainId: easChainId, contractAddress } = useContext(EASConfigContext);
   const {
     register,
     handleSubmit,
     watch,
     formState: { errors },
-    control
+    control,
   } = useForm<MediaAttestationForm>({
-    defaultValues:{
+    defaultValues: {
       hidden: false,
       participant: "0x9cbC225B9d08502d231a6d8c8FF0Cc66aDcc2A4F",
-      keywordsProven: [{keyword: "video"}, {keyword: "interview"}],
+      keywordsProven: [{ keyword: "react" }, { keyword: "typescript" }],
       refUrl: "https://www.youtube.com/watch?v=oHg5SJYRHA0",
       refType: "video",
-    }
+    },
   });
   const { fields, append, remove } = useFieldArray({
     control,
@@ -235,7 +236,7 @@ export const CreateAttestMediaForm: React.FC = ({}) => {
         { name: "refType", type: "string", value: data.refType },
       ];
 
-      console.log("Making attestation request with values", values)
+      console.log("Making attestation request with values", values);
 
       const res = await makeAttestationRequest({
         schema,
@@ -249,10 +250,10 @@ export const CreateAttestMediaForm: React.FC = ({}) => {
         walletClient,
         connector,
       });
-      console.log("res", res)
+      console.log("res", res);
       setJsonResponse(res);
     } catch (error: any) {
-      console.log("error", error)
+      console.log("error", error);
       setErrorMessage(error);
     }
 
@@ -260,22 +261,32 @@ export const CreateAttestMediaForm: React.FC = ({}) => {
   };
 
   return (
-    <div className="bg-white p-8 rounded shadow-lg">
+    <div className="border-2 border-gray-300 rounded p-8 ">
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className="flex flex-col border-2 p-4 rounded"
+        className="flex-col m-2 space-y-4"
       >
         <div className="mb-4 flex justify-center">
           <p className="title">
             Create attestation that proves skills w/ media
           </p>
         </div>
-        <div className="flex items-center mb-2">
-          <input type="checkbox" id="hidden" {...register("hidden", { required: true })} className="form-checkbox"/>
-          <label htmlFor="hidden" className="form-checkbox-label ml-2">Hidden</label>
+        <div className="flex items-center">
+          <input
+            type="checkbox"
+            id="hidden"
+            {...register("hidden", { required: true })}
+            className="form-checkbox"
+          />
+          <label htmlFor="hidden" className="form-checkbox-label ml-2">
+            Hidden
+          </label>
         </div>
-        <input {...(register("participant"), { required: true })} className="form-input" placeholder="Participant"
-        defaultValue={"0x9cbC225B9d08502d231a6d8c8FF0Cc66aDcc2A4F"}
+        <input
+          {...(register("participant"), { required: true })}
+          className="form-input"
+          placeholder="Participant"
+          defaultValue={"0x9cbC225B9d08502d231a6d8c8FF0Cc66aDcc2A4F"}
         />
 
         <ul className="space-y-4">
@@ -302,23 +313,37 @@ export const CreateAttestMediaForm: React.FC = ({}) => {
               </button>
             </li>
           ))}
+          <li>
+            {/*TODO style is heresy*/}
+            <button
+              type="button"
+              className={"submit-button ml-auto"}
+              onClick={() => append({ keyword: "" })}
+            >
+              Add Keyword
+            </button>
+          </li>
         </ul>
 
-        {/*TODO style is heresy*/}
-        <button
-          type="button"
-          className={"submit-button"}
-          onClick={() => append({ keyword: "" })}
-        >
-          Add Keyword
-        </button>
-        <input {...(register("refUrl"), { required: true })} className="form-input" placeholder="Reference URL"
-        defaultValue={"https://www.youtube.com/watch?v=oHg5SJYRHA0"}
-        />
-        <input {...(register("refType"), { required: true })} className="form-input" placeholder="Reference Type"
-        defaultValue={"video"}/>
-
-        <input type="submit" value="Submit" className="submit-button" />
+        <div>
+          <input
+            {...(register("refUrl"), { required: true })}
+            className="form-input"
+            placeholder="Reference URL"
+            defaultValue={"https://www.youtube.com/watch?v=oHg5SJYRHA0"}
+          />
+        </div>
+        <div>
+          <input
+            {...(register("refType"), { required: true })}
+            className="form-input"
+            placeholder="Reference Type"
+            defaultValue={"video"}
+          />
+        </div>
+        <div>
+          <input type="submit" value="Submit" className="submit-button" />
+        </div>
         {/* errors will return when field validation fails  */}
       </form>
       <div className="mt-4">
@@ -335,7 +360,6 @@ export const CreateAttestMediaForm: React.FC = ({}) => {
     </div>
   );
 };
-
 
 export const CreateAttestPublicInterview: React.FC = ({}) => {
   const { address } = useWallet();
@@ -395,25 +419,43 @@ export const CreateAttestPublicInterview: React.FC = ({}) => {
   };
 
   return (
-    <div className="bg-white p-8 rounded shadow-lg">
-      <form
-        onSubmit={handleSubmit(onSubmit)}
-        className="flex flex-col border-2 p-4 rounded"
-      >
+    <div className="border-2 border-gray-300 rounded p-8 ">
+      <form onSubmit={handleSubmit(onSubmit)} className="flex-col m-2">
         <div className="mb-4 flex justify-center">
-          <p className="title">
-            Create attestation with public interview
-          </p>
+          <p className="title">Create attestation with public interview</p>
         </div>
 
         <div className="flex items-center mb-2">
-          <input type="checkbox" id="hidden" {...register("hidden", { required: true })} className="form-checkbox"/>
-          <label htmlFor="hidden" className="form-checkbox-label ml-2">Hidden</label>
+          <input
+            type="checkbox"
+            id="hidden"
+            {...register("hidden", { required: true })}
+            className="form-checkbox"
+          />
+          <label htmlFor="hidden" className="form-checkbox-label ml-2">
+            Hidden
+          </label>
         </div>
-        <input {...(register("interviewee"), { required: true })} className="form-input" placeholder="Interviewee" />
-        <input {...(register("videoUrl"), { required: true })} className="form-input" placeholder="Video URL" />
-        <input {...(register("positionTitle"), { required: true })} className="form-input" placeholder="Position Title" />
-        <input {...(register("keywords"), { required: true })} className="form-input" placeholder="Keywords (comma separated)" />
+        <input
+          {...(register("interviewee"), { required: true })}
+          className="form-input"
+          placeholder="Interviewee"
+        />
+        <input
+          {...(register("videoUrl"), { required: true })}
+          className="form-input"
+          placeholder="Video URL"
+        />
+        <input
+          {...(register("positionTitle"), { required: true })}
+          className="form-input"
+          placeholder="Position Title"
+        />
+        <input
+          {...(register("keywords"), { required: true })}
+          className="form-input"
+          placeholder="Keywords (comma separated)"
+        />
         <input type="submit" value="Submit" className="submit-button" />
         {/* errors will return when field validation fails  */}
       </form>

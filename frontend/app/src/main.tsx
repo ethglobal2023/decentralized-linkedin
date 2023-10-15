@@ -1,5 +1,5 @@
 import "./polyfills";
-import { StrictMode } from "react";
+import React, { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import "@rainbow-me/rainbowkit/styles.css";
 import {
@@ -29,21 +29,14 @@ import {
   replyContentTypeConfig,
   XMTPProvider,
 } from "@xmtp/react-sdk";
-import ShowConnectDialogWhenNotConnected from "./components/ShowConnectDialogWhenNotConnected";
+import { RequireWalletConnected } from "./components/RequireWalletConnected";
 import "@xmtp/react-components/styles.css";
 import { WalletProvider } from "./contexts/WalletContext";
 import "./index.css";
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import { Inbox } from "./components/Inbox";
+import { App } from "./components/App";
 import { SupabaseProvider } from "./contexts/SupabaseContext";
-import { Search } from "./components/Search";
-import { EasConfigContextProvider } from "./components/admin/EASConfigContext";
-import { ProfileMediaCard } from "./components/ProfileMediaCard";
-import { AdminManualVerificationInbox } from "./components/admin/AdminManualVerificationInbox";
-import ProfileCard from "./components/ProfileCard";
-import { ProfilePublish } from "./components/ProfilePublish";
 import Navbar from "./components/Navbar";
-import { AdminHome } from "./components/admin/AdminHome";
+import { Theme } from "@radix-ui/themes";
 
 const DB_VERSION = 1;
 
@@ -85,70 +78,28 @@ const wagmiConfig = createConfig({
   publicClient,
 });
 
-const router = createBrowserRouter([
-  {
-    path: "/",
-    element: <Inbox />, //TODO this should probably be the "Message" and "NewMessage" components in the Inbox.tsx file
-  },
-  {
-    path: "/search",
-    element: <Search />,
-  },
-  {
-    path: "/admin",
-    element: (
-      <EasConfigContextProvider>
-        <AdminHome />
-        <ProfileMediaCard cid={"cid:testcid4"} mediaType={"publication"} />
-        <ProfileMediaCard
-          cid={`cid:testcid${Date.now()}`}
-          mediaType={"publication"}
-        />
-      </EasConfigContextProvider>
-    ),
-  },
-  {
-    path: "/admin/inbox", //This admin inbox is for manual verification of attestations
-    element: (
-      <EasConfigContextProvider>
-        <AdminManualVerificationInbox />
-      </EasConfigContextProvider>
-    ),
-  },
-  {
-    path: "/inbox",
-    element: <Inbox />,
-  },
-  {
-    path: "/profile/:address",
-    element: <ProfileCard />,
-  },
-  {
-    path: "/publish",
-    element: <ProfilePublish />,
-  },
-]);
-
 createRoot(document.getElementById("root") as HTMLElement).render(
-  <WagmiConfig config={wagmiConfig}>
-    <RainbowKitProvider chains={chains}>
-      <StrictMode>
-        <SupabaseProvider>
-          <WalletProvider>
-            <XMTPProvider
-              dbVersion={DB_VERSION}
-              contentTypeConfigs={contentTypeConfigs}
-            >
-              <Navbar />
-              <div className="container mx-auto">
-                <ShowConnectDialogWhenNotConnected>
-                  <RouterProvider router={router} />
-                </ShowConnectDialogWhenNotConnected>
-              </div>
-            </XMTPProvider>
-          </WalletProvider>
-        </SupabaseProvider>
-      </StrictMode>
-    </RainbowKitProvider>
-  </WagmiConfig>,
+  <Theme>
+    <WagmiConfig config={wagmiConfig}>
+      <RainbowKitProvider chains={chains}>
+        <StrictMode>
+          <SupabaseProvider>
+            <WalletProvider>
+              <XMTPProvider
+                dbVersion={DB_VERSION}
+                contentTypeConfigs={contentTypeConfigs}
+              >
+                <Navbar />
+                <div className="container flex mx-auto">
+                  <RequireWalletConnected>
+                    <App />
+                  </RequireWalletConnected>
+                </div>
+              </XMTPProvider>
+            </WalletProvider>
+          </SupabaseProvider>
+        </StrictMode>
+      </RainbowKitProvider>
+    </WagmiConfig>
+  </Theme>,
 );

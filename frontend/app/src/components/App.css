@@ -6,8 +6,7 @@
 }
 
 .InboxHeader {
-  display: flex;
-  flex-shrink: 0;
+
 }
 
 .InboxHeader__xmtp {
@@ -16,6 +15,7 @@
   align-items: center;
   justify-content: space-between;
   padding: 8px 16px;
+  /*border-right: 1px solid #ccc;*/
 }
 
 .InboxHeader__actions {
@@ -48,3 +48,4 @@
   flex-grow: 1;
   overflow: auto;
 }
+

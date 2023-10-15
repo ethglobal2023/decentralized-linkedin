@@ -1,5 +1,5 @@
 .form-input {
-    @apply p-2 mb-4 border rounded;
+    @apply p-2 mb-4 border rounded flex min-w-full;
 }
 
 .submit-button {
