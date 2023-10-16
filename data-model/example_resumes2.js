@@ -240,6 +240,9 @@ console.log(JSON.stringify(profile1));
 
 
 
+/*
+
+
 // todo example of inserting 
 // todo example of searching 
 // todo create stored procedure for search 
@@ -293,3 +296,5 @@ console.log(data8);
 await supabase .rpc('people_websearch', {query:'"fox dog"'} )
 
 }
+
+*/

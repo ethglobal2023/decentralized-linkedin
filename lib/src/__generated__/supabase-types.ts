@@ -177,23 +177,32 @@ export interface Database {
       people_search: {
         Row: {
           created_at: string
+          first_name: string | null
           json: Json | null
+          last_name: string | null
           pk: string
           text: string | null
+          trust_score: number
           updated_at: string | null
         }
         Insert: {
           created_at?: string
+          first_name?: string | null
           json?: Json | null
+          last_name?: string | null
           pk: string
           text?: string | null
+          trust_score?: number
           updated_at?: string | null
         }
         Update: {
           created_at?: string
+          first_name?: string | null
           json?: Json | null
+          last_name?: string | null
           pk?: string
           text?: string | null
+          trust_score?: number
           updated_at?: string | null
         }
         Relationships: []
