@@ -6,8 +6,7 @@
 }
 
 .InboxHeader {
-  display: flex;
-  flex-shrink: 0;
+
 }
 
 .InboxHeader__xmtp {
@@ -16,6 +15,7 @@
   align-items: center;
   justify-content: space-between;
   padding: 8px 16px;
+  /*border-right: 1px solid #ccc;*/
 }
 
 .InboxHeader__actions {
@@ -47,4 +47,19 @@
 .InboxConversations__messages > :nth-child(2) {
   flex-grow: 1;
   overflow: auto;
+}
+
+.blue__gradient {
+  background: linear-gradient(180deg, rgba(188, 165, 255, 0) 0%, #214d76 100%);
+  filter: blur(123px);
+}
+
+.pink__gradient {
+  background: linear-gradient(90deg, #f4c4f3 0%, #fc67fa 100%);
+  filter: blur(900px);
+}
+
+.white__gradient {
+  background: rgba(255, 255, 255, 0.6);
+  filter: blur(750px);
 }

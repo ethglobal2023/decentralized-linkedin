@@ -1,10 +1,9 @@
 import "./polyfills";
-import { StrictMode } from "react";
+import React, { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import "@rainbow-me/rainbowkit/styles.css";
 import {
   connectorsForWallets,
-  darkTheme,
   RainbowKitProvider,
 } from "@rainbow-me/rainbowkit";
 import {
@@ -30,23 +29,14 @@ import {
   replyContentTypeConfig,
   XMTPProvider,
 } from "@xmtp/react-sdk";
-import ShowConnectDialogWhenNotConnected from "./components/ShowConnectDialogWhenNotConnected";
+import { RequireWalletConnected } from "./components/RequireWalletConnected";
 import "@xmtp/react-components/styles.css";
 import { WalletProvider } from "./contexts/WalletContext";
 import "./index.css";
-import { ChangeNetworkButton } from "./components/ChangeNetworkButton";
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import { Inbox } from "./components/Inbox";
-import { Profile } from "./components/Profile";
+import { App } from "./components/App";
 import { SupabaseProvider } from "./contexts/SupabaseContext";
-import { Search } from "./components/Search";
-import { EasConfigContextProvider } from "./components/admin/EASConfigContext";
-import AdminCreateAttestation from "./components/admin/AdminCreateAttestation";
-import { ProfileMediaCard } from "./components/ProfileMediaCard";
-import { AdminManualVerificationInbox } from "./components/admin/AdminManualVerificationInbox";
-import ProfileCard from "./components/ProfileCard";
-import { ProfilePublish } from "./components/ProfilePublish";
 import Navbar from "./components/Navbar";
+import { Theme } from "@radix-ui/themes";
 
 const DB_VERSION = 1;
 
@@ -88,82 +78,28 @@ const wagmiConfig = createConfig({
   publicClient,
 });
 
-const router = createBrowserRouter([
-  {
-    path: "/",
-    element: <Inbox />, //TODO this should probably be the "Message" and "NewMessage" components in the Inbox.tsx file
-  },
-  // {
-  //   path: "/profile/:address",
-  //   element: <Profile />,
-  // },
-  {
-    path: "/search",
-    element: <Search />,
-  },
-  {
-    path: "/admin",
-    element: (
-      <EasConfigContextProvider>
-        <AdminCreateAttestation />
-        <ProfileMediaCard cid={"cid:testcid4"} mediaType={"publication"} />
-        <ProfileMediaCard
-          cid={`cid:testcid${Date.now()}`}
-          mediaType={"publication"}
-        />
-      </EasConfigContextProvider>
-    ),
-  },
-  {
-    path: "/admin/inbox", //This admin inbox is for manual verification of attestations
-    element: (
-      <EasConfigContextProvider>
-        <AdminManualVerificationInbox />
-      </EasConfigContextProvider>
-    ),
-  },
-  {
-    path: "/inbox",
-    element: <Inbox />,
-  },
-  { //TODO Delete this route, overlaps with profile/:address below
-    path: "/profile/:address",
-    element: <ProfileCard />,
-  },
-  {
-    path: "/profile2",
-    element: <Profile />,
-  },
-  {
-    path: "/profile3",
-    element: <ProfileCard />,
-  },
-  {
-    path: "/publish",
-    element: <ProfilePublish />,
-  },
-]);
-
 createRoot(document.getElementById("root") as HTMLElement).render(
-  <WagmiConfig config={wagmiConfig}>
-    <RainbowKitProvider  chains={chains}>
-      <StrictMode>
-        <SupabaseProvider>
-          <WalletProvider>
-            <XMTPProvider
-              dbVersion={DB_VERSION}
-              contentTypeConfigs={contentTypeConfigs}
-            ><Navbar/>
-              <div className="container mx-auto">
-                <ShowConnectDialogWhenNotConnected>
-                  {/* <ChangeNetworkButton /> */}
-                  <RouterProvider router={router} />
-                </ShowConnectDialogWhenNotConnected>
-              </div>
-            </XMTPProvider>
-          </WalletProvider>
-        </SupabaseProvider>
-      </StrictMode>
-    </RainbowKitProvider>
-  </WagmiConfig>,
+  <Theme>
+    <WagmiConfig config={wagmiConfig}>
+      <RainbowKitProvider chains={chains}>
+        <StrictMode>
+          <SupabaseProvider>
+            <WalletProvider>
+              <XMTPProvider
+                dbVersion={DB_VERSION}
+                contentTypeConfigs={contentTypeConfigs}
+              >
+                <Navbar />
+                <div className="container flex mx-auto">
+                  <RequireWalletConnected>
+                    <App />
+                  </RequireWalletConnected>
+                </div>
+              </XMTPProvider>
+            </WalletProvider>
+          </SupabaseProvider>
+        </StrictMode>
+      </RainbowKitProvider>
+    </WagmiConfig>
+  </Theme>,
 );

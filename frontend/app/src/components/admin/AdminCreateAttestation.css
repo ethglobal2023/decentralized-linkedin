@@ -1,0 +1,27 @@
+.form-input {
+    @apply p-2 mb-4 border rounded flex min-w-full;
+}
+
+.submit-button {
+    @apply p-2 bg-blue-500 text-white rounded cursor-pointer;
+}
+
+.title {
+    @apply text-xl font-semibold;
+}
+
+.response-title {
+    @apply font-semibold text-lg mb-2;
+}
+
+.error-message {
+    @apply text-red-500;
+}
+
+.form-checkbox {
+    @apply h-5 w-5 text-purple-600;
+}
+
+.form-checkbox-label{
+    @apply ml-2 text-gray-700;
+}

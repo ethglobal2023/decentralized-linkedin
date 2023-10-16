@@ -21,7 +21,6 @@ export default function ProfileCard() {
 
   //@Sakshi, this is the logic for fetching the resume from IPFS
   const supabase = useContext(SupabaseContext);
-  const { address: profileAddress } = useParams();
   const [error, setError] = useState("");
   const [fetchedProfile, setFetchedProfile] = useState<Resume>();
   useEffect(() => {
@@ -126,7 +125,6 @@ export default function ProfileCard() {
   ];
   return (
     <div className=" flex">
-      <SideBar />
       <FileUploadModal
         getImage={getImage}
         uploadImage={uploadImage}

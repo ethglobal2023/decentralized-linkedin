@@ -40,7 +40,8 @@
     "uint8arrays": "^4.0.6",
     "web-did-resolver": "^2.0.27",
     "web3.storage": "^4.5.5",
-    "winston": "^3.11.0"
+    "winston": "^3.11.0",
+    "lib": "workspace:*"
   },
   "devDependencies": {
     "@composedb/types": "^0.5.1",

@@ -44,6 +44,7 @@ export const Messages: React.FC<ConversationMessagesProps> = ({
 
   return (
     <>
+
       <AddressInput
         value={conversation.peerAddress}
         avatarUrlProps={{ address: conversation.peerAddress }}

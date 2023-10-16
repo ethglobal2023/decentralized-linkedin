@@ -1,0 +1,6 @@
+.menu-icon{
+    @apply w-12 h-12;
+}
+.menu-link {
+    @apply flex flex-grow justify-center
+}

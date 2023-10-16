@@ -5,21 +5,7 @@ import { supabase } from "../config.js";
 
 import axios from "axios";
 
-/*
 
-// Collects metadata about the uploaded media and adds it to the manual review inbox
-export const calcTrustScore = async (
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ) => {
-    // Attestation is verified in middleware before this function is called
-    logger.debug("Start trust score calc:", req.body);
-  
-  };  
-
-
-  */
 
 const MAX_SCORE_CALC_AGE = 30; //TODO move to config
 
@@ -32,47 +18,6 @@ export function dateDiffInDays(a: Date, b: Date) {
   return Math.floor((utc2 - utc1) / _MS_PER_DAY);
 }
 
-/*
-export const rest_get_and_save_to_db= async(url:string, headers:object={Accept: 'application/json', "content-type":'application/json'}, callback:any =(response: any) => {}, max_age_days:number=30, ops?:string)=>{
-
-
-    //TODO should add http response STATUS to the DB or atleast consider it when deciding to save or not to db. Right now I jsut save it so errors would save empty insert. 
-    if(ops!="recalc"){
-        const {data} = await supabase
-        .from("get_rest_cache")
-        .select("*")
-        .eq("url",url)
-        .single();
- 
-            if(data!==null&&data.updated_at!==null){
-                let last=  new Date(Date.parse(data.updated_at));
-                let today= new Date();
-                console.log( dateDiffInDays(last,today))
-                if( dateDiffInDays(last,today) <max_age_days  ){
-                    callback(data.response);
-                    return data.response;
-                } 
-    
-        
-        }
-    }
-
-    let config = {
-        method: 'get',
-        maxBodyLength: Infinity,
-        url: url,
-        headers: headers
-      };
-
-      // @ts-ignore
-     async function save_res_to_db(url,res){
-        const {data} = await supabase
-        .from("get_rest_cache")
-        .upsert({url:url,response:res.body,status:res.status})
-     }
-      await axios.request(config).then((response) => {save_res_to_db(url,response); callback(response); return(response)}).catch((error) => {console.error(error);});
-}
-*/
 
 export const rest_api_save_to_db = async (
   url: string,
@@ -115,17 +60,6 @@ export const rest_api_save_to_db = async (
   };
 
   1 === 1;
-  // @ts-ignore
-  /*
-     async function save_res_to_db(url,res){
-        const {data} = await supabase
-        .from("get_rest_cache")
-        .upsert({url:url,method:method,req_body:req_body, response:res.response_body,status:res.status})
-     }
-     */
-
-  1 === 1;
-  //await axios.request(config).then((response) => {save_res_to_db(url,response); callback(response); return(response)}).catch((error) => {console.error(error);});
 
   try{
   let res = await axios.request(config);
@@ -136,8 +70,8 @@ export const rest_api_save_to_db = async (
     url: url,
     method: method,
     req_body: req_body,
-    response_body: res.data,
-    status: res.status,
+    response_body: res.data || {},
+    status: res.status || 400,
   });
 
   if( upsertError)
@@ -145,7 +79,7 @@ export const rest_api_save_to_db = async (
   1 === 1;
   return res.data;
 } catch(error){
-    console.error("error in rest_api_save_to_db  :"+error);
+    console.error("error in rest_api_save_to_db   lin82 :"+error);
 }
 };
 
@@ -160,10 +94,13 @@ export const getWeb3BioNextId = async (pk: string) => {
     }
 };
 
-//For now this is only looking on optimism ,  but we should do all other chains
-export const getAllAttestations = async (pk: string) => {
-  //let getall_attestions_filter_receipiant_pk=JSON.parse('{"query":"query Query($where: AttestationWhereInput) {  attestations(where: $where) {    id    data    attester    decodedDataJson    expirationTime    ipfsHash    isOffchain    recipient    refUID    revocable    revocationTime    revoked    schemaId    time    timeCreated    txid  }}","variables":{"where":{"recipient":{"equals":"'+pk+'"}}}}');
 
+
+//For now this is only looking on optimism ,  but we should do all other chains
+export const getOnChainAttestations = async (pk: string) => {
+ 
+
+    //get on chain attestaitons 
   let query =
     "query Query($where: AttestationWhereInput) {  attestations(where: $where) {    id    data    attester    decodedDataJson    expirationTime    ipfsHash    isOffchain    recipient    refUID    revocable    revocationTime    revoked    schemaId    time    timeCreated    txid  }}";
   let variables = { where: { recipient: { equals: pk } } };
@@ -183,16 +120,45 @@ export const getAllAttestations = async (pk: string) => {
     {}
   );
   console.log(
-    "🚀 ~ file: util.ts:172 ~ getAllAttestations ~ res:",
+    "🚀 ~ file: index.ts:172 ~ getOnChainAttestations ~ res:",
     res!.data.attestations
   );
   return res!.data.attestations;
   }
   catch(error){
     console.log(
-        "🚀 ~ file: util.ts:193 ~ getAllAttestations ~ error:",        error) 
+        "🚀 ~ file: index.ts:193 ~ getOnChainAttestations ~ error:",        error)
     return [];
   }
+  1 === 1;
+};
+
+
+//For now this is only looking on optimism ,  but we should do all other chains
+export const getAllAttestations = async (pk: string) => {
+
+    try {
+         
+    //get internall offchain attestations 
+    const { data, error } = await supabase.from("attestations").select("*").eq("recipient_address", pk);
+    let offChain = data;
+
+    let onChain = await getOnChainAttestations(pk);
+    let all=onChain;
+    if(offChain && !!offChain.forEach){
+        // @ts-ignore
+        all= [...all, ...(offChain?.map( (r)=>{
+            return( {id:r.id,data:''+r.type,attester:r.attester_address,decodedDataJson:r.document,isOffCHain:true,recipient:r.recipient_address,refUID:r.ref_uid,revoked:r.revoked,revocable:true,schemaId:r.eas_schema_address,timeCreated:r.created_at,revocationTime:r.expiration_time})
+            }  ))]
+            
+    }
+    return all;
+    
+    }
+    catch (error){
+        console.error("getAllAttestations :::"+error)
+
+    }
   1 === 1;
 };
 

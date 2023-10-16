@@ -10,7 +10,7 @@ import { MessageWithViemSignature } from "./admin/types";
 import { useWallet } from "../hooks/useWallet";
 import { useWalletClient } from "wagmi";
 import { DatePicker } from "antd";
-
+import "./App.css"
 type PublishResumeMessage = {
   account: string;
   resume: string;
@@ -105,74 +105,91 @@ console.log(address)
   };
 
   return (
-    <div>
-      <form onSubmit={handleSubmit(onSubmit)} className="bg-opacity-25 bg-black backdrop-blur-8.5 border border-opacity-20 rounded-lg shadow-lg p-8">
-        <label>
-          First Name:
+    <div className="flex min-h-screen h-fit w-full bg-black justify-center align-middle">
+                  <div className="absolute z-[0] w-[40%] h-[35%] top-0 right-0 pink__gradient" />
+            <div className="absolute z-[0] w-[40%] h-[50%] rounded-full right-0 white__gradient bottom-40" />
+            <div className="absolute z-[0] w-[50%] h-[50%] left-0 bottom-40 blue__gradient" />
+      <form onSubmit={handleSubmit(onSubmit)}  className="  text-gray-400 font-montserrat h-fit mt-12 w-[600px] lg:p-10 p-6  bg-white bg-opacity-5 shadow-md  backdrop-blur rounded-xl border border-gray-400 border-opacity-18 ">
+        <div className="flex gap-12"><div className=" flex flex-col w-[200px]"><label className="block mb-2 text-md font-medium text-white"> 
+          First Name:</label>
           <input
             type="text"
             {...register("firstName", { required: true })}
-            defaultValue="John"
+           
+            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 " placeholder="John" required
           />
-        </label>
+       </div>
         <br />
-        <label>
-          Last Name:
+        <div className=" flex flex-col w-[200px]">
+        <label className="block mb-2 text-md font-medium text-white">
+          Last Name:  </label>
           <input
+          className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 " placeholder="Mane" required
             type="text"
             {...register("lastName", { required: true })}
-            defaultValue="von Neumann"
-          />
-        </label>
+          /></div></div>
+      
         <br />
-        <label>
-          Languages:
-          <label
+      <div className="flex gap-12">
+         <div className="flex flex-col w-[200px]"> <label
             htmlFor="languages"
-            className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+            className="block mb-2 text-md font-medium text-white"
           >
-            Select an option
+            Select a Language
           </label>
           <select
             {...register("language", { required: true })}
             id="languages"
-            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
           >
             <option selected>Choose a Language</option>
             <option value="English">Englishs</option>
             <option value="Hindi">Hindi</option>
             <option value="French">French</option>
             <option value="German">German</option>
-          </select>
-        </label>
-        <br />
+          </select></div>
+
+  <div className="flex flex-col w-[200px]">
+        <label className="block mb-2 text-md font-medium text-white">
+          Description:   </label>
+          <textarea
+            {...register("description", { required: true })}
+            className="bg-gray-50 border h-fit border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 " placeholder="Your bio" required
+          />
+     
+        </div>
+  </div>
         {fields.map((organization, index) => (
           <div key={organization.id}>
-            <label>
+            <label className="block mb-2 text-md font-medium text-white">
               Organization Name:
               <input
+              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 " placeholder="Mane" required
+           
                 type="text"
                 {...register(`organizations.${index}.organizationName`, {
                   required: true,
                 })}
               />
             </label>
-            <label>
+            <label className="block mb-2 text-md font-medium text-white">
               Title:
               <input
+              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 " placeholder="Mane" required
+           
                 type="text"
                 {...register(`organizations.${index}.titleAtWork`, {
                   required: true,
                 })}
               />
             </label>
-            <label>TimeLine</label>
+            <label className="block mb-2 text-md font-medium text-white">TimeLine</label>
 
             <div date-rangepicker className="flex items-center">
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
                   <svg
-                    className="w-4 h-4 text-gray-500 dark:text-gray-400"
+                    className="w-4 h-4 "
                     aria-hidden="true"
                     xmlns="http://www.w3.org/2000/svg"
                     fill="currentColor"
@@ -182,6 +199,7 @@ console.log(address)
                   </svg>
                 </div>
                 <input
+                
                   {...register(
                     `organizations.${index}.relationshipTimestamp.startDate`,
                     {
@@ -191,7 +209,7 @@ console.log(address)
                   name="start"
                   type="text"
                   date-rangepicker="true"
-                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 p-2.5 "
                   placeholder="Select date start"
                 />
               </div>
@@ -199,7 +217,7 @@ console.log(address)
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
                   <svg
-                    className="w-4 h-4 text-gray-500 dark:text-gray-400"
+                    className="w-4 h-4 "
                     aria-hidden="true"
                     xmlns="http://www.w3.org/2000/svg"
                     fill="currentColor"
@@ -217,29 +235,30 @@ console.log(address)
                   )}
                   name="end"
                   type="text"
-                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 p-2.5  "
                   placeholder="Select date end"
                 />
               </div>
             </div>
-            <label>Type</label>
+            <label className="block mb-2 text-md font-medium text-white mt-6">Type</label>
             <select
               {...register("language", { required: true })}
               id="languages"
-              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
             >
               <option selected>Choose a Type</option>
               <option value="Education">Education</option>
               <option value="Experience">Experience</option>
               <option value="Volunteer">Volunteer</option>
             </select>
-            <button type="button" onClick={() => remove(index)}>
+           <div className="w-full flex justify-center mt-6"> <button type="button" onClick={() => remove(index)} className="text-white bg-gradient-to-r from-pink-400 via-pink-500 to-pink-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-pink-300 dark:focus:ring-pink-800 shadow-lg shadow-pink-500/50 dark:shadow-lg dark:shadow-pink-800/80 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 mb-2">
               Remove Organization
-            </button>
+            </button></div>
           </div>
         ))}
-        <button
-          type="button"
+       <div className="w-full flex justify-center mt-6"> <button
+        className="text-white bg-gradient-to-r  from-purple-500 via-purple-600 to-purple-700 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-purple-300 dark:focus:ring-purple-800 shadow-lg shadow-purple-500/50 dark:shadow-lg dark:shadow-purple-800/80 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 mb-2"
+        type="button"
           onClick={() =>
             append({
               organizationName: "",
@@ -254,54 +273,53 @@ console.log(address)
           }
         >
           Add Organization
-        </button>
+        </button> </div>
         <br />
-        <label>
-          Description:
-          <textarea
-            {...register("description", { required: true })}
-            defaultValue="Hungarian-American mathematician, physicist, computer scientist, engineer and polymath."
-          />
-        </label>
-        <br />
-        <label>
+       
+        
+        <div className="flex gap-12"><div><label className="block mb-2 text-md font-medium text-white">
           Preferred Name:
           <input
+           className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 p-2.5  "
             type="text"
             {...register("preferredName", { required: true })}
-            defaultValue="von Neumann"
+            placeholder="von Neumann"
           />
-        </label>
+        </label></div>
         <br />
-        <label>
+        <div><label className="block mb-2 text-md font-medium text-white">
           Preferred Title:
           <input
             type="text"
+            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 p-2.5  "
             {...register("preferredTitle", { required: true })}
-            defaultValue="Lecturer"
+            placeholder="Lecturer"
           />
-        </label>
+        </label></div>
         <br />
-        <label>
+        </div>
+       <div className="flex gap-12"><div><label className="block mb-2 text-md font-medium text-white">
           Skill Keywords:
           <input
+           className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 p-2.5  "
             type="text"
             {...register("skillKeywords", { required: true })}
-            defaultValue="set theory, mathematics"
+            placeholder="set theory, mathematics"
           />
-        </label>
+        </label></div>
         <br />
-
-        <label>
+<div>
+        <label className="block mb-2 text-md font-medium text-white">
           Preferred Location:
           <input
+           className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 p-2.5  "
             type="text"
             {...register("preferredLocation", { required: true })}
-            defaultValue="Zurich and London"
+            placeholder="Zurich and London"
           />
-        </label>
-        <br />
-        <button className={"bg-blue-300"} type="submit">
+        </label></div>
+        <br /></div>
+        <button className="text-white bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 shadow-lg shadow-blue-500/50 dark:shadow-lg dark:shadow-blue-800/80 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 mb-2 " type="submit">
           Upload to IPFS
         </button>
       </form>

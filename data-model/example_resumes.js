@@ -97,7 +97,6 @@ const profile1 = {
           "https://www.w3.org/ns/credentials/examples/v2"
         ],
         "type": "VerifiablePresentation",
-
         "verifiableCredential": [{
           "@context": [
             "https://www.w3.org/ns/credentials/v2",
@@ -123,22 +122,17 @@ const profile1 = {
             "proofValue": "zQeVbY4oey5q2M3XKaxup3tmzN4DRFTLVqpLMweBrSxMY2xHX5XTYV8nQApmEcqaqA3Q1gVHMrXFkXJeV6doDwLWx"
           }
         }],
-        
         "proof": {
           "type": "DataIntegrityProof",
           "cryptosuite": "eddsa-2022",
           "created": "2018-09-14T21:19:10Z",
           "proofPurpose": "authentication",
           "verificationMethod": "did:example:ebfeb1f712ebc6f1c276e12ec21#keys-1",
-          
-      
-      
           "challenge": "1f44d55f-f161-4938-a659-f8026467f126",
           "domain": "4jt78h47fh47",
           "proofValue": "zqpLMweBrSxMY2xHX5XTYV8nQAJeV6doDwLWxQeVbY4oey5q2pmEcqaqA3Q1gVHMrXFkXM3XKaxup3tmzN4DRFTLV"
         }
       }
-
     ],
     eoaAttestations:[
         //TODO add 

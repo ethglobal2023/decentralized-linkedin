@@ -1,0 +1,33 @@
+{
+  "name": "lib",
+  "version": "1.0.0",
+  "description": "",
+  "main": "dist/index.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "./node_modules/nodemon/bin/nodemon.js -e ts  --exec \"tsc && node ./dist/index.js\"",
+    "start": "node dist/index.js",
+    "build": "tsc",
+    "codegen": "graphql-codegen --config codegen.ts",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "prettier": "prettier src --check",
+    "prettier:fix": "prettier -- --write"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@ethereum-attestation-service/eas-sdk": "^0.29.1",
+    "@supabase/supabase-js": "^2.38.0",
+    "ethers": "^6.7.1"
+  },
+  "devDependencies": {
+    "@types/node": "^17.0.45",
+    "lefthook": "^1.5.1",
+    "nodemon": "^3.0.1",
+    "ts-node": "^10.9.1",
+    "typescript": "^5.2.2"
+  }
+}

@@ -9,6 +9,7 @@ import {
 import { Avatar } from "./Avatar";
 import styles from "./ConversationPreviewCard.module.css";
 import { shortAddress } from "../helpers/shortAddress";
+import { Link } from "react-router-dom";
 
 export type ConversationPreviewCardProps = {
   /**
@@ -61,7 +62,9 @@ export const ConversationPreviewCard: React.FC<
       tabIndex={0}
       onKeyDown={handleKeyDown}
       onClick={handleClick}>
+      <Link to={`/profile/${conversation.peerAddress}`}>
       <Avatar address={conversation.peerAddress} />
+      </Link>
       <div className={styles.element}>
         <div className={styles.address}>
           {shortAddress(conversation.peerAddress)}

@@ -13,8 +13,6 @@ export type EASChainConfig = {
   subdomain: string;
   contractStartBlock: number;
   rpcProvider: string;
-  metIrlSchema: string;
-  confirmSchema: string;
 };
 
 //TODO This is sloppy, fix it when we port to NextJS
@@ -33,8 +31,6 @@ export const EAS_CHAIN_CONFIGS: { [chainId: number]: EASChainConfig } = {
     contractStartBlock: 0,
     rpcProvider: "",
     easscanUrl: "",
-    metIrlSchema: "",
-    confirmSchema: "",
   },
   11155111: {
     chainId: 11155111,
@@ -47,10 +43,6 @@ export const EAS_CHAIN_CONFIGS: { [chainId: number]: EASChainConfig } = {
     contractStartBlock: 2958570,
     rpcProvider: `https://sepolia.infura.io/v3/`,
     easscanUrl: "https://sepolia.easscan.org",
-    metIrlSchema:
-      "0xc59265615401143689cbfe73046a922c975c99d97e4c248070435b1104b2dea7",
-    confirmSchema:
-      "0xb96446c85ce538c1641a967f23ea11bbb4a390ef745fc5a9905689dbd48bac86",
   },
 };
 
@@ -58,13 +50,9 @@ export const EASConfigContext = createContext<EASChainConfig>(
   EAS_CHAIN_CONFIGS[0],
 );
 // React context provider that carries the EAS chain config
-export const EasConfigContextProvider = ({
-  children,
-}: {
-  children: any;
-}) => {
-  const {chain} = useWallet();
-  const chainId = chain?.id || 0
+export const EasConfigContextProvider = ({ children }: { children: any }) => {
+  const { chain } = useWallet();
+  const chainId = chain?.id || 0;
   const config = EAS_CHAIN_CONFIGS[chain?.id || 0];
 
   if (!config) {
