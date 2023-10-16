@@ -1,5 +1,5 @@
 import { supabase } from "../config.js";
-
+import * as fs from "fs";
 import axios from "axios";
 
 const MAX_SCORE_CALC_AGE = 30; //TODO move to config
@@ -7,6 +7,7 @@ const MAX_SCORE_CALC_AGE = 30; //TODO move to config
 import { init, fetchQuery } from "@airstack/node";
 
 const airstackAPIKeys = [  //TODO move to config  and gitignore 
+  "cfba1e8625d040d99b2c49f51960891b",  
   "148c64fde3cf4c078d5da3c559b6aac4",
   "169e231a545547c5b40781506374a97a",
   "0704529f3d0540ecaa192a42562bfcf5",
@@ -191,13 +192,23 @@ let currentApiKey="cfba1e8625d040d99b2c49f51960891b";
 
       //lastDownload =  await rest_api_save_to_db("https://optimism.easscan.org/graphql",'post',{query:curQuery},{ "Content-Type": "application/json" })
 
+      //{"profileName":"cryptomiyagi","userAssociatedAddresses":["0x8e349f70fc7760bbaa0efbca706503095ece899c","0xc92b56eec24b3405afb08ee7215fd50725fa7df7"],"followerCount":162,"fnames":["cryptomiyagi"],"profileBio":"Web3 Renaissance Man. Surreal AI artist and Photographer! https://foundation.app/@CryptoMiyagi_","profileImage":"https://i.imgur.com/0lPN65V.jpg","profileDisplayName":"CryptoMiyagi_","userRecoveryAddress":"0x00000000fcd5a8e45785c8a4b9a718c9348e4f18","profileTokenId":"14200","profileTokenAddress":"0x00000000fcaf86937e41ba038b4fa40baa4b780a","profileLastUpdatedAtBlockNumber":108875188,"chainId":"10","dappName":"farcaster"}
+
+      //{"pubkey":"0xf3c24e5ff3975fddc49b254bc8350b1abf2342a0","preferredname":"faraon","preferredtitle":"dev","description":"faraon developments","skill_keywords":"blockchain","preferredlocation":null,"id":"11713","cid":"QmRRYfTGEQ1G7mbGuziDoeFPXKjYZjTUcTSEJp9tD6esnu","address":"0xf3c24e5ff3975fddc49b254bc8350b1abf2342a0","}
+
+
 
       for (let x = 0; x < lastDownload.length; x++) {
+        const row=lastDownload[x];
+
+        const resumejson={pubkey:row.userAssociatedAddresses[0],preferredname:row.profileDisplayName,preferredtitle:row.fnames[0]||"",description:row.profileBio,preferredlocation:null,address:row.userAssociatedAddresses[0],profileImage:row.profileImage}
+
         const { data,error } = await supabase.from("farcaster_users").upsert({
-          userAssociatedAddresse: lastDownload[x].userAssociatedAddresses[0]||"",
-          profileTokenId: lastDownload[x].profileTokenId,
-          userAssociatedAddresses_all:lastDownload[x].userAssociatedAddresses,
-          json: lastDownload[x],
+          userAssociatedAddresse:row.userAssociatedAddresses[0]||"",
+          profileTokenId: row.profileTokenId,
+          userAssociatedAddresses_all:row.userAssociatedAddresses,
+          json: row,
+          resumejson :resumejson,
           source: 'airstack'
         });
         console.log("----------- Finished inserting into supabase -- \n "+JSON.stringify(lastDownload[x]))
@@ -243,7 +254,7 @@ const eas_get_distinct_recipeints=`query Attestations($distinct: [AttestationSca
 
 
 
-let payload_all_eass = { query:eas_get_distinct_recipeints,
+let payload_all_eass = { query:eas_get_distinct_recipeints, 
       variables:{
       "distinct": "recipient"
     }
@@ -255,6 +266,188 @@ let payload_all_eass = { query:eas_get_distinct_recipeints,
   1==1;
  return(alleasrecp);
 }
+
+
+
+
+const XMTPQuery = `query BulkFetchPrimaryENSandXMTP($address: [Identity!]) {
+  XMTPs(input: {blockchain: ALL, filter: {owner: {_in: $address}}}) {
+    XMTP {
+      isXMTPEnabled
+      owner {
+        addresses
+        primaryDomain {
+          name
+        }
+        domains{
+          name
+          labelName
+        }
+        socials {
+          dappName
+          profileName
+          profileCreatedAtBlockTimestamp
+          profileCreatedAtBlockTimestamp
+          profileLastUpdatedAtBlockNumber
+          profileLastUpdatedAtBlockTimestamp
+          userAddress
+          followerCount
+          followingCount
+          profileBio
+          profileUrl
+          profileName
+          profileImage
+          userHomeURL
+          userAssociatedAddresses
+          dappName
+        }
+        
+      }
+    }
+  }
+ 
+}`;
+
+
+
+const XMTPOnlyQuery = `query BulkFetchPrimaryENSandXMTP($address: [Identity!]) {
+  XMTPs(input: {blockchain: ALL, filter: {owner: {_in: $address}}}) {
+    XMTP {
+      isXMTPEnabled
+      owner {
+        addresses
+        primaryDomain {
+          name
+        }
+      }
+    }
+  }
+ 
+}`;
+
+
+
+
+export const checkAllForXMTP = async ()=>{
+
+
+
+
+type User = {
+  address: string;
+  id: string;
+  cid?: string;
+  tokenId?: string;
+  score?: number;
+  document: {
+    numReviews?: string;
+    handle?: string;
+    rating?: string;
+    description?: any;
+    index?: string;
+    transactionHash?: string;
+  };
+};
+
+ 
+ 
+/*
+const airstackAPIKeys = [
+  "148c64fde3cf4c078d5da3c559b6aac4",
+  "169e231a545547c5b40781506374a97a",
+  "0704529f3d0540ecaa192a42562bfcf5",
+  "4e7245eed2db4b8287fa336d1fc56c6a",
+  "f3c4a4085fb644cc9293756decea426d",
+];
+*/
+const airstackAPIKeys = [ "148c64fde3cf4c078d5da3c559b6aac4"];
+ 
+
+let apiKeyIndex = 0;
+
+// Function to get the current API key
+function getCurrentApiKey() {
+  return airstackAPIKeys[apiKeyIndex];
+}
+
+// Function to rotate to the next API key
+function rotateApiKey() {
+  if(airstackAPIKeys.length>1)
+    apiKeyIndex = (apiKeyIndex + 1) % airstackAPIKeys.length;
+  else
+  airstackAPIKeys[0];
+}
+
+const wallets: string[] = [];
+
+
+queryWallets(wallets).then((allUsers) => {
+  console.log("All Users:", allUsers);
+  fs.writeFileSync("results3.json", JSON.stringify(allUsers, null, 2));
+});
+ 
+}
+
+
+
+export const queryWallets = async (wallets: string[]) => {
+  console.log("starting queryWallets() ");
+  console.log("wallets.length", wallets.length);
+  const results = [];
+  console.log("started");
+
+  // Batch processing
+  const batchSize = 50;
+  for (let i = 0; i < wallets.length; i += batchSize) {
+    const batch = wallets.slice(i, i + batchSize);
+
+    // API key rotation logic here
+    //const currentApiKey = getCurrentApiKey();
+    const currentApiKey = "cfba1e8625d040d99b2c49f51960891b";
+
+    let userData;
+    if (batch.length > 0) {
+      try {
+        console.log("currentApiKey= "+currentApiKey);
+        init(currentApiKey);
+
+        const { data, error } = await fetchQuery(XMTPOnlyQuery, { address: batch });
+        userData = data;
+        console.log("userData.XMTPs.XMTP.length ", userData.XMTPs.XMTP.length);
+        
+      } catch (err) {
+        console.log("errorerrorerrorerrorerrorerror error", err);
+      }
+      // Make the API request for the batch
+      if (userData?.XMTPs.XMTP) {
+        results.push(...userData?.XMTPs?.XMTP!);
+
+        //@ts-ignore
+
+    for (let s = 0; s < userData.XMTPs.XMTP.length; s+=1) {
+        const e= userData.XMTPs.XMTP[s];
+        
+            console.log("userData.XMTPs.XMTP.e ======= "+JSON.stringify(e))
+
+              //@ts-ignore
+             const { data3, error } = await supabase.from("on_xmtp").upsert({
+              pk: e.owner.addresses[0]||"",
+              on_xmtp: e.isXMTPEnabled,
+            });
+
+              //@ts-ignore
+                const { error3 } = await supabase.from('people_search').update({ on_xmtp:  e.isXMTPEnabled}).eq('pk', e.owner.addresses[0])
+
+
+           
+        }
+        
+
+      }
+    }
+  }
+  return results;
+};
 
 
 

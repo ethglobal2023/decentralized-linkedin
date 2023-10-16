@@ -8,6 +8,8 @@ import { requestVerification } from "./eas/request-manual-verification.js";
 import { signatureVerificationMiddleware } from "./signature-auth.js";
 import { calcTrustScore } from "./dili/calcTrustScore.js";
 import { scrapeSocial } from "./dili/scrapeSocial.js";
+import { checkXMTP } from "./dili/checkXMTP.js";
+import { calcAllTrustScores } from "./dili/calcAllTrustScores.js";
 import { updateProfile } from "./profile/upsert-resume.js";
 import { confirmVerification } from "./eas/confirm-manual-verification.js";
 import { getResume } from "./profile/get-resume.js";
@@ -59,6 +61,11 @@ app.post(
 app.post("/profile", signatureVerificationMiddleware, updateProfile);
 app.post("/dili/trustscore", calcTrustScore);
 app.post("/dili/scrapesocial", scrapeSocial);
+app.post("/dili/checkxmtp", checkXMTP);
+app.post("/dili/calcalltrustscores", calcAllTrustScores);
+
+
+
 
 
 app.listen(PORT, () => {
