@@ -91,6 +91,43 @@ export const getWeb3BioNextId = async (pk: string) => {
 
 
 
+export async function crawlEAS(){
+ 
+
+const eas_lots_of_attestations_graphql_query=`query derpderp($take: Int, $skip: Int) {
+  attestations(take:$take skip: $skip){
+    recipient
+    attester
+    id
+    time
+    txid
+    schemaId
+  }
+}`;
+
+const eas_get_distinct_recipeints=`query Attestations($distinct: [AttestationScalarFieldEnum!]) {
+  attestations(distinct: $distinct) {
+    recipient
+  }
+}`
+
+
+
+let payload_all_eass = { query:eas_get_distinct_recipeints,
+      variables:{
+      "distinct": "recipient"
+    }
+    }
+
+  let alleasrecp = await rest_api_save_to_db("https://optimism.easscan.org/graphql",'post',payload_all_eass,{ "Content-Type": "application/json" })
+
+
+  1==1;
+ 
+}
+
+
+
 /*
 curl --request POST \
   --header 'content-type: application/json' \

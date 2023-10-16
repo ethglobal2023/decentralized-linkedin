@@ -107,6 +107,14 @@ export const calcTrustScore = async (
     console.error("error in calcTrustScore errorUpsert: "+errorUpsert);
 
   }
+  
+  try {
+    await supabase.from("people_search").update({ trust_score:calcScore   })
+    .eq('pk',req.body.account )
+   }catch(uper){
+     console.error("error updating people_search column trust_score : "+uper);
+ 
+   }
 
   return res.status(200).send({ result_payload});
 };
