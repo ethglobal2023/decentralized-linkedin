@@ -4,6 +4,18 @@ import axios from "axios";
 
 const MAX_SCORE_CALC_AGE = 30; //TODO move to config
 
+import { init, fetchQuery } from "@airstack/node";
+
+const airstackAPIKeys = [  //TODO move to config  and gitignore 
+  "148c64fde3cf4c078d5da3c559b6aac4",
+  "169e231a545547c5b40781506374a97a",
+  "0704529f3d0540ecaa192a42562bfcf5",
+  "4e7245eed2db4b8287fa336d1fc56c6a",
+  "f3c4a4085fb644cc9293756decea426d",
+];
+
+
+
 export function dateDiffInDays(a: Date, b: Date) {
   const _MS_PER_DAY = 1000 * 60 * 60 * 24;
   // Discard the time and time-zone information.
@@ -61,13 +73,14 @@ export const rest_api_save_to_db = async (
   1 == 1;
   if (req_body === undefined || req_body === null) req_body = {};
   // @ts-ignore
-  const { data, upsertError } = await supabase.from("rest_cache").upsert({
+  const { data, error } = await supabase.from("rest_cache").upsert({
     url: url,
     method: method,
     req_body: req_body,
     response_body: res.data || {},
     status: res.status || 400,
   });
+  let upsertError=error;
 
   if( upsertError)
     console.log(upsertError);
@@ -90,8 +103,125 @@ export const getWeb3BioNextId = async (pk: string) => {
 };
 
 
+const airstackquery_farcaster_iterate=`query GetAllFarcasterUsernamesAndEthAddresses {
+  Socials(
+    input: {filter: {dappName: {_eq: farcaster}, followerCount: {_gt: 2}}, blockchain: ethereum, limit: 200, cursor: ""}
+  ) {
+    Social {
+      profileName
+      userAssociatedAddresses
+      followerCount
+      fnames
+      profileBio
+      profileImage
+      profileDisplayName
+      userRecoveryAddress
+    }
+    pageInfo {
+      hasNextPage
+      nextCursor
+    }
+  }
+}`
 
-export async function crawlEAS(){
+
+let apiKeyIndex = 2;
+
+// Function to get the current API key
+function getCurrentApiKey() {
+  return airstackAPIKeys[apiKeyIndex];
+}
+
+// Function to rotate to the next API key
+function rotateApiKey() {
+  apiKeyIndex = (apiKeyIndex + 1) % airstackAPIKeys.length;
+}
+
+export const airStackFarCaster = async ()=>{
+
+
+  const pagelimit =10;
+
+let currentApiKey="cfba1e8625d040d99b2c49f51960891b";
+  init(currentApiKey);
+  let currentcursor="";
+  let lastDownload ;
+  //@ts-ignore
+  let all=[];
+  for (let i = 0; i < pagelimit; i++) {
+    let curQuery = `query GetAllFarcasterUsernamesAndEthAddresses {
+      Socials(
+        input: {filter: {dappName: {_eq: farcaster}, followerCount: {_gt: 100}}, blockchain: ethereum, limit: 200, cursor: "${currentcursor}"}
+      ) {
+        Social {
+          profileName
+          userAssociatedAddresses
+          followerCount
+          fnames
+          profileBio
+          profileImage
+          profileDisplayName
+          userRecoveryAddress
+          profileTokenId
+          profileTokenAddress
+          profileLastUpdatedAtBlockNumber
+          chainId
+          dappName
+        }
+        pageInfo {
+          hasNextPage
+          nextCursor
+        }
+      }
+    }`
+
+
+    console.log(" i = "+i)
+    console.log("before  airstack fetchQuery")
+    const { data, error } = await fetchQuery(curQuery);
+    lastDownload= data?.Socials?.Social;
+
+
+    console.log("data?.Socials?.pageInfo.nextCursor "+data?.Socials?.pageInfo.nextCursor)
+    console.log("data?.Socials?.pageInfo.hasNextPage "+data?.Socials?.pageInfo.hasNextPage)
+    console.log("after  airstack fetchQuery")
+    
+    //console.log("----------- "+JSON.stringify(lastDownload))
+
+
+      //lastDownload =  await rest_api_save_to_db("https://optimism.easscan.org/graphql",'post',{query:curQuery},{ "Content-Type": "application/json" })
+
+
+      for (let x = 0; x < lastDownload.length; x++) {
+        const { data,error } = await supabase.from("farcaster_users").upsert({
+          userAssociatedAddresse: lastDownload[x].userAssociatedAddresses[0]||"",
+          profileTokenId: lastDownload[x].profileTokenId,
+          userAssociatedAddresses_all:lastDownload[x].userAssociatedAddresses,
+          json: lastDownload[x],
+          source: 'airstack'
+        });
+        console.log("----------- Finished inserting into supabase -- \n "+JSON.stringify(lastDownload[x]))
+
+        
+      }
+
+      if (lastDownload) {
+        //@ts-ignore
+        all=[...lastDownload,...all]
+      }
+      
+      1===1
+      console.log(" i = "+i+" i = "+i+" i = "+i+" i = "+i+" i = "+i+" i = "+i)
+      if(data?.Socials?.pageInfo.hasNextPage  )
+         currentcursor=data?.Socials?.pageInfo.nextCursor  || "";
+      else 
+        break;
+  }
+  //@ts-ignore
+  return (all);
+}
+
+export const crawlEAS = async ()=>{
  
 
 const eas_lots_of_attestations_graphql_query=`query derpderp($take: Int, $skip: Int) {
@@ -123,7 +253,7 @@ let payload_all_eass = { query:eas_get_distinct_recipeints,
 
 
   1==1;
- 
+ return(alleasrecp);
 }
 
 

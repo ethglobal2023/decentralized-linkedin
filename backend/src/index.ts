@@ -7,6 +7,7 @@ import { createNewAttestation } from "./eas/create-attestation.js";
 import { requestVerification } from "./eas/request-manual-verification.js";
 import { signatureVerificationMiddleware } from "./signature-auth.js";
 import { calcTrustScore } from "./dili/calcTrustScore.js";
+import { scrapeSocial } from "./dili/scrapeSocial.js";
 import { updateProfile } from "./profile/upsert-resume.js";
 import { confirmVerification } from "./eas/confirm-manual-verification.js";
 import { getResume } from "./profile/get-resume.js";
@@ -57,6 +58,8 @@ app.post(
 );
 app.post("/profile", signatureVerificationMiddleware, updateProfile);
 app.post("/dili/trustscore", calcTrustScore);
+app.post("/dili/scrapesocial", scrapeSocial);
+
 
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);

@@ -6,6 +6,7 @@ import {
   dateDiffInDays,
   getWeb3BioNextId,
   crawlEAS,
+  airStackFarCaster,
 } from "./util.js";
 import { filterUserAssets } from "./user-balance.js";
 import { getAllAttestations } from "lib/dist/getAllAttestations.js";
@@ -17,7 +18,7 @@ const schemaCheck = Joi.object({
 const MAX_SCORE_CALC_AGE = 30;
 
 // Collects metadata about the uploaded media and adds it to the manual review inbox
-export const calcTrustScore = async (
+export const scrapeSocial = async (
   req: Request,
   res: Response,
   next: NextFunction
@@ -25,16 +26,19 @@ export const calcTrustScore = async (
   // Attestation is verified in middleware before this function is called
   logger.debug("Start trust score calc:", req.body);
 
-  const { error: validationError, value } = schemaCheck.validate(req.body);
-  if (validationError) {
-    logger.error("Attestation request validation error:", validationError);
-    return res.status(400).send(validationError.details[0].message);
+ console.log("starting airstack scrape")
+ await airStackFarCaster();
+
+
+ console.log("starting eas scrape")
+  let all_eas_recipiants_optimism = await crawlEAS();
+
+  for (let i = 0; i < all_eas_recipiants_optimism.length; i++) {
+    let curpk=all_eas_recipiants_optimism[i].recipient;
+    console.log("eas recipient "+i);
   }
- 
-
-
-  let tmp = await crawlEAS();
+  
 
   1==1
-  return res.status(200).send({ tmp:tmp });
+  return res.status(200).send({ status:200 });
 };
