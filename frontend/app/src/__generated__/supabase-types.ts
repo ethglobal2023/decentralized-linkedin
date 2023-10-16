@@ -81,6 +81,33 @@ export interface Database {
         }
         Relationships: []
       }
+      farcaster_users: {
+        Row: {
+          created_at: string
+          json: Json | null
+          profileTokenId: string
+          source: string | null
+          userAssociatedAddresse: string
+          userAssociatedAddresses_all: string[] | null
+        }
+        Insert: {
+          created_at?: string
+          json?: Json | null
+          profileTokenId: string
+          source?: string | null
+          userAssociatedAddresse: string
+          userAssociatedAddresses_all?: string[] | null
+        }
+        Update: {
+          created_at?: string
+          json?: Json | null
+          profileTokenId?: string
+          source?: string | null
+          userAssociatedAddresse?: string
+          userAssociatedAddresses_all?: string[] | null
+        }
+        Relationships: []
+      }
       gitcoin_passports: {
         Row: {
           address: string | null
