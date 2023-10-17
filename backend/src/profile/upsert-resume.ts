@@ -77,17 +77,6 @@ export const updateProfile = async (
     // Search for all keys containing "keywords" in resume
 
 
-    const { error: error2 } = await supabase
-      .from("people_search")
-      .upsert({ pk: account, text: recursionResumeToString(resume, ""), json: resume, first_name: resume.firstName, last_name: resume.lastName, keywords: })
-      .eq("pk", account);
-
-    if (error2) {
-      logger.error("Failed to update resume:", error);
-      return res.status(500).json({
-        error: `Failed to update resume: ${error}`,
-      });
-    }
     return res.status(200).json({ cid: ourCid });
   } catch (e) {
     logger.error("Failed to update resume:", e);

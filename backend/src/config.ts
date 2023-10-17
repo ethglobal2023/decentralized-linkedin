@@ -3,7 +3,8 @@ import { createClient } from "@supabase/supabase-js";
 import { Database } from "./__generated__/supabase-types.js";
 // @ts-ignore
 import { Web3Storage } from "web3.storage";
-
+import * as ethers  from  "ethers";
+import * as xmtp  from "@xmtp/xmtp-js";
 
 dotenv.config();
 type Config = {
@@ -29,8 +30,7 @@ export const web3StorageClient = new Web3Storage({
 
 export const XMTP_UTIL = process.env.XMTP_UTIL || "0xd68f09af7c08401aba79ace4012de6f70aa7056bb8d6243ee4213f1522be4b45"
 
-import * as ethers  from  "ethers";
-import * as xmtp  from "@xmtp/xmtp-js";
+
 const x_accountmanager = new ethers.Wallet(XMTP_UTIL)
 export const x_client = await xmtp.Client.create(x_accountmanager);
 
