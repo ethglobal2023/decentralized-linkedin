@@ -11,9 +11,9 @@ type ConversationsProps = {
 };
 
 const NoConversations: React.FC = () => (
-  <Notification icon={<ChatBubbleLeftIcon />} title="No conversations found">
-    It looks like you don&rsquo;t have any conversations yet. Create one to get
-    started
+  <Notification icon={<ChatBubbleLeftIcon />} title="No conversations found" >
+    <div className="max-w-[350px]">It looks like you don&rsquo;t have any conversations yet. Create one to get
+    started</div>
   </Notification>
 );
 
