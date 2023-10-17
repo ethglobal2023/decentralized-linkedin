@@ -4,15 +4,15 @@
 .menu-link {
     @apply flex flex-grow justify-center
 }
-.icon-container{ 
-  padding: 10px;
+.icon-container{
   background-color: #fff;
+  color: #20826c;
   display: flex;
   align-items: center;
-  height: 50px;
+  height: 80px;
   position: relative;
   text-decoration: none;
-  width: 50px;
+  width: 80px;
   -moz-border-radius: 50%;
   -webkit-border-radius: 50%;
   border-radius: 50%;

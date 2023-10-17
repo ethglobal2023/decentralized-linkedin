@@ -5,7 +5,6 @@ import { MessageWithSignature } from "../signature-auth.js";
 import { logger } from "../index.js";
 // @ts-ignore
 import { Blob, File } from "web3.storage";
-import { recursionResumeToString } from "lib";
 
 type UpdateMessage = {
   account: string;
@@ -72,11 +71,6 @@ export const updateProfile = async (
         error: `Failed to update resume: ${error}`,
       });
     }
-
-    // const allKeywords: string[] = []
-    // Search for all keys containing "keywords" in resume
-
-
     return res.status(200).json({ cid: ourCid });
   } catch (e) {
     logger.error("Failed to update resume:", e);

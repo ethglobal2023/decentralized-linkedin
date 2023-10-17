@@ -70,7 +70,10 @@ export const App: React.FC = () => {
   
 
       <div className="InboxConversations">
+
+
         <BrowserRouter>
+
           {/*<SideBar />*/}
           <div className="InboxConversations__list overflow-y-hidden border-r-[3px]">
             <Menu />
@@ -80,13 +83,19 @@ export const App: React.FC = () => {
                 element={<>
                   <div className="InboxHeader__actions">
                   <button
-                   className="text-white bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 shadow-lg shadow-blue-500/50 dark:shadow-lg flex dark:shadow-blue-800/80 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 mb-2 "
+                    className="Button"
                     type="button"
                     onClick={handleStartNewConversation}
                   >
                     <PlusCircleIcon width={24} /> New message
                   </button>
-                
+                  <button
+                    className="Button Button--secondary"
+                    type="button"
+                    onClick={handleDisconnect}
+                  >
+                    <ArrowRightOnRectangleIcon width={24} /> Disconnect
+                  </button>
                   </div>
                   <Conversations
                     onConversationClick={handleConversationClick}
@@ -95,7 +104,7 @@ export const App: React.FC = () => {
                   </>
                 }
               />
-              <Route path="/search" element={<Search/>} />
+
             </Routes>
           </div>
           <Routes>
@@ -117,6 +126,7 @@ export const App: React.FC = () => {
                 </RequireXMTPConnected>
               }
             />
+            <Route path="/search" element={<Search />} />
             <Route
               path="/admin"
               element={
@@ -126,7 +136,7 @@ export const App: React.FC = () => {
               }
             />
             <Route
-              path="/profileEdit"
+              path="/profile-demo"
               element={<ProfilePublish/>}
             />
             <Route

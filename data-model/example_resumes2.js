@@ -230,15 +230,14 @@ function recursionResumeToString( d , prefixpath){
         }
         else 
             return "";
+
+
 }
 
 console.log(recursionResumeToString(profile1,""));
 console.log(`\n\n\n\n\n`);
 console.log(JSON.stringify(profile1));
 
-
-
-/*
 
 
 // todo example of inserting 
@@ -294,5 +293,3 @@ console.log(data8);
 await supabase .rpc('people_websearch', {query:'"fox dog"'} )
 
 }
-
-*/

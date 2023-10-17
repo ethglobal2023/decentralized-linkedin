@@ -4,16 +4,14 @@ import FileUploadModal from "./FileUpload";
 import "./ProfileCard.css";
 import SideBar from "./SideBar";
 import { SupabaseContext } from "../contexts/SupabaseContext";
-import { useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { Resume } from "../types";
 import { ipfsDownload } from "../ipfs";
-import {IoMdArrowBack} from "react-icons/io"
-import "./App.css"
+
 export default function ProfileCard() {
   const { address: profileAddress } = useParams();
   console.log(profileAddress);
   const [allStatuses, setAllStatus] = useState([]);
-  const navigate=useNavigate()
   const [currentImage, setCurrentImage] = useState({});
   const [progress, setProgress] = useState(0);
   const [modalOpen, setModalOpen] = useState(false);
@@ -125,15 +123,8 @@ export default function ProfileCard() {
       timeline: "2015-2023",
     },
   ];
-  return (<div className="bg-white w-full">
-       <div className="flex text-[#73b6ff] text-[18px] mt-5 ml-5 font-semibold cursor-pointer"
-       onClick={()=>{
-        navigate("/")
-       }}>
-        <IoMdArrowBack className="mt-1"/>
-        <p>Back</p>
-       </div>
-    <div className=" flex gap-6">
+  return (
+    <div className=" flex">
       <FileUploadModal
         getImage={getImage}
         uploadImage={uploadImage}
@@ -143,20 +134,19 @@ export default function ProfileCard() {
         progress={progress}
       />
       <div className="ml-10">
-      <div className="  text-gray-800 font-montserrat h-fit mt-12 w-[700px] lg:p-10 p-6  card rounded-xl ">
-
+      <div className="profile-card">
+        <div className="edit-btn">
+          <HiOutlinePencil className="edit-icon" />
+        </div>
 
         <div className="profile-info">
           <div>
-          <div className=" flex"> <div ><img
-              className="rounded-full"
+            <img
+              className="profile-image"
               onClick={() => setModalOpen(true)}
               src="https://avatars.githubusercontent.com/u/65860201?s=96&v=4"
               alt="profile-image"
-            /></div>
-            <div className="w-full flex justify-end mt-6"> <button
-        className="text-white bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-purple-300 dark:focus:ring-purple-800 shadow-lg shadow-purple-500/50 dark:shadow-lg dark:shadow-purple-800/80 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 mb-2"
-        type="button" onClick={()=>{navigate("/profileEdit")}}>Edit profile</button></div></div>
+            />
             <h3 className="userName">{fetchedProfile?.firstName} {fetchedProfile?.lastName}</h3>
             <p className="heading">{fetchedProfile?.description}</p>
 
@@ -184,7 +174,7 @@ export default function ProfileCard() {
       </div>
 
       
-<div className="text-gray-800 font-montserrat h-fit mt-12 w-[700px] lg:p-10 p-6  card rounded-xl">
+<div className="max-w-[500px] p-3 attestation-card">
     <a href="#" className="w-full text-center">
         <h5 className="mb-2 text-2xl font-semibold tracking-tight text-gray-900 "> Unknown Attestation</h5>
     </a>
@@ -209,7 +199,7 @@ export default function ProfileCard() {
 </div></div>
 
 
-      <div className="text-gray-800 font-montserrat h-fit mt-12 w-[700px] lg:p-10 p-6  card rounded-xl">
+      <div className="profile-card">
        { workOrganization && workOrganization.length > 0 &&<div><h1 className="heading-2">Experience</h1>
         <ul>
           {experience.map((item, index) => (
@@ -267,6 +257,6 @@ export default function ProfileCard() {
           );
         })}
       </div> */}
-    </div></div>
+    </div>
   );
 }
