@@ -17,6 +17,7 @@ import { calcTrustScore,internalcalcTrustScore } from "./calcTrustScore.js";
 
  
 
+//TODO this should return immediatly and start a background worker thread, release the main thread. 
 // Collects metadata about the uploaded media and adds it to the manual review inbox
 export const calcAllTrustScores = async (
   req: Request,
@@ -29,10 +30,8 @@ export const calcAllTrustScores = async (
 
 
   const { data } = await supabase
-      .from("people_search")
+      .from("people_without_trust_score")
       .select("*")
-      .lt("trust_score", 0.01)   
-
 
 
 if(data){

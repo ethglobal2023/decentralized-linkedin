@@ -100,7 +100,6 @@ export const Search: FC = () => {
             >
               <div
                 className="flex items-center space-x-4"
-                to={`/profile/${user.pk}`}
               >
                 <Link
                   className="flex items-center space-x-4"
