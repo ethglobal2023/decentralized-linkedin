@@ -30,7 +30,7 @@ export async function fetchGitcoinPassportUsers() {
       });
       console.log(
         "🚀 ~ file: index.ts:82 ~ fetchAllUsers ~ response:",
-        response.data.errors!
+        response.data.errors!,
       );
 
       console.log("response", response.data.data!);
@@ -50,11 +50,11 @@ export async function fetchGitcoinPassportUsers() {
       });
       console.log(
         "🚀 ~ file: index.ts:98 ~ transformedUsers ~ transformedUsers:",
-        transformedUsers
+        transformedUsers,
       );
       console.log(
         "🚀 ~ file: index.ts:93 ~ fetchAllUsers ~ lastUserId:",
-        lastUserId
+        lastUserId,
       );
 
       users.push(...transformedUsers);

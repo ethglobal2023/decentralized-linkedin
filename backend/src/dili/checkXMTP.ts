@@ -25,14 +25,14 @@ export const checkXMTP = async (
     .eq("on_xmtp", "unknown"); //NOTE this will only return 1000 at a time.
   //@ts-ignore
   console.log(" supabase select " + JSON.stringify(data.slice(0, 4)));
-  let missing_xmtp_for = data?.map((a) => a.pk);
+  const missing_xmtp_for = data?.map((a) => a.pk);
   //@ts-ignore
   console.log(
     " missing_xmtp_for select " +
       JSON.stringify(missing_xmtp_for?.slice(0, 50)),
   );
   //@ts-ignore
-  let resi = await queryWallets(missing_xmtp_for);
+  const resi = await queryWallets(missing_xmtp_for);
   console.log("    queryWallets() returned :   " + JSON.stringify(resi));
 
   1 == 1;

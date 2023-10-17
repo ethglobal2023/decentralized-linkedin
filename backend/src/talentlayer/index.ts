@@ -40,7 +40,7 @@ export async function fetchTalentLayerUsers() {
       });
       console.log(
         "🚀 ~ file: index.ts:82 ~ fetchAllUsers ~ response:",
-        response.data.errors!
+        response.data.errors!,
       );
 
       const userData = response.data.data.users;
@@ -58,11 +58,11 @@ export async function fetchTalentLayerUsers() {
       });
       console.log(
         "🚀 ~ file: index.ts:98 ~ transformedUsers ~ transformedUsers:",
-        transformedUsers
+        transformedUsers,
       );
       console.log(
         "🚀 ~ file: index.ts:93 ~ fetchAllUsers ~ lastUserId:",
-        lastUserId
+        lastUserId,
       );
 
       users.push(...transformedUsers);

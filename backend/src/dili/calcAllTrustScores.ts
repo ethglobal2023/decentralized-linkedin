@@ -28,7 +28,7 @@ export const calcAllTrustScores = async (
       const row = data[s];
       //@ts-ignore
       //@ts-ignore
-      let resi = await internalcalcTrustScore(row.pk);
+      const resi = await internalcalcTrustScore(row.pk);
       console.log(
         "    internalcalcTrustScore() resi :   " + JSON.stringify(resi),
       );

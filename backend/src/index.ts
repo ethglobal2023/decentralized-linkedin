@@ -23,7 +23,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 app.use(express.static("public"));
 app.use(cors({ origin: "*" }));
-let date = new Date().toISOString();
+const date = new Date().toISOString();
 
 const logFormat = winston.format.printf(function (info) {
   return `${date}-${info.level}: ${JSON.stringify(info.message, null, 4)}\n`;
@@ -46,17 +46,25 @@ if (process.env.NODE_ENV !== "production") {
 
 app.get("/api/profile", getResume);
 app.get("/api/attestations", getAttestationsForAddress);
-app.post("/api/eas/verify", signatureVerificationMiddleware, verifyAttestations);
-app.post("/api/eas/attest", signatureVerificationMiddleware, createNewAttestation); //Signature verification is handled w/ EAS here, not in middleware
+app.post(
+  "/api/eas/verify",
+  signatureVerificationMiddleware,
+  verifyAttestations,
+);
+app.post(
+  "/api/eas/attest",
+  signatureVerificationMiddleware,
+  createNewAttestation,
+); //Signature verification is handled w/ EAS here, not in middleware
 app.post(
   "/api/eas/request-verification",
   signatureVerificationMiddleware,
-  requestVerification
+  requestVerification,
 );
 app.post(
   "/api/eas/confirm-verification",
   signatureVerificationMiddleware,
-  confirmVerification
+  confirmVerification,
 );
 app.post("/api/profile", signatureVerificationMiddleware, updateProfile);
 app.post("/api/dili/trustscore", calcTrustScore);
@@ -64,12 +72,8 @@ app.post("/api/dili/scrapesocial", scrapeSocial);
 app.post("/api/dili/checkxmtp", checkXMTP);
 app.post("/api/dili/calcalltrustscores", calcAllTrustScores);
 
-
-
-
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
 });
 
-
-export default app
+export default app;

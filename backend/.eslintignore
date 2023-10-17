@@ -8,4 +8,6 @@ coverage
 .yarn
 .vscode
 .idea
-.eslintrc.js
+.eslintrc.cjs
+
+codegen.js

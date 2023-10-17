@@ -22,11 +22,11 @@ const extractAddressFromMessage = (message: any, signature: string): string => {
 export const signatureVerificationMiddleware = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
-  console.log(req.body)
+  console.log(req.body);
   const { error: validationError, value } =
-    signatureVerificationSchema.validate(req.body, {allowUnknown: true});
+    signatureVerificationSchema.validate(req.body, { allowUnknown: true });
 
   if (validationError) {
     logger.error("Attestation request validation error:", validationError);

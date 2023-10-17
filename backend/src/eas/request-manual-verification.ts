@@ -18,7 +18,7 @@ const requestManualReviewSchema = Joi.object<
     mediaType: Joi.string().valid(
       "conference_talk",
       "publication",
-      "interview"
+      "interview",
     ),
   }).required(),
 });
@@ -27,17 +27,17 @@ const requestManualReviewSchema = Joi.object<
 export const requestVerification = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   // Attestation is verified in middleware before this function is called
   const { error: validationError, value } = requestManualReviewSchema.validate(
     req.body,
-    { allowUnknown: true }
+    { allowUnknown: true },
   );
   if (validationError) {
     logger.error(
       "Create manual verification request validation error:",
-      validationError
+      validationError,
     );
     return res.status(400).send(validationError.details[0].message);
   }

@@ -22,10 +22,10 @@ export const scrapeSocial = async (
   await airStackFarCaster();
 
   console.log("starting eas scrape");
-  let all_eas_recipiants_optimism = await crawlEAS();
+  const all_eas_recipiants_optimism = await crawlEAS();
 
   for (let i = 0; i < all_eas_recipiants_optimism.length; i++) {
-    let curpk = all_eas_recipiants_optimism[i].recipient;
+    const curpk = all_eas_recipiants_optimism[i].recipient;
     console.log("eas recipient " + i);
   }
 

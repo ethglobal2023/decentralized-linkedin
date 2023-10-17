@@ -24,8 +24,8 @@ export const internalcalcTrustScore = async (account: string, ops: string) => {
       .limit(1)
       .single();
     if (data !== null && data.updated_at !== null) {
-      let last = new Date(Date.parse(data.updated_at));
-      let today = new Date();
+      const last = new Date(Date.parse(data.updated_at));
+      const today = new Date();
       console.log(dateDiffInDays(last, today));
       if (dateDiffInDays(last, today) < MAX_SCORE_CALC_AGE) {
         return data;
@@ -85,7 +85,7 @@ export const internalcalcTrustScore = async (account: string, ops: string) => {
     calcScore = calcScore + 1;
   }
 
-  let result_payload = {
+  const result_payload = {
     pk: account,
     score: calcScore,
     updated_at: new Date().toISOString(),
@@ -126,7 +126,7 @@ export const calcTrustScore = async (
 
   // TODO Add signature verification here to make sure a rando is not spamming us.
 
-  let result_payload = await internalcalcTrustScore(
+  const result_payload = await internalcalcTrustScore(
     req.body.account,
     req.body.ops,
   );
@@ -159,15 +159,16 @@ const checkGitcoinAttestation = (data: any) => {
     const userScoreS = gitcoinAttestationData.map((attestation: any) => {
       // console.log("attestatio112n", attestation);
       //@ts-ignore
-      let scoreval = parseInt(
-        attestation.find((e: any) => e.name === "score")?.value?.value?.hex || 0,
+      const scoreval = parseInt(
+        attestation.find((e: any) => e.name === "score")?.value?.value?.hex ||
+          0,
         16,
       );
       //@ts-ignore
-      let scoredec =
-        attestation.find((e: any) => e.name === "score_decimals")?.value?.value ||
-        18;
-      let finalscore = scoreval / Math.pow(10, scoredec);
+      const scoredec =
+        attestation.find((e: any) => e.name === "score_decimals")?.value
+          ?.value || 18;
+      const finalscore = scoreval / Math.pow(10, scoredec);
       return finalscore;
     });
 

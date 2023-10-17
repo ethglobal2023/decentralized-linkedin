@@ -1,9 +1,11 @@
 import { AnkrProvider, GetAccountBalanceReply } from "@ankr.com/ankr.js";
 
 //API KEY HERE
-const provider = new AnkrProvider("https://rpc.ankr.com/multichain/"+process.env.ANKR_API_KEY);
+const provider = new AnkrProvider(
+  "https://rpc.ankr.com/multichain/" + process.env.ANKR_API_KEY,
+);
 
-const balances = async (pk:string) => {
+const balances = async (pk: string) => {
   const balance = await provider.getAccountBalance({
     blockchain: ["bsc", "eth", "polygon", "arbitrum", "optimism"],
     walletAddress: pk,
@@ -20,7 +22,7 @@ interface Asset {
   tokenType: string;
 }
 
-export const filterUserAssets = async (pk:string): Promise<Asset[]> => {
+export const filterUserAssets = async (pk: string): Promise<Asset[]> => {
   const userAssets: GetAccountBalanceReply = await balances(pk);
 
   const nativeCoins = ["ETH", "BNB", "MATIC"];

@@ -33,7 +33,7 @@ const uploadToInternalIPFS = async (fileBody: string) => {
   const resx = await web3StorageClient.get(cid);
   console.log("getting resx", resx);
   const filesx = await resx.files();
-  var uploadedFileUrls = [];
+  const uploadedFileUrls = [];
   for (const file of filesx) {
     console.log(`File Info: ${file.cid} ${file.name} ${file.size}`);
   }
