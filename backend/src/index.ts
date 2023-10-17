@@ -10,6 +10,7 @@ import { calcTrustScore } from "./dili/calcTrustScore.js";
 import { scrapeSocial } from "./dili/scrapeSocial.js";
 import { checkXMTP } from "./dili/checkXMTP.js";
 import { calcAllTrustScores } from "./dili/calcAllTrustScores.js";
+import { announceConnectionRequest } from "./dili/announceConnectionRequest.js";
 import { updateProfile } from "./profile/upsert-resume.js";
 import { confirmVerification } from "./eas/confirm-manual-verification.js";
 import { getResume } from "./profile/get-resume.js";
@@ -63,6 +64,7 @@ app.post("/api/dili/trustscore", calcTrustScore);
 app.post("/api/dili/scrapesocial", scrapeSocial);
 app.post("/api/dili/checkxmtp", checkXMTP);
 app.post("/api/dili/calcalltrustscores", calcAllTrustScores);
+app.post("/api/dili/announceconnectionrequest", announceConnectionRequest);
 
 
 
