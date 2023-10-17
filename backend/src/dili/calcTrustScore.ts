@@ -17,29 +17,15 @@ const schemaCheck = Joi.object({
 
 const MAX_SCORE_CALC_AGE = 30;
 
-// Collects metadata about the uploaded media and adds it to the manual review inbox
-export const calcTrustScore = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  // Attestation is verified in middleware before this function is called
-  logger.debug("Start trust score calc:", req.body);
 
-  const { error: validationError, value } = schemaCheck.validate(req.body);
-  if (validationError) {
-    logger.error("Attestation request validation error:", validationError);
-    return res.status(400).send(validationError.details[0].message);
-  }
+export const internalcalcTrustScore  = async (account: string,ops:string) => {
 
-  // TODO Add signature verification here to make sure a rando is not spamming us.
-
-  console.log(req.body && req.body.ops !== "recalc");
-  if (req.body && req.body.ops !== "recalc") {
+  console.log(account && ops !== "recalc");
+  if (account && ops !== "recalc") {
     const { data, error } = await supabase
       .from("user_trust_score")
       .select("*")
-      .eq("pk", req.body.account)
+      .eq("pk", account)
       .limit(1)
       .single();
     if (data !== null && data.updated_at !== null) {
@@ -47,7 +33,7 @@ export const calcTrustScore = async (
       let today = new Date();
       console.log(dateDiffInDays(last, today));
       if (dateDiffInDays(last, today) < MAX_SCORE_CALC_AGE) {
-        return res.status(200).send(data);
+        return (data);
       }
     }
   }
@@ -60,12 +46,12 @@ export const calcTrustScore = async (
   // get domains from next.id
 
   let  calcScore=0;
-  const res1= await getWeb3BioNextId(req.body.account);
+  const res1= await getWeb3BioNextId(account);
   if(res1 && res1.length>0){
     calcScore=calcScore+1;
   }
 
-  const res2 = await getAllAttestations(supabase, req.body.account);
+  const res2 = await getAllAttestations(supabase, account);
   if(res2 && res2.length>0){
     calcScore=calcScore+1;
   //@ts-ignore
@@ -94,30 +80,68 @@ export const calcTrustScore = async (
   }
   console.log("🚀 ~ file: calcTrustScore.ts:70 ~ gitcoinCheck:", gitcoinCheck);
 
-  const res3 = await getBalancePoints(req.body.account)
+  const res3 = await getBalancePoints(account)
   if(res3){
     calcScore=calcScore+1;
   }
   
+  let result_payload={pk:account,score:calcScore,updated_at:(new Date().toISOString())};
 
-  let result_payload={pk:req.body.account,score:calcScore,updated_at:(new Date().toISOString())};
   try {
-   await supabase.from("user_trust_score").upsert(result_payload);
-  }catch(errorUpsert){
-    console.error("error in calcTrustScore errorUpsert: "+errorUpsert);
-
-  }
-  
-  try {
-    await supabase.from("people_search").update({ trust_score:calcScore   })
-    .eq('pk',req.body.account )
-   }catch(uper){
-     console.error("error updating people_search column trust_score : "+uper);
+    await supabase.from("user_trust_score").upsert(result_payload);
+   }catch(errorUpsert){
+     console.error("error in calcTrustScore errorUpsert: "+errorUpsert);
  
    }
+   
+   try {
+     await supabase.from("people_search").update({ trust_score:calcScore   })
+     .eq('pk',account )
+    }catch(uper){
+      console.error("error updating people_search column trust_score : "+uper);
+  
+    }
+
+
+
+
+  return (result_payload);
+}
+
+// Collects metadata about the uploaded media and adds it to the manual review inbox
+export const calcTrustScore = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  // Attestation is verified in middleware before this function is called
+  logger.debug("Start trust score calc:", req.body);
+
+  const { error: validationError, value } = schemaCheck.validate(req.body);
+  if (validationError) {
+    logger.error("Attestation request validation error:", validationError);
+    return res.status(400).send(validationError.details[0].message);
+  }
+
+  // TODO Add signature verification here to make sure a rando is not spamming us.
+
+
+  let result_payload= await internalcalcTrustScore(req.body.account,req.body.ops) 
+
 
   return res.status(200).send({ result_payload});
 };
+
+
+
+
+
+
+
+
+
+
+
 
 const checkGitcoinAttestation = (data: any) => {
   //console.log("gitcoindata", data.length);
