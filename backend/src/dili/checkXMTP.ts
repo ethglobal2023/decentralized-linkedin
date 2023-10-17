@@ -30,7 +30,7 @@ export const checkXMTP = async (
   const { data } = await supabase
       .from("people_search")
       .select("*")
-      .eq("on_xmtp", 'unknown')
+      .eq("on_xmtp", 'unknown')   //NOTE this will only return 1000 at a time. 
    //@ts-ignore
       console.log( " supabase select "+ JSON.stringify(data.slice(0, 4)))
       let missing_xmtp_for=data?.map(a=>a.pk);

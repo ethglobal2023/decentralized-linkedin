@@ -1,6 +1,10 @@
 import { supabase } from "../config.js";
 import * as fs from "fs";
 import axios from "axios";
+import { x_client } from "../config.js";
+
+
+
 
 const MAX_SCORE_CALC_AGE = 30; //TODO move to config
 
@@ -413,37 +417,68 @@ export const queryWallets = async (wallets: string[]) => {
 
         const { data, error } = await fetchQuery(XMTPOnlyQuery, { address: batch });
         userData = data;
-        console.log("userData.XMTPs.XMTP.length ", userData.XMTPs.XMTP.length);
+        if(data && data?.XMTPs?.XMTP)
+         console.log("data.XMTPs.XMTP.length ", data?.XMTPs?.XMTP?.length);
         
+
+      // Make the API request for the batch
+      if (userData?.XMTPs?.XMTP) {
+        results.push(...userData?.XMTPs?.XMTP!);
+            for (let s = 0; s < userData.XMTPs.XMTP.length; s+=1) {
+                const e= userData.XMTPs.XMTP[s];
+                    console.log("userData.XMTPs.XMTP.e ======= "+JSON.stringify(e))
+                      //@ts-ignore
+                    const { data3, error } = await supabase.from("on_xmtp").upsert({
+                      pk: e.owner.addresses[0]||"",
+                      on_xmtp: e.isXMTPEnabled,
+                    });
+                      //@ts-ignore
+                        const { error3 } = await supabase.from('people_search').update({ on_xmtp:  e.isXMTPEnabled}).eq('pk', e.owner.addresses[0])
+                }
+        }
+
+
       } catch (err) {
         console.log("errorerrorerrorerrorerrorerror error", err);
       }
-      // Make the API request for the batch
-      if (userData?.XMTPs.XMTP) {
-        results.push(...userData?.XMTPs?.XMTP!);
 
-        //@ts-ignore
-
-    for (let s = 0; s < userData.XMTPs.XMTP.length; s+=1) {
-        const e= userData.XMTPs.XMTP[s];
+                //@ts-ignore
+                let airstackfound=[];
+                if(userData?.XMTPs.XMTP && userData?.XMTPs.XMTP) {
+                      //@ts-ignore
+                     airstackfound=userData?.XMTPs?.XMTP?.map(e=>e.owner.addresses[0]) || []
+                }
+                console.log( "airstackfound="+airstackfound)
+                //@ts-ignore
         
-            console.log("userData.XMTPs.XMTP.e ======= "+JSON.stringify(e))
+        
+                //BOOKMARK
+                let notfromairstack = batch.filter(w=>!airstackfound.includes(w))
+                console.log( "notfromairstack="+JSON.stringify(notfromairstack))
 
-              //@ts-ignore
-             const { data3, error } = await supabase.from("on_xmtp").upsert({
-              pk: e.owner.addresses[0]||"",
-              on_xmtp: e.isXMTPEnabled,
-            });
+                let xanswers = await x_client.canMessage(notfromairstack);
+                console.log("xanswers="+JSON.stringify(xanswers))
+        
+                let zipped =[];
+                for (let s = 0; s < xanswers.length; s+=1) {
+                  const curwallettest=notfromairstack[s];
+                  zipped.push({pk:curwallettest,on_xmtp: xanswers[s]})
+                  /*
+                  let xanswer = await x_client.canMessage(curwallettest);
+                  console.log("xanswer="+xanswer)
+                  console.log("xanswer="+JSON.stringify(xanswer))
+                  */
+             
+                      //@ts-ignore
+                     const { error3 } = await supabase.from('people_search').update({ on_xmtp:  xanswers[s]}).eq('pk', curwallettest)
+                    
+                }
 
-              //@ts-ignore
-                const { error3 } = await supabase.from('people_search').update({ on_xmtp:  e.isXMTPEnabled}).eq('pk', e.owner.addresses[0])
-
-
-           
-        }
+                       //@ts-ignore
+                       const { data3, error } = await supabase.from("on_xmtp").upsert(zipped);
+                       console.log("data3="+JSON.stringify(data3))
         
 
-      }
     }
   }
   return results;
