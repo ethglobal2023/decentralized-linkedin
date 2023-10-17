@@ -191,8 +191,26 @@ insert into people_search(pk,"text","json","source")
 select pubkey as pk, human_text_from_json_jsonbin("json"::jsonb) as "text",  "json"::jsonb as "json", 'talentlayer' as "source" from talent_layer_formated f
 where f.pubkey  not in (select pk from people_search) and f."json" is not  null;
 
-select * from people_search ps  where source ='talentlayer'
-  
---update  people_search set on_xmtp='unknown' where on_xmtp is null 
+select count(*) from people_search ps  where on_xmtp <> 'unknown'
+select * from people_search ps  
+
+
+select count(*) cnt, trust_score, "source" from people_search ps group by trust_score , "source"
+
+select count(*) cnt  from people_search ps  where   trust_score > 0
+
+select count(*) from user_trust_score; 
+
+create view people_without_trust_score as 
+select ps.pk from people_search ps 
+left join user_trust_score uts    on ps.pk = uts.pk 
+where uts.score  is null ; 
+
+select * from people_without_trust_score
+
+
+select count(*) cnt, on_xmtp, "source" from people_search ps group by on_xmtp, "source"
+
+select * from people_search ps  where "source"= 'talentlayer' and on_xmtp <> 'unknown';
 
 
