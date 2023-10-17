@@ -7,7 +7,7 @@
   text-transform: uppercase;
 }
 :root {
-  --background-color: white;
+  --background-color: #f7f7f7;
   --secondary-background-color: #eee;
   --text-color: #213547;
   --brand-color: rgb(49 0 110);

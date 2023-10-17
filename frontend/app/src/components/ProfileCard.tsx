@@ -133,6 +133,7 @@ export default function ProfileCard() {
         currentImage={currentImage}
         progress={progress}
       />
+      <div className="ml-10">
       <div className="profile-card">
         <div className="edit-btn">
           <HiOutlinePencil className="edit-icon" />
@@ -171,6 +172,32 @@ export default function ProfileCard() {
           {fetchedProfile?.description}
         </p>
       </div>
+
+      
+<div className="max-w-[500px] p-3 attestation-card">
+    <a href="#" className="w-full text-center">
+        <h5 className="mb-2 text-2xl font-semibold tracking-tight text-gray-900 "> Unknown Attestation</h5>
+    </a>
+    <div className=" flex gap-2 mb-[2px]"><p className="mb-3 font-normal text-gray-500 ">Data: </p>
+   <div> <p> metIrl:true</p>
+    <p>property 2:value</p>
+    <p>property 3: 0xABC...0055</p></div>
+    </div>
+    <div className=" flex gap-2 mb-[2px]"><p className="mb-3 font-normal text-gray-500 ">Attester: </p>
+   <div> <p> metIrl:true</p>
+   </div>
+    </div>
+    <div className=" flex gap-2 mb-[2px]"><p className="mb-3 font-normal text-gray-500 ">Issued: </p>
+   <div> <p> Jan 1st,2020</p></div>
+    </div>
+    <div className=" flex gap-2 mb-[2px]"><p className="mb-3 font-normal text-gray-500 ">Expires: </p>
+   <div> <p> Never</p></div>
+    </div>
+   <div className="w-full flex justify-center"> <button className="text-white bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 shadow-lg shadow-blue-500/50 dark:shadow-lg dark:shadow-blue-800/80 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 mb-2 " type="submit">
+          Verify
+        </button></div>
+</div></div>
+
 
       <div className="profile-card">
        { workOrganization && workOrganization.length > 0 &&<div><h1 className="heading-2">Experience</h1>

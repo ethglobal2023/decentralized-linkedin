@@ -5,9 +5,10 @@ import { supabase } from "../config.js";
 import {
   dateDiffInDays,
   getWeb3BioNextId,
-  getAllAttestations,
+
 } from "./util.js";
 import { filterUserAssets } from "./user-balance.js";
+import { getAllAttestations } from "lib/src/getAllAttestations.js";
 
 const schemaCheck = Joi.object({
   account: Joi.string().optional(),
@@ -31,10 +32,8 @@ export const calcTrustScore = async (
     return res.status(400).send(validationError.details[0].message);
   }
 
-  //  console.log("why ");
-  //  console.log("why ");
   // TODO Add signature verification here to make sure a rando is not spamming us.
-  1 === 1;
+
   console.log(req.body && req.body.ops !== "recalc");
   if (req.body && req.body.ops !== "recalc") {
     const { data, error } = await supabase
@@ -66,7 +65,7 @@ export const calcTrustScore = async (
     calcScore=calcScore+1;
   }
 
-  const res2 = await getAllAttestations(req.body.account);
+  const res2 = await getAllAttestations(supabase, req.body.account);
   if(res2 && res2.length>0){
     calcScore=calcScore+1;
   //@ts-ignore

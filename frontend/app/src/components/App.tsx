@@ -66,10 +66,8 @@ export const App: React.FC = () => {
     );
   };
   return (
-    <div className="Inbox">
-      <div className="InboxHeader">
-
-      </div>
+    <div className="  w-full h-[100vh] bg-[#f7f7f7] ">
+  
 
       <div className="InboxConversations">
 
@@ -77,7 +75,7 @@ export const App: React.FC = () => {
         <BrowserRouter>
 
           {/*<SideBar />*/}
-          <div className="InboxConversations__list">
+          <div className="InboxConversations__list overflow-y-hidden border-r-[3px]">
             <Menu />
             <Routes>
               <Route

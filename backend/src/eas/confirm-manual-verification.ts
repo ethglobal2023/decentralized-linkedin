@@ -9,6 +9,7 @@ type ConfirmManualVerificationMessage = {
   cid: string;
   accept: boolean;
 }
+
 const confirmSchema = Joi.object<MessageWithSignature<ConfirmManualVerificationMessage>>({
   message: {
     cid: Joi.string().required(),

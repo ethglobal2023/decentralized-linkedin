@@ -4,7 +4,7 @@
   background-color: #F6F6F7;
   margin: 30px;
   border-radius: 5px;
-  padding: 20px;
+  padding: 0px 20px 20px 20px;
   position: relative;
   .profile-info {
     display: flex;
@@ -90,4 +90,11 @@
     margin-top: 20px;
     font-weight: 700;
     font-size: large;
+}
+
+.attestation-card{
+  border-radius: 12px;
+background: #f7f7f7;
+box-shadow:  -12px -12px 24px #e8e8e8,
+             12px 12px 24px #ffffff;
 }

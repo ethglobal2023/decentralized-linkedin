@@ -9,11 +9,6 @@ dotenv.config();
 type Config = {
   port: number | string;
   logLevel: string;
-  talentLayerSubgraphUrl: string;
-  databaseType: string;
-  databaseUrl: string;
-  rpcUrl: string;
-  rpcNetwork: "mumbai" | "sepolia" | "goerli";
 };
 
 if (!process.env.SUPABASE_PROJECT_ID || !process.env.SUPABASE_API_KEY) {
@@ -22,7 +17,6 @@ if (!process.env.SUPABASE_PROJECT_ID || !process.env.SUPABASE_API_KEY) {
 if (!process.env.WEB3_STORAGE_KEY) {
   throw new Error("Missing WEB3_STORAGE_KEY");
 }
-
 
 export const supabase = createClient<Database>(
   process.env.SUPABASE_PROJECT_ID,
@@ -36,13 +30,4 @@ export const web3StorageClient = new Web3Storage({
 export const config: Config = {
   port: process.env.PORT || 3000,
   logLevel: (process.env.LOG_LEVEL || "info").toLowerCase(),
-  talentLayerSubgraphUrl:
-    "https://api.thegraph.com/subgraphs/name/talentlayer/talentlayer-polygon",
-  databaseType: process.env.DATABASE_TYPE || "postgres", //see README for one-liner to start postgres instance
-  databaseUrl:
-    process.env.DATABASE_URL ||
-    "postgres://postgres:password@localhost:5432/postgres",
-  rpcUrl: process.env.RPC_URL || "https://rpc-mumbai.maticvigil.com",
-  rpcNetwork:
-    (process.env.RPC_NETWORK as "mumbai" | "sepolia" | "goerli") || "mumbai",
 };

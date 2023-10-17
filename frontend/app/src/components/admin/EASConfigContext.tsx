@@ -16,7 +16,7 @@ export type EASChainConfig = {
 };
 
 //TODO This is sloppy, fix it when we port to NextJS
-export const BACKEND_URL = "http://localhost:3005";
+export const BACKEND_URL = import.meta.env.VITE_API_BASE_URL as string;
 
 export const EAS_CHAIN_CONFIGS: { [chainId: number]: EASChainConfig } = {
   0: {

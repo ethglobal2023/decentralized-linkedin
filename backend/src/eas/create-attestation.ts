@@ -3,7 +3,7 @@ import { logger } from "../index.js";
 import Joi from "joi";
 import { supabase } from "../config.js";
 import { AttestationShareablePackageObject } from "@ethereum-attestation-service/eas-sdk";
-import { extractAddressFromAttestation, verifyAttestation } from "lib";
+import { extractAddressFromAttestation, verifyAttestation } from "lib/src/index.js";
 
 export type CreateAttestationRequest = {
   uid: string;

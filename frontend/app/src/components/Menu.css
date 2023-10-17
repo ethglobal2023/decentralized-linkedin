@@ -1,6 +1,50 @@
 .menu-icon{
-    @apply w-12 h-12;
+    @apply w-[25px] h-[25px] relative;
 }
 .menu-link {
     @apply flex flex-grow justify-center
+}
+.icon-container{
+  background-color: #fff;
+  color: #20826c;
+  display: flex;
+  align-items: center;
+  height: 80px;
+  position: relative;
+  text-decoration: none;
+  width: 80px;
+  -moz-border-radius: 50%;
+  -webkit-border-radius: 50%;
+  border-radius: 50%;
+  -moz-transition: color 0.1s;
+  -o-transition: color 0.1s;
+  -webkit-transition: color 0.1s;
+  transition: color 0.1s;
+}
+.icon-container:hover{
+  color: #fff;
+}
+  
+.inner{
+  background-color: #20826c;
+  display: block;
+  height: 0;
+  left: 50%;
+  margin: 0;
+  position: absolute;
+  top: 50%;
+  width: 0;
+  -moz-border-radius: 50%;
+  -webkit-border-radius: 50%;
+  border-radius: 50%;
+  -moz-transition: all 0.1s;
+  -o-transition: all 0.1s;
+  -webkit-transition: all 0.1s;
+  transition: all 0.1s;
+}
+.icon-container:hover .inner {
+  height: 76px;
+  margin-left: -38px;
+  margin-top: -38px;
+  width: 76px;
 }

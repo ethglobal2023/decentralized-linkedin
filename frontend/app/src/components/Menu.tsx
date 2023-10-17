@@ -22,7 +22,7 @@ const MenuIcon: FC<PropsWithChildren<{ tooltip: string; link: string }>> = ({
       className={"bg-white text-gray-600"}
     >
       <Link to={link} className={"menu-link"}>
-        <IconButton>{children}</IconButton>
+        <IconButton className="sidebar-buttons">{children}</IconButton>
       </Link>
     </Tooltip>
   );
@@ -41,10 +41,12 @@ export const Menu = () => {
           <Route path="/settings" element={<div>Settings</div>} />
         </Routes>
       </div>
-      <div className="mt-auto flex justify-between mb-2">
-        <MenuIcon tooltip={"Search"} link={"/search"}>
+      <div className="mt-auto flex justify-between pb-6 border-b-[3px]">
+        
+        <div className="icon-container"><MenuIcon tooltip={"Search"} link={"/search"}>
+        <span className="inner"></span>
           <AiOutlineSearch className={"menu-icon"} />
-        </MenuIcon>
+        </MenuIcon></div>
         <MenuIcon tooltip={"Messages"} link={"/"}>
           <LuMessagesSquare className={"menu-icon"} />
         </MenuIcon>
