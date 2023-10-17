@@ -1,7 +1,8 @@
 import Joi from "joi";
 import { NextFunction, Request, Response } from "express";
 import { supabase } from "../config.js";
-import { getAllAttestations } from "lib/src/getAllAttestations.js";
+
+import { getAllAttestations } from "lib";
 
 const schema = Joi.object({
   address: Joi.string().required(),
@@ -11,7 +12,7 @@ const schema = Joi.object({
 export const getAttestationsForAddress = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   const { error, value } = schema.validate(req.query);
   if (error) {

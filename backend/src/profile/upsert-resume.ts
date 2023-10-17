@@ -5,7 +5,6 @@ import { MessageWithSignature } from "../signature-auth.js";
 import { logger } from "../index.js";
 // @ts-ignore
 import { Blob, File } from "web3.storage";
-import { recursionResumeToString } from "lib";
 
 type UpdateMessage = {
   account: string;
@@ -29,27 +28,25 @@ const uploadToInternalIPFS = async (fileBody: string) => {
     onStoredChunk: (bytes: any) =>
       logger.info(`> 🛰 sent ${bytes.toLocaleString()} bytes to web3.storage`),
   });
-  console.log("getting cid", cid)
+  console.log("getting cid", cid);
 
-  const resx = await web3StorageClient.get(cid)
-  console.log("getting resx", resx)
-  const filesx = await resx.files()
-  var uploadedFileUrls = []
+  const resx = await web3StorageClient.get(cid);
+  console.log("getting resx", resx);
+  const filesx = await resx.files();
+  var uploadedFileUrls = [];
   for (const file of filesx) {
-    console.log(`File Info: ${file.cid} ${file.name} ${file.size}`)
+    console.log(`File Info: ${file.cid} ${file.name} ${file.size}`);
   }
 
   logger.info(`🔗 Content added to IPFS with CID: ${cid}`);
-  logger.info(
-    `🔗 https://dweb.link/ipfs/${cid}/resume.json`
-  );
+  logger.info(`🔗 https://dweb.link/ipfs/${cid}/resume.json`);
   return `${cid}/resume.json`;
 };
 
 export const updateProfile = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   const { error: validationError, value } = updateSchema.validate(req.body, {
     allowUnknown: true,
@@ -75,7 +72,6 @@ export const updateProfile = async (
 
     // const allKeywords: string[] = []
     // Search for all keys containing "keywords" in resume
-
 
     return res.status(200).json({ cid: ourCid });
   } catch (e) {

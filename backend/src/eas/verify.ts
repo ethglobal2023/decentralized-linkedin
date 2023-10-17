@@ -1,6 +1,6 @@
 import Joi from "joi";
 import { NextFunction, Request, Response } from "express";
-import { bulkVerifyAttestations } from "lib/src/index.js";
+import { bulkVerifyAttestations } from "lib";
 
 const schema = Joi.object({
   //TODO Fill out the full schema later
@@ -11,12 +11,12 @@ const schema = Joi.object({
 export const verifyAttestations = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   const { error, value } = schema.validate(req.body, {
     allowUnknown: true,
   });
-  console.log(error, value)
+  console.log(error, value);
   if (error) {
     return res.status(400).send(error.details[0].message);
   }
@@ -31,12 +31,11 @@ export const verifyAttestations = async (
     default:
       return res.status(200).json({
         validAttestations: validAttestations.map(
-          (attestation) => attestation.sig.uid
+          (attestation) => attestation.sig.uid,
         ),
         invalidAttestations: invalidAttestations.map(
-          (attestation) => attestation.sig.uid
+          (attestation) => attestation.sig.uid,
         ),
       });
   }
-
 };

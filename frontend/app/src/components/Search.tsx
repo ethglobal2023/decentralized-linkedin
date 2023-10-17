@@ -98,9 +98,7 @@ export const Search: FC = () => {
               className="flex items-center"
               to={`/TODO MAKE THIS LINK TO CHAT, USE user.pk OR user.address as key`}
             >
-              <div
-                className="flex items-center space-x-4"
-              >
+              <div className="flex items-center space-x-4">
                 <Link
                   className="flex items-center space-x-4"
                   to={`/profile/${user.pk}`}

@@ -3,7 +3,10 @@ import { logger } from "../index.js";
 import Joi from "joi";
 import { supabase } from "../config.js";
 import { AttestationShareablePackageObject } from "@ethereum-attestation-service/eas-sdk";
-import { extractAddressFromAttestation, verifyAttestation } from "lib/src/index.js";
+import {
+  extractAddressFromAttestation,
+  verifyAttestation,
+} from "lib";
 
 export type CreateAttestationRequest = {
   uid: string;
@@ -33,7 +36,7 @@ export type CreateAttestationRequest = {
     nonce?: number;
   };
   attestationType: //TODO add check to db
-    | "todo"
+  | "todo"
     | "humanity"
     | "met_irl" //Left here so old code samples work
     | "resume"
@@ -76,7 +79,7 @@ const attestationRequestSchema = Joi.object<CreateAttestationRequest>({
     "resume",
     "review",
     "confirmed_skill",
-    "confirmed_language"
+    "confirmed_language",
   ),
 });
 
@@ -84,7 +87,7 @@ const attestationRequestSchema = Joi.object<CreateAttestationRequest>({
 // This is because the message has additional fields to prevent replay attacks
 // This function converts the format from the app to the format fetched from Ceramic
 const appAttestationToEASFormat = (
-  data: any
+  data: any,
 ): AttestationShareablePackageObject => {
   const attestation2 = {
     sig: {
@@ -120,13 +123,13 @@ const appAttestationToEASFormat = (
 export const createNewAttestation = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   // Attestation is verified in middleware before this function is called
   logger.debug("Create attestation request:", req.body);
 
   const { error: validationError, value } = attestationRequestSchema.validate(
-    req.body
+    req.body,
   );
   if (validationError) {
     logger.error("Attestation request validation error:", validationError);
@@ -140,7 +143,7 @@ export const createNewAttestation = async (
   if (!verifyAttestation(easDocument)) {
     const recoveredAddress = extractAddressFromAttestation(easDocument);
     logger.debug(
-      `Signature is not from the attester. Expected: ${account}, signer: ${recoveredAddress}`
+      `Signature is not from the attester. Expected: ${account}, signer: ${recoveredAddress}`,
     );
     return res.status(401).send("Signature is not from the attester");
   }
@@ -158,7 +161,7 @@ export const createNewAttestation = async (
     .single();
   if (!adminAccount) {
     logger.warn(
-      `Signature is not from an admin account, got signer: ${account}`
+      `Signature is not from an admin account, got signer: ${account}`,
     );
     return res.status(401).send("Signature is not from the trusted issuer");
   }

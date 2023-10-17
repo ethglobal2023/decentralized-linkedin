@@ -15,9 +15,6 @@
     "prettier": "prettier src --check",
     "prettier:fix": "prettier -- --write"
   },
-  "engines": {
-    "node": "18.x"
-  },
   "keywords": [],
   "author": "",
   "license": "ISC",
