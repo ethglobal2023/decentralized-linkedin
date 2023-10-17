@@ -10,7 +10,7 @@ import {
   queryWallets,
 } from "./util.js";
 import { filterUserAssets } from "./user-balance.js";
-import { getAllAttestations } from "lib/dist/getAllAttestations.js";
+//import { getAllAttestations } from "lib/dist/getAllAttestations.js";
 
 import { signatureVerificationMiddleware } from "../signature-auth.js";
 
