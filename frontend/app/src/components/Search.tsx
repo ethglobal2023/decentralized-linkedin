@@ -1,8 +1,7 @@
 import { FC, useContext, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { SupabaseContext } from "../contexts/SupabaseContext";
-import { Link, useNavigate } from "react-router-dom";
-import {IoMdArrowBack} from "react-icons/io"
+import { Link } from "react-router-dom";
 import {
   Avatar,
   AvatarFallback,
@@ -44,7 +43,7 @@ export const Search: FC = () => {
   const [error, setError] = useState("");
   const [data, setData] = useState<any[]>([]);
   const imageUrls = getImageUrls();
-  const navigate=useNavigate()
+
   const onSubmit: SubmitHandler<SearchForm> = async (data) => {
     const { searchTerm } = data;
 
@@ -83,10 +82,8 @@ export const Search: FC = () => {
 
   return (
     <div className={"p-4 space-y-2"}>
-
       <form onSubmit={handleSubmit(onSubmit)} className={"p-4 rounded"}>
-      <div className="input-wrapper">
-        <Input type="text" placeholder="Search" {...register("searchTerm")} /></div>
+        <Input type="text" placeholder="Search" {...register("searchTerm")} />
       </form>
       {data.map((user) => {
         console.log(user);
