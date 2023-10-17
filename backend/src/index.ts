@@ -44,26 +44,25 @@ if (process.env.NODE_ENV !== "production") {
   app.use(morgan("combined"));
 }
 
-app.get("/profile", getResume);
-app.get("/attestations", getAttestationsForAddress);
-app.post("/eas/verify", verifyAttestations);
-app.post("/eas/attest", createNewAttestation); //Signature verification is handled w/ EAS here, not in middleware
+app.get("/api/profile", getResume);
+app.get("/api/attestations", getAttestationsForAddress);
+app.post("/api/eas/verify", signatureVerificationMiddleware, verifyAttestations);
+app.post("/api/eas/attest", signatureVerificationMiddleware, createNewAttestation); //Signature verification is handled w/ EAS here, not in middleware
 app.post(
-  "/eas/request-verification",
+  "/api/eas/request-verification",
   signatureVerificationMiddleware,
   requestVerification
 );
 app.post(
-  "/eas/confirm-verification",
+  "/api/eas/confirm-verification",
   signatureVerificationMiddleware,
   confirmVerification
 );
-app.post("/profile", signatureVerificationMiddleware, updateProfile);
-app.post("/dili/trustscore", calcTrustScore);
-app.post("/dili/scrapesocial", scrapeSocial);
-app.post("/dili/checkxmtp", checkXMTP);
-app.post("/dili/calcalltrustscores", calcAllTrustScores);
-
+app.post("/api/profile", signatureVerificationMiddleware, updateProfile);
+app.post("/api/dili/trustscore", calcTrustScore);
+app.post("/api/dili/scrapesocial", scrapeSocial);
+app.post("/api/dili/checkxmtp", checkXMTP);
+app.post("/api/dili/calcalltrustscores", calcAllTrustScores);
 
 
 

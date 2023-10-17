@@ -230,8 +230,6 @@ function recursionResumeToString( d , prefixpath){
         }
         else 
             return "";
-
-
 }
 
 console.log(recursionResumeToString(profile1,""));

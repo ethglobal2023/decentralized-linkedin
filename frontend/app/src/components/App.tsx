@@ -67,15 +67,8 @@ export const App: React.FC = () => {
   };
   return (
     <div className="Inbox">
-      <div className="InboxHeader">
-
-      </div>
-
       <div className="InboxConversations">
-
-
         <BrowserRouter>
-
           {/*<SideBar />*/}
           <div className="InboxConversations__list">
             <Menu />
@@ -106,7 +99,7 @@ export const App: React.FC = () => {
                   </>
                 }
               />
-
+              <Route path="/search" element={<Search/>} />
             </Routes>
           </div>
           <Routes>
@@ -128,7 +121,6 @@ export const App: React.FC = () => {
                 </RequireXMTPConnected>
               }
             />
-            <Route path="/search" element={<Search />} />
             <Route
               path="/admin"
               element={

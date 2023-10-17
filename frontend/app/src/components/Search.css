@@ -1,0 +1,4 @@
+.search-card {
+    max-width: var(--sidebar-width);
+    @apply bg-white rounded-lg shadow-lg overflow-hidden;
+}
