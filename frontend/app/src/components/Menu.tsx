@@ -41,27 +41,31 @@ export const Menu = () => {
           <Route path="/settings" element={<div>Settings</div>} />
         </Routes>
       </div>
-      <div className="mt-auto flex justify-between pb-6 border-b-[3px]">
+      <div className="mt-auto flex justify-between pb-6 border-b-[3px] max-w-[400px] px-4">
         
-        <div className="icon-container"><MenuIcon tooltip={"Search"} link={"/search"}>
-        <span className="inner"></span>
+        <div  className="text-black border-gradient-to-r from-blue-500 via-blue-600 to-blue-700 hover:bg-gradient-to-br hover:text-white ring-4  shadow-lg shadow-blue-500/50 dark:shadow-lg flex dark:shadow-blue-800/80 font-medium rounded-full text-sm py-2 px-2 text-center  "><MenuIcon tooltip={"Search"} link={"/search"}>
           <AiOutlineSearch className={"menu-icon"} />
         </MenuIcon></div>
+        <div className="text-black border-gradient-to-r from-blue-500 via-blue-600 to-blue-700 hover:bg-gradient-to-br hover:text-white ring-4  shadow-lg shadow-blue-500/50 dark:shadow-lg flex dark:shadow-blue-800/80 font-medium rounded-full text-sm py-2 px-2 text-center  ">
         <MenuIcon tooltip={"Messages"} link={"/"}>
           <LuMessagesSquare className={"menu-icon"} />
-        </MenuIcon>
+        </MenuIcon></div>
+        <div className="text-black border-gradient-to-r from-blue-500 via-blue-600 to-blue-700 hover:bg-gradient-to-br hover:text-white ring-4  shadow-lg shadow-blue-500/50 dark:shadow-lg flex dark:shadow-blue-800/80 font-medium rounded-full text-sm py-2 px-2 text-center  ">
         <MenuIcon tooltip={"Connections"} link={"/connections"}>
           <BsPeople className={"menu-icon"} />
-        </MenuIcon>
-        <MenuIcon tooltip={"My Profile"} link={"/profile-demo"}>
+        </MenuIcon></div>
+        <div className="text-black border-gradient-to-r from-blue-500 via-blue-600 to-blue-700 hover:bg-gradient-to-br hover:text-white ring-4  shadow-lg shadow-blue-500/50 dark:shadow-lg flex dark:shadow-blue-800/80 font-medium rounded-full text-sm py-2 px-2 text-center  ">
+        <MenuIcon tooltip={"My Profile"} link={"/profile/:address"}>
           <BsPerson className={"menu-icon"} />
-        </MenuIcon>
+        </MenuIcon></div>
+        <div className="text-black border-gradient-to-r from-blue-500 via-blue-600 to-blue-700 hover:bg-gradient-to-br hover:text-white ring-4  shadow-lg shadow-blue-500/50 dark:shadow-lg flex dark:shadow-blue-800/80 font-medium rounded-full text-sm py-2 px-2 text-center  ">
         <MenuIcon tooltip={"Admin"} link={"/admin"}>
           <RiAdminLine className={"menu-icon"} />
-        </MenuIcon>
+        </MenuIcon></div>
+        <div className="text-black border-gradient-to-r from-blue-500 via-blue-600 to-blue-700 hover:bg-gradient-to-br hover:text-white ring-4  shadow-lg shadow-blue-500/50 dark:shadow-lg flex dark:shadow-blue-800/80 font-medium rounded-full text-sm py-2 px-2 text-center  ">
         <MenuIcon tooltip={"Settings"} link={"/settings"}>
           <CiSettings className={"menu-icon"} />
-        </MenuIcon>
+        </MenuIcon></div>
       </div>
     </>
   );

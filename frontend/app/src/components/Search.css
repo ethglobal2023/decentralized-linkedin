@@ -1,0 +1,21 @@
+.search-card {
+    max-width: var(--sidebar-width);
+    @apply bg-white rounded-lg shadow-lg overflow-hidden;
+}
+
+.input-wrapper input {
+    background-color: whitesmoke;
+    border: none;
+    padding: 1rem;
+    font-size: 1rem;
+    width: 20em;
+    border-radius: 1rem;
+    color:black;
+    border:1px;
+    box-shadow: 0 0.4rem #bbebff;
+    cursor: pointer;
+  }
+  
+  .input-wrapper input:focus {
+    outline-color: 	#bbebff;
+  }

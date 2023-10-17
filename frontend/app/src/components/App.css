@@ -28,6 +28,8 @@
   overflow-y: hidden;
   flex: 0 0 var(--sidebar-width);
   height: 100vh;
+  background-color: white !important;
+  min-width: 400px;
 }
 
 .InboxConversations__messages {

@@ -90,7 +90,7 @@ createRoot(document.getElementById("root") as HTMLElement).render(
                 contentTypeConfigs={contentTypeConfigs}
               >
                 <Navbar />
-                <div className="container flex mx-auto">
+                <div className="">
                   <RequireWalletConnected>
                     <App />
                   </RequireWalletConnected>

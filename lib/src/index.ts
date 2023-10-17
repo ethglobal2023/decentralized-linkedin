@@ -55,3 +55,49 @@ export const extractAddressFromAttestation = (
   );
 };
 
+
+const MIN_SPACES_IN_VALUE_TO_CONSIDER_NON_TECHNICAL=3;
+const MAX_LENGTH_NON_SENTENCE_VALUES=20;
+const ALWAYS_PRINT_KEYS_CONTAINING=["name","title","description","title","keyword"];
+const NEVER_PRINT_KEYS=["vc","value","link","dns","id","href","icon","type","issuer","isbn","start","end","date","cid","doi","level"];
+
+
+function keyNamingToTitle(text: string){
+  return (
+    text.replace(/([a-z])([A-Z])/g, '$1 $2')
+      .replace("_"," ")
+      .replace(/([A-Z]+)([A-Z][a-z]+)/g, '$1 $2')
+      .replace(/^./, m => m.toUpperCase())
+  );
+}
+
+export function recursionResumeToString( d: any , prefixpath: string){
+  let out="";
+
+  if( d === null )
+    return "";
+
+  if( typeof(d)==="string"  && ( d.split(" ").length>=MIN_SPACES_IN_VALUE_TO_CONSIDER_NON_TECHNICAL || d.length<MAX_LENGTH_NON_SENTENCE_VALUES )){
+    return (keyNamingToTitle(prefixpath)+": "+d+`\n`)
+  }
+  let nextprefixpath=prefixpath;
+  if( typeof(d) ==="object"){
+    Object.keys(d).forEach(k=>{
+      if(!NEVER_PRINT_KEYS.includes(k)){
+        if( isNaN(parseInt(k))){
+          out=out+recursionResumeToString(d[k],prefixpath+" "+keyNamingToTitle(k))
+        }
+        else{
+          out=out+recursionResumeToString(d[k],prefixpath)
+        }
+      }
+
+
+    })
+    return out;
+  }
+  else
+    return "";
+
+
+}

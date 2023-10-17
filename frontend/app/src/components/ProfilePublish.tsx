@@ -5,12 +5,14 @@ import {
   useFieldArray,
   Controller,
 } from "react-hook-form";
+import {IoMdArrowBack} from "react-icons/io"
 import { BACKEND_URL } from "./admin/EASConfigContext";
 import { MessageWithViemSignature } from "./admin/types";
 import { useWallet } from "../hooks/useWallet";
 import { useWalletClient } from "wagmi";
 import { DatePicker } from "antd";
 import "./App.css"
+import { useNavigate } from "react-router-dom";
 type PublishResumeMessage = {
   account: string;
   resume: string;
@@ -46,6 +48,7 @@ export function ProfilePublish() {
   const [error, setError] = useState(null);
   const { address } = useWallet();
   const { data: walletClient } = useWalletClient();
+  const navigate=useNavigate()
 console.log(address)
   const {
     register,
@@ -104,13 +107,20 @@ console.log(address)
     }
   };
 
-  return (
-    <div className="flex min-h-screen h-fit w-full bg-black justify-center align-middle">
+  return (<>      <div className="flex bg-white text-[#73b6ff] text-[18px] pt-5 pl-5 font-semibold cursor-pointer"
+  onClick={()=>{
+   navigate(-1)
+  }}>
+   <IoMdArrowBack className="mt-1"/>
+   <p>Back</p>
+  </div>
+    <div className="flex min-h-screen h-fit  w-full bg-white justify-center align-middle">
                   <div className="absolute z-[0] w-[40%] h-[35%] top-0 right-0 pink__gradient" />
             <div className="absolute z-[0] w-[40%] h-[50%] rounded-full right-0 white__gradient bottom-40" />
             <div className="absolute z-[0] w-[50%] h-[50%] left-0 bottom-40 blue__gradient" />
-      <form onSubmit={handleSubmit(onSubmit)}  className="  text-gray-400 font-montserrat h-fit mt-12 w-[600px] lg:p-10 p-6  bg-white bg-opacity-5 shadow-md  backdrop-blur rounded-xl border border-gray-400 border-opacity-18 ">
-        <div className="flex gap-12"><div className=" flex flex-col w-[200px]"><label className="block mb-2 text-md font-medium text-white"> 
+      
+      <form onSubmit={handleSubmit(onSubmit)}  className="  text-gray-800 font-montserrat h-fit mt-12 w-[600px] lg:p-10 p-6  bg-white bg-opacity-5 shadow-md  backdrop-blur rounded-xl border border-gray-400 border-opacity-18 ">
+        <div className="flex gap-12"><div className=" flex flex-col w-[200px]"><label className="block mb-2 text-md font-medium text-gray-800"> 
           First Name:</label>
           <input
             type="text"
@@ -121,7 +131,7 @@ console.log(address)
        </div>
         <br />
         <div className=" flex flex-col w-[200px]">
-        <label className="block mb-2 text-md font-medium text-white">
+        <label className="block mb-2 text-md font-medium text-gray-800">
           Last Name:  </label>
           <input
           className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 " placeholder="Mane" required
@@ -133,7 +143,7 @@ console.log(address)
       <div className="flex gap-12">
          <div className="flex flex-col w-[200px]"> <label
             htmlFor="languages"
-            className="block mb-2 text-md font-medium text-white"
+            className="block mb-2 text-md font-medium text-gray-800"
           >
             Select a Language
           </label>
@@ -150,7 +160,7 @@ console.log(address)
           </select></div>
 
   <div className="flex flex-col w-[200px]">
-        <label className="block mb-2 text-md font-medium text-white">
+        <label className="block mb-2 text-md font-medium text-gray-800">
           Description:   </label>
           <textarea
             {...register("description", { required: true })}
@@ -161,7 +171,7 @@ console.log(address)
   </div>
         {fields.map((organization, index) => (
           <div key={organization.id}>
-            <label className="block mb-2 text-md font-medium text-white">
+            <label className="block mb-2 text-md font-medium text-gray-800">
               Organization Name:
               <input
               className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 " placeholder="Mane" required
@@ -172,7 +182,7 @@ console.log(address)
                 })}
               />
             </label>
-            <label className="block mb-2 text-md font-medium text-white">
+            <label className="block mb-2 text-md font-medium text-gray-800">
               Title:
               <input
               className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 " placeholder="Mane" required
@@ -183,7 +193,7 @@ console.log(address)
                 })}
               />
             </label>
-            <label className="block mb-2 text-md font-medium text-white">TimeLine</label>
+            <label className="block mb-2 text-md font-medium text-gray-800">TimeLine</label>
 
             <div date-rangepicker className="flex items-center">
               <div className="relative">
@@ -240,7 +250,7 @@ console.log(address)
                 />
               </div>
             </div>
-            <label className="block mb-2 text-md font-medium text-white mt-6">Type</label>
+            <label className="block mb-2 text-md font-medium text-gray-800 mt-6">Type</label>
             <select
               {...register("language", { required: true })}
               id="languages"
@@ -277,7 +287,7 @@ console.log(address)
         <br />
        
         
-        <div className="flex gap-12"><div><label className="block mb-2 text-md font-medium text-white">
+        <div className="flex gap-12"><div><label className="block mb-2 text-md font-medium text-gray-800">
           Preferred Name:
           <input
            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 p-2.5  "
@@ -287,7 +297,7 @@ console.log(address)
           />
         </label></div>
         <br />
-        <div><label className="block mb-2 text-md font-medium text-white">
+        <div><label className="block mb-2 text-md font-medium text-gray-800">
           Preferred Title:
           <input
             type="text"
@@ -298,7 +308,7 @@ console.log(address)
         </label></div>
         <br />
         </div>
-       <div className="flex gap-12"><div><label className="block mb-2 text-md font-medium text-white">
+       <div className="flex gap-12"><div><label className="block mb-2 text-md font-medium text-gray-800">
           Skill Keywords:
           <input
            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 p-2.5  "
@@ -309,7 +319,7 @@ console.log(address)
         </label></div>
         <br />
 <div>
-        <label className="block mb-2 text-md font-medium text-white">
+        <label className="block mb-2 text-md font-medium text-gray-800">
           Preferred Location:
           <input
            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 p-2.5  "
@@ -326,7 +336,7 @@ console.log(address)
       {cid && <div>CID: {cid}</div>}
       {error && <div>Error: {error}</div>}
       {response && JSON.stringify(response)}
-    </div>
+    </div></>
   );
 }
 
