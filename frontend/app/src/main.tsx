@@ -2,6 +2,8 @@ import "./polyfills";
 import React, { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import "@rainbow-me/rainbowkit/styles.css";
+import { InjectedConnector } from "@wagmi/core/connectors/injected";
+import { WalletConnectConnector } from "@wagmi/core/connectors/walletConnect";
 import {
   connectorsForWallets,
   RainbowKitProvider,
@@ -37,6 +39,8 @@ import { App } from "./components/App";
 import { SupabaseProvider } from "./contexts/SupabaseContext";
 import Navbar from "./components/Navbar";
 import { Theme } from "@radix-ui/themes";
+import { createClient, http, publicActions } from "viem";
+import { privateKeyToAccount } from "viem/accounts";
 
 const DB_VERSION = 1;
 
@@ -52,7 +56,7 @@ const { chains, publicClient } = configureChains(
   [
     infuraProvider({ apiKey: "b46a8b93584e410e8a0d353a9a2b4f1a" }),
     publicProvider(),
-  ],
+  ]
 );
 
 const projectId = "f3b8ea84247122bc77e28b7b91edf3d8";
@@ -101,5 +105,5 @@ createRoot(document.getElementById("root") as HTMLElement).render(
         </StrictMode>
       </RainbowKitProvider>
     </WagmiConfig>
-  </Theme>,
+  </Theme>
 );

@@ -1,5 +1,4 @@
-import "@rainbow-me/rainbowkit/styles.css";
-import { createContext, useMemo, useState } from "react";
+import { useContext, createContext, useMemo, useState } from "react";
 import {
   Chain,
   useAccount,
@@ -11,7 +10,7 @@ import { createClient, http, publicActions } from "viem";
 import { privateKeyToAccount, PrivateKeyAccount } from "viem/accounts";
 import { mainnet } from "wagmi";
 
-export type WalletContextValue = {
+export type UserContextValue = {
   address: `0x${string}` | undefined;
   disconnect: ReturnType<typeof useDisconnect>["disconnect"];
   error: Error | null;
@@ -21,11 +20,9 @@ export type WalletContextValue = {
   chainsSupportedByWallet: Chain[];
   walletClient: any;
   setLocalAccount: (val: string) => void;
-  isSignedIn: boolean;
-  setIsSignedIn: (val: boolean) => void;
 };
 
-export const WalletContext = createContext<WalletContextValue>({
+export const UserContext = createContext<UserContextValue>({
   address: undefined,
   disconnect: () => {},
   error: null,
@@ -35,15 +32,12 @@ export const WalletContext = createContext<WalletContextValue>({
   chainsSupportedByWallet: [],
   walletClient: null,
   setLocalAccount: () => {},
-  isSignedIn: false,
-  setIsSignedIn: () => {},
 });
 
-export const WalletProvider: React.FC<React.PropsWithChildren> = ({
+export const UserProvider: React.FC<React.PropsWithChildren> = ({
   children,
 }) => {
   const [localAccount, setLocalAccount] = useState("");
-  const [isSignedIn, setIsSignedIn] = useState(false);
   const { address, isConnected, isConnecting, isReconnecting, connector } =
     useAccount();
   const { error } = useConnect();
@@ -73,8 +67,6 @@ export const WalletProvider: React.FC<React.PropsWithChildren> = ({
       chainsSupportedByWallet,
       walletClient,
       setLocalAccount,
-      setIsSignedIn,
-      isSignedIn,
     }),
     [
       address,
@@ -86,11 +78,9 @@ export const WalletProvider: React.FC<React.PropsWithChildren> = ({
       chainsSupportedByWallet,
       localAccount,
       walletClient,
-      isSignedIn,
     ]
   );
 
-  return (
-    <WalletContext.Provider value={value}>{children}</WalletContext.Provider>
-  );
+  return <UserContext.Provider value={value}>{children}</UserContext.Provider>;
 };
+export const useUser = () => useContext(UserContext);

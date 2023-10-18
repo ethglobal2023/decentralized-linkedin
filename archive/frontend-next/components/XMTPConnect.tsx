@@ -13,8 +13,12 @@ const XMTPConnectButton: React.FC<XMTPConnectButtonProps> = ({ label }) => {
   const { data: walletClient } = useWalletClient();
 
   const handleConnect = useCallback(() => {
+    // const options = {
+    //   persistConversations: false,
+    // };
     void initialize({
       signer: walletClient,
+      // options,
     });
   }, [initialize, walletClient]);
 
@@ -33,7 +37,8 @@ export const XMTPConnect: React.FC = () => {
       <Notification
         icon={<ExclamationTriangleIcon />}
         title="Could not connect to XMTP"
-        cta={<XMTPConnectButton label="Try again" />}>
+        cta={<XMTPConnectButton label="Try again" />}
+      >
         Something went wrong
       </Notification>
     );
@@ -51,7 +56,8 @@ export const XMTPConnect: React.FC = () => {
     <Notification
       icon={<LinkIcon />}
       title="XMTP not connected"
-      cta={<XMTPConnectButton label="Connect" />}>
+      cta={<XMTPConnectButton label="Connect" />}
+    >
       Connect to XMTP to continue
     </Notification>
   );
