@@ -1,4 +1,0 @@
-{
-  "extends": "./react-sdk.json",
-  "include": ["src", ".eslintrc.cjs", ".storybook/*"]
-}
