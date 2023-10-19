@@ -22,10 +22,3 @@ COPY --from=build /app/backend/dist /app/backend/dist
 WORKDIR /app/backend/
 EXPOSE 3005
 CMD [ "pnpm", "start" ]
-
-FROM base AS frontend
-COPY --from=prod-deps /app/frontend/app/node_modules/ /app/frontend/app/node_modules
-COPY --from=build /app/frontend/app/dist /app/frontend/app/dist
-WORKDIR /app/frontend/app/
-EXPOSE 3000
-CMD [ "pnpm", "serve" ]
