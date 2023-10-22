@@ -2,6 +2,8 @@ Frontend Repo moved here -> https://github.com/JidoTaikaSuru/dili-frontend/tree/
 
 Slide deck here -> https://docs.google.com/presentation/d/1dPQ-08J_7O0QjKjYuR_6u7ZK1UDp25OlWW8qciIsuGY/edit?usp=sharing 
 
+Demo video -> https://drive.google.com/file/d/1vTmjAkMDlAFjUCIkgS5G0IIzOOxd07Vq/view?usp=share_link 
+
 # Decentralinked 
 
 
