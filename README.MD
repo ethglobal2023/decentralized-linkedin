@@ -1,4 +1,6 @@
-# Decentralized Linkedin (name pending)
+Frontend Repo moved here -> https://github.com/JidoTaikaSuru/dili-frontend/tree/main
+
+# Decentralinked 
 
 
 ## Repo structure:
