@@ -7,10 +7,20 @@ import { supabase } from "./config.js";
 export type MessageWithSignature<T> = {
   message: T & { account: string };
   signature: string;
+  // signature: {
+  //   r: string
+  //   s: string
+  //   v: number
+  // };
 };
 const signatureVerificationSchema = Joi.object<MessageWithSignature<any>>({
   message: Joi.object({}).required(),
-  signature: Joi.string().required(),
+  signature: Joi.string()
+  // signature: Joi.object({
+  //   r: Joi.string().required(),
+  //   s: Joi.string().required(),
+  //   v: Joi.number().required()
+  // }).required(),
 });
 
 const extractAddressFromMessage = (message: any, signature: string): string => {

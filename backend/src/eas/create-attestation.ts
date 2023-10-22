@@ -80,6 +80,10 @@ const attestationRequestSchema = Joi.object<CreateAttestationRequest>({
     "review",
     "confirmed_skill",
     "confirmed_language",
+    "skillProven",
+    "proveSkills",
+    "publicInterview",
+    "public_interview"
   ),
 });
 
@@ -126,7 +130,8 @@ export const createNewAttestation = async (
   next: NextFunction,
 ) => {
   // Attestation is verified in middleware before this function is called
-  logger.debug("Create attestation request:", req.body);
+  logger.debug("Create attestation request:", JSON.stringify(req.body));
+  console.log(req.body)
 
   const { error: validationError, value } = attestationRequestSchema.validate(
     req.body,

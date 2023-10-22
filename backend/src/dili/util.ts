@@ -190,17 +190,10 @@ let currentApiKey="cfba1e8625d040d99b2c49f51960891b";
     console.log("data?.Socials?.pageInfo.nextCursor "+data?.Socials?.pageInfo.nextCursor)
     console.log("data?.Socials?.pageInfo.hasNextPage "+data?.Socials?.pageInfo.hasNextPage)
     console.log("after  airstack fetchQuery")
-    
     //console.log("----------- "+JSON.stringify(lastDownload))
-
-
-      //lastDownload =  await rest_api_save_to_db("https://optimism.easscan.org/graphql",'post',{query:curQuery},{ "Content-Type": "application/json" })
-
-      //{"profileName":"cryptomiyagi","userAssociatedAddresses":["0x8e349f70fc7760bbaa0efbca706503095ece899c","0xc92b56eec24b3405afb08ee7215fd50725fa7df7"],"followerCount":162,"fnames":["cryptomiyagi"],"profileBio":"Web3 Renaissance Man. Surreal AI artist and Photographer! https://foundation.app/@CryptoMiyagi_","profileImage":"https://i.imgur.com/0lPN65V.jpg","profileDisplayName":"CryptoMiyagi_","userRecoveryAddress":"0x00000000fcd5a8e45785c8a4b9a718c9348e4f18","profileTokenId":"14200","profileTokenAddress":"0x00000000fcaf86937e41ba038b4fa40baa4b780a","profileLastUpdatedAtBlockNumber":108875188,"chainId":"10","dappName":"farcaster"}
-
-      //{"pubkey":"0xf3c24e5ff3975fddc49b254bc8350b1abf2342a0","preferredname":"faraon","preferredtitle":"dev","description":"faraon developments","skill_keywords":"blockchain","preferredlocation":null,"id":"11713","cid":"QmRRYfTGEQ1G7mbGuziDoeFPXKjYZjTUcTSEJp9tD6esnu","address":"0xf3c24e5ff3975fddc49b254bc8350b1abf2342a0","}
-
-
+    //lastDownload =  await rest_api_save_to_db("https://optimism.easscan.org/graphql",'post',{query:curQuery},{ "Content-Type": "application/json" })
+    //{"profileName":"cryptomiyagi","userAssociatedAddresses":["0x8e349f70fc7760bbaa0efbca706503095ece899c","0xc92b56eec24b3405afb08ee7215fd50725fa7df7"],"followerCount":162,"fnames":["cryptomiyagi"],"profileBio":"Web3 Renaissance Man. Surreal AI artist and Photographer! https://foundation.app/@CryptoMiyagi_","profileImage":"https://i.imgur.com/0lPN65V.jpg","profileDisplayName":"CryptoMiyagi_","userRecoveryAddress":"0x00000000fcd5a8e45785c8a4b9a718c9348e4f18","profileTokenId":"14200","profileTokenAddress":"0x00000000fcaf86937e41ba038b4fa40baa4b780a","profileLastUpdatedAtBlockNumber":108875188,"chainId":"10","dappName":"farcaster"}
+    //{"pubkey":"0xf3c24e5ff3975fddc49b254bc8350b1abf2342a0","preferredname":"faraon","preferredtitle":"dev","description":"faraon developments","skill_keywords":"blockchain","preferredlocation":null,"id":"11713","cid":"QmRRYfTGEQ1G7mbGuziDoeFPXKjYZjTUcTSEJp9tD6esnu","address":"0xf3c24e5ff3975fddc49b254bc8350b1abf2342a0","}
 
       for (let x = 0; x < lastDownload.length; x++) {
         const row=lastDownload[x];
@@ -216,8 +209,6 @@ let currentApiKey="cfba1e8625d040d99b2c49f51960891b";
           source: 'airstack'
         });
         console.log("----------- Finished inserting into supabase -- \n "+JSON.stringify(lastDownload[x]))
-
-        
       }
 
       if (lastDownload) {

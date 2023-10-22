@@ -8,12 +8,14 @@ import { MessageWithSignature } from "../signature-auth.js";
 type ConfirmManualVerificationMessage = {
   cid: string;
   accept: boolean;
+  account: string;
 }
 
 const confirmSchema = Joi.object<MessageWithSignature<ConfirmManualVerificationMessage>>({
   message: {
     cid: Joi.string().required(),
     accept: Joi.boolean().required(),
+    account: Joi.string().optional(),
   },
 
 });
